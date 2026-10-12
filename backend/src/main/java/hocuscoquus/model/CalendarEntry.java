@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class CalendarEntry {
     
-    private int calendarEntryId;
+    private long calendarEntryId;
     private Date dateTime;
     private List<Recipe> recipes;
 
@@ -20,7 +20,7 @@ public class CalendarEntry {
      * @param calendarEntryId the unique ID of the calendar entry
      * @param dateTime the date and time associated with the calendar entry
      */
-    public CalendarEntry(int calendarEntryId, Date dateTime) {
+    public CalendarEntry(long calendarEntryId, Date dateTime) {
         this.calendarEntryId = calendarEntryId;
         this.dateTime = dateTime;
         this.recipes = new ArrayList<>();
@@ -31,7 +31,7 @@ public class CalendarEntry {
      *
      * @return the calendar entry ID
      */
-    public int getCalendarEntryId() {
+    public long getCalendarEntryId() {
         return calendarEntryId;
     }
 
@@ -77,7 +77,7 @@ public class CalendarEntry {
      *
      * @param recipeId the ID of the recipe to remove
      */
-    public void removeRecipe(int recipeId) {
+    public void removeRecipe(long recipeId) {
         for (int i = 0; i < recipes.size(); i++) {
             if (recipes.get(i).getRecipeId() == recipeId) {
                 recipes.remove(i);
