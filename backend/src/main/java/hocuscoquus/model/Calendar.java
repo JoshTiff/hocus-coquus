@@ -2,13 +2,14 @@ package hocuscoquus.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import hocuscoquus.model.CalendarEntry;
 
 /**
  * Represents a calendar containing a collection of calendar entries.
  */
 public class Calendar {
     
-    private int calendarId;
+    private long calendarId;
     private String calendarName;
     private String description;
     private List<CalendarEntry> entries;
@@ -21,7 +22,7 @@ public class Calendar {
      * @param calendarName the name of the calendar
      * @param description the description of the calendar
      */
-    public Calendar(int calendarId, String calendarName, String description) {
+    public Calendar(long calendarId, String calendarName, String description) {
         this.calendarId = calendarId;
         this.calendarName = calendarName;
         this.description = description;
@@ -33,7 +34,7 @@ public class Calendar {
      *
      * @return the calendar ID
      */
-    public int getCalendarId() {
+    public long getCalendarId() {
         return calendarId;
     }
 
