@@ -19,9 +19,6 @@ public class DietaryRestriction {
 	}
 	
 	//Setters
-	public void setDietaryRestrictionId(long dietaryRestrictionId) {
-		this.dietaryRestrictionId = dietaryRestrictionId;
-	}
 	public void setDietaryRestrictionName(String dietaryRestrictionName) {
 		this.dietaryRestrictionName = dietaryRestrictionName;
 	}
