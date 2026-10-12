@@ -18,7 +18,7 @@ public class Reaction {
 
     /**
     * Returns the unique ID of the recipe note.
-    *@return teh reaction type.
+    * @return the reaction type.
     */
 
     public ReactionType getReactionType(){
