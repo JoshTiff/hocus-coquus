@@ -1,5 +1,6 @@
 package hocuscoquus.model;
 import java.util.ArrayList;
+import java.util.list;
 import java.util.HashMap;
 import hocuscoquus.model.Recipe;
 import hocuscoquus.model.DietaryRestriction;
@@ -9,19 +10,19 @@ import hocuscoquus.model.Calendar;
 
 public class Account {
     
-	private Long accountId;
+	private long accountId;
 	private String firstName;
 	private String email;
 	private String password;
-	private ArrayList<Recipe> recipes;
-	private ArrayList<Recipe> favorites;
-	private ArrayList<DietaryRestriction> dietaryrestrictions;
-	private HashMap<Long, ArrayList<RecipeTag>> tags;
-	private HashMap<Long, ArrayList<RecipeNote>> recipeNotes;
-	private ArrayList<Calendar> calendars;
+	private List<Recipe> recipes;
+	private List<Recipe> favorites;
+	private List<DietaryRestriction> dietaryrestrictions;
+	private HashMap<long, List<RecipeTag>> tags;
+	private HashMap<long, List<RecipeNote>> recipeNotes;
+	private List<Calendar> calendars;
 	
 	//Getters
-	public Long getAccountId() {
+	public long getAccountId() {
 		return accountId;
 	}
 	public String getFirstName() {
@@ -38,19 +39,19 @@ public class Account {
 		return recipes;
 	}
 	*/
-	public ArrayList<Recipe> getFavorites() {
+	public List<Recipe> getFavorites() {
 		return favorites;
 	}
-	public ArrayList<DietaryRestriction> getDietaryrestrictions() {
+	public List<DietaryRestriction> getDietaryrestrictions() {
 		return dietaryrestrictions;
 	}
-	public HashMap<Long, ArrayList<RecipeTag>> getTags() {
+	public HashMap<long, List<RecipeTag>> getTags() {
 		return tags;
 	}
-	public HashMap<Long, ArrayList<RecipeNote>> getRecipeNotes() {
+	public HashMap<long, List<RecipeNote>> getRecipeNotes() {
 		return recipeNotes;
 	}
-	public ArrayList<Calendar> getCalendars() {
+	public List<Calendar> getCalendars() {
 		return calendars;
 	}
 	
@@ -92,7 +93,7 @@ public class Account {
 	}
 	
 	//removes a reaction from the recipe with the specified Id
-	public void removeReactionFromRecipe(Long recipeId) {
+	public void removeReactionFromRecipe(long recipeId) {
 		
 	}
 	
@@ -102,7 +103,7 @@ public class Account {
 	}
 	
 	//deletes the calendar with the specified Id
-	public void deleteCalendar(Long calendarID) {
+	public void deleteCalendar(long calendarID) {
 		
 	}
 	
@@ -112,7 +113,7 @@ public class Account {
 	}
 	
 	//deletes the dietary restriction with the specified Id
-	public void deleteDietaryRestriction(Long dietaryRestrictionId) {
+	public void deleteDietaryRestriction(long dietaryRestrictionId) {
 		
 	}
 	
@@ -122,7 +123,7 @@ public class Account {
 	}
 	
 	//deletes the recipe tag with the specified Id
-	public void deleteRecipeTag(Long recipeTagId) {
+	public void deleteRecipeTag(long recipeTagId) {
 		
 	}
 	
@@ -132,7 +133,7 @@ public class Account {
 	}
 	
 	//deletes the recipe note with the specified Id
-	public void deleteRecipeNote(Long recipeNoteId) {
+	public void deleteRecipeNote(long recipeNoteId) {
 		
 	}
 	
