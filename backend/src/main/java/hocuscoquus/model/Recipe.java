@@ -8,11 +8,11 @@ import java.util.List;
  * Stores information regarding recipe including ingredients, instructions, tags, notes, reactions, and more.
  */
 public class Recipe {
-    private final long recipeID;
-    private final String recipeName;
-    private final String recipeDescription;
-    private final String instructions;
-    private final String image;
+    private long recipeID;
+    private String recipeName;
+    private String recipeDescription;
+    private String instructions;
+    private String image;
     private final List<Ingredient> ingredients = new ArrayList<>();
     private final List<RecipeTag> recipeTags = new ArrayList<>();
     private final List<RecipeNote> recipeNotes = new ArrayList<>();
@@ -41,6 +41,15 @@ public class Recipe {
         return recipeID;
     }
 
+
+    /**
+     * Used to set the ID of a recipe.
+     * @param recipeID New recipe ID.
+     */
+    public void setRecipeID(long recipeID) {
+        this.recipeID = recipeID;
+    }
+
     /**
      * @return Recipe's Name
      */
@@ -49,10 +58,27 @@ public class Recipe {
     }
 
     /**
+     * Used to set the name of a recipe.
+     * @param recipeName New recipe name.
+     */
+    public void setRecipeName(String recipeName) {
+        this.recipeName = recipeName;
+    }
+
+    /**
      * @return Recipe's Description
      */
     public String getRecipeDescription() {
         return recipeDescription;
+    }
+
+
+    /**
+     * Used to set the description of a recipe.
+     * @param recipeDescription New recipe description.
+     */
+    public void setRecipeDescription(String recipeDescription) {
+
     }
 
     /**
@@ -83,6 +109,14 @@ public class Recipe {
      */
     public String getImage() {
         return image;
+    }
+
+    /**
+     * Used to set the filepath for the recipe image.
+     * @param image New image filepath.
+     */
+    public void setImage(String image) {
+        this.image = image;
     }
 
     /**
