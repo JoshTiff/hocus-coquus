@@ -7,9 +7,9 @@ import java.util.List;
  * Represents a set of tags associated with a recipe by an account.
  */
 public class RecipeTag {
-    private int recipeTagId;
-    private int recipeId;
-    private int accountId;
+    private Long recipeTagId;
+    private Long recipeId;
+    private Long accountId;
     private List<String> tags;
 
     /**
@@ -21,7 +21,7 @@ public class RecipeTag {
      * @param accountId the ID of the account that created the tags
      * @param tags the initial list of tags
      */
-    public RecipeTag(int recipeTagId, int recipeId, int accountId, List<String> tags) {
+    public RecipeTag(Long recipeTagId, Long recipeId, Long accountId, List<String> tags) {
         this.recipeTagId = recipeTagId;
         this.recipeId = recipeId;
         this.accountId = accountId;
@@ -33,7 +33,7 @@ public class RecipeTag {
      *
      * @return the recipe tag ID
      */
-    public int getRecipeTagId() {
+    public Long getRecipeTagId() {
         return this.recipeTagId;
     }
 

@@ -4,9 +4,9 @@ package hocuscoquus.model;
  * Represents a note written about a recipe by a specific account.
  */
 public class RecipeNote {
-    private int recipeNoteId;
-    private int recipeId;
-    private int accountId;
+    private Long recipeNoteId;
+    private Long recipeId;
+    private Long accountId;
     private String message;
 
     /**
@@ -18,7 +18,7 @@ public class RecipeNote {
      * @param accountId the ID of the account that created the note
      * @param message the message of the note
      */
-    public RecipeNote(int recipeNoteId, int recipeId, int accountId, String message) {
+    public RecipeNote(Long recipeNoteId, Long recipeId, Long accountId, String message) {
         this.recipeNoteId = recipeNoteId;
         this.recipeId = recipeId;
         this.accountId = accountId;
@@ -30,7 +30,7 @@ public class RecipeNote {
      *
      * @return the recipe note ID
      */
-    public int getRecipeNoteId() {
+    public Long getRecipeNoteId() {
         return this.recipeNoteId;
     }
 
