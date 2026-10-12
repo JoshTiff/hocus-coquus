@@ -9,19 +9,19 @@ import hocuscoquus.model.Calendar;
 
 public class Account {
     
-	private Integer accountId;
+	private Long accountId;
 	private String firstName;
 	private String email;
 	private String password;
 	private ArrayList<Recipe> recipes;
 	private ArrayList<Recipe> favorites;
 	private ArrayList<DietaryRestriction> dietaryrestrictions;
-	private HashMap<Integer, ArrayList<RecipeTag>> tags;
-	private HashMap<Integer, ArrayList<RecipeNote>> recipeNotes;
+	private HashMap<Long, ArrayList<RecipeTag>> tags;
+	private HashMap<Long, ArrayList<RecipeNote>> recipeNotes;
 	private ArrayList<Calendar> calendars;
 	
 	//Getters
-	public Integer getAccountId() {
+	public Long getAccountId() {
 		return accountId;
 	}
 	public String getFirstName() {
@@ -44,10 +44,10 @@ public class Account {
 	public ArrayList<DietaryRestriction> getDietaryrestrictions() {
 		return dietaryrestrictions;
 	}
-	public HashMap<Integer, ArrayList<RecipeTag>> getTags() {
+	public HashMap<Long, ArrayList<RecipeTag>> getTags() {
 		return tags;
 	}
-	public HashMap<Integer, ArrayList<RecipeNote>> getRecipeNotes() {
+	public HashMap<Long, ArrayList<RecipeNote>> getRecipeNotes() {
 		return recipeNotes;
 	}
 	public ArrayList<Calendar> getCalendars() {
@@ -92,7 +92,7 @@ public class Account {
 	}
 	
 	//removes a reaction from the recipe with the specified Id
-	public void removeReactionFromRecipe(Integer recipeId) {
+	public void removeReactionFromRecipe(Long recipeId) {
 		
 	}
 	
@@ -102,7 +102,7 @@ public class Account {
 	}
 	
 	//deletes the calendar with the specified Id
-	public void deleteCalendar(Integer calendarID) {
+	public void deleteCalendar(Long calendarID) {
 		
 	}
 	
@@ -112,7 +112,7 @@ public class Account {
 	}
 	
 	//deletes the dietary restriction with the specified Id
-	public void deleteDietaryRestriction(Integer dietaryRestrictionId) {
+	public void deleteDietaryRestriction(Long dietaryRestrictionId) {
 		
 	}
 	
@@ -122,7 +122,7 @@ public class Account {
 	}
 	
 	//deletes the recipe tag with the specified Id
-	public void deleteRecipeTag(Integer recipeTagId) {
+	public void deleteRecipeTag(Long recipeTagId) {
 		
 	}
 	
@@ -132,7 +132,7 @@ public class Account {
 	}
 	
 	//deletes the recipe note with the specified Id
-	public void deleteRecipeNote(Integer recipeNoteId) {
+	public void deleteRecipeNote(Long recipeNoteId) {
 		
 	}
 	
