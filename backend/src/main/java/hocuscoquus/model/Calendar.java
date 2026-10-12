@@ -9,7 +9,7 @@ import hocuscoquus.model.CalendarEntry;
  */
 public class Calendar {
     
-    private long calendarId;
+    private Long calendarId;
     private String calendarName;
     private String description;
     private List<CalendarEntry> entries;
@@ -22,7 +22,7 @@ public class Calendar {
      * @param calendarName the name of the calendar
      * @param description the description of the calendar
      */
-    public Calendar(long calendarId, String calendarName, String description) {
+    public Calendar(Long calendarId, String calendarName, String description) {
         this.calendarId = calendarId;
         this.calendarName = calendarName;
         this.description = description;
@@ -34,7 +34,7 @@ public class Calendar {
      *
      * @return the calendar ID
      */
-    public long getCalendarId() {
+    public Long getCalendarId() {
         return calendarId;
     }
 
@@ -98,7 +98,7 @@ public class Calendar {
      *
      * @param calendarEntryId the ID of the calendar entry to remove
      */
-    public void deleteEntry(int calendarEntryId) {
+    public void deleteEntry(Long calendarEntryId) {
         for (int i = 0; i < entries.size(); i++) {
             if (entries.get(i).getCalendarEntryId() == calendarEntryId) {
                 entries.remove(i);
