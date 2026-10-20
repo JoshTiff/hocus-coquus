@@ -15,4 +15,14 @@ public class PageController {
 	public String account() {
 		return "account";
 	}
+
+	@GetMapping("/account/liked")
+	public String likedRecipes() {
+		return "account-liked";
+	}
+
+	@GetMapping("/account/tagged")
+	public String taggedRecipes() {
+		return "account-tagged";
+	}
 }

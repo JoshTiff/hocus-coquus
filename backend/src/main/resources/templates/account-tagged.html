@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragments/layout :: head('Tagged Recipes')}"></head>
+    <body>
+        <header th:replace="~{fragments/layout :: site-header}"></header>
+
+        <div class="account-layout">
+            <aside
+                th:replace="~{fragments/layout :: sidebar('tagged')}"
+            ></aside>
+
+            <main class="panel">
+                <h2 class="panel-title">Tagged Recipes</h2>
+
+                <ul class="tag-grid">
+                    <li>
+                        <a href="#" class="tag-tile">
+                            <img th:src="@{/images/recipes/recipe-1.png}" alt="" />
+                            <span>Comfort Food</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="tag-tile">
+                            <img th:src="@{/images/recipes/recipe-2.png}" alt="" />
+                            <span>Dinner Ideas</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="tag-tile">
+                            <img th:src="@{/images/recipes/recipe-3.png}" alt="" />
+                            <span>Breakfast</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="tag-tile">
+                            <img th:src="@{/images/recipes/recipe-4.png}" alt="" />
+                            <span>Food for Thanksgiving</span>
+                        </a>
+                    </li>
+                </ul>
+            </main>
+        </div>
+    </body>
+</html>
