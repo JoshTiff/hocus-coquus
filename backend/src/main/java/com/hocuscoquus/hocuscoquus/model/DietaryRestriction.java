@@ -1,4 +1,4 @@
-package hocuscoquus.model;
+package com.hocuscoquus.hocuscoquus.model;
 import java.util.List;
 
 public class DietaryRestriction {

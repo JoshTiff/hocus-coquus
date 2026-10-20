@@ -1,12 +1,7 @@
-package hocuscoquus.model;
-import java.util.ArrayList;
-import java.util.list;
+package com.hocuscoquus.hocuscoquus.model;
+import java.util.List;
 import java.util.HashMap;
-import hocuscoquus.model.Recipe;
-import hocuscoquus.model.DietaryRestriction;
-import hocuscoquus.model.RecipeTag;
-import hocuscoquus.model.RecipeNote;
-import hocuscoquus.model.Calendar;
+
 
 public class Account {
     
@@ -17,8 +12,8 @@ public class Account {
 	private List<Recipe> recipes;
 	private List<Recipe> favorites;
 	private List<DietaryRestriction> dietaryrestrictions;
-	private HashMap<long, List<RecipeTag>> tags;
-	private HashMap<long, List<RecipeNote>> recipeNotes;
+	private HashMap<Long, List<RecipeTag>> tags;
+	private HashMap<Long, List<RecipeNote>> recipeNotes;
 	private List<Calendar> calendars;
 	
 	//Getters
@@ -45,10 +40,10 @@ public class Account {
 	public List<DietaryRestriction> getDietaryrestrictions() {
 		return dietaryrestrictions;
 	}
-	public HashMap<long, List<RecipeTag>> getTags() {
+	public HashMap<Long, List<RecipeTag>> getTags() {
 		return tags;
 	}
-	public HashMap<long, List<RecipeNote>> getRecipeNotes() {
+	public HashMap<Long, List<RecipeNote>> getRecipeNotes() {
 		return recipeNotes;
 	}
 	public List<Calendar> getCalendars() {
@@ -97,10 +92,7 @@ public class Account {
 		
 	}
 	
-	//creates a calendar with the provided name
-	public Calendar createCalendar(String name) {
-		
-	}
+
 	
 	//deletes the calendar with the specified Id
 	public void deleteCalendar(long calendarID) {
@@ -140,6 +132,12 @@ public class Account {
 	//deletes the calling account from the hocuscoquus system
 	public void deleteAccount() {
 		
+	}
+	public List<Recipe> getRecipes() {
+		return recipes;
+	}
+	public void setRecipes(List<Recipe> recipes) {
+		this.recipes = recipes;
 	}
 	
 }

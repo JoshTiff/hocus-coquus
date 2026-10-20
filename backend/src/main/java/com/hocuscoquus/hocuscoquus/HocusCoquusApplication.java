@@ -1,4 +1,4 @@
-package hocuscoquus;
+package com.hocuscoquus.hocuscoquus;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

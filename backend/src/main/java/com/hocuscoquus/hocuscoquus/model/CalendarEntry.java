@@ -1,4 +1,4 @@
-package hocuscoquus.model;
+package com.hocuscoquus.hocuscoquus.model;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -79,7 +79,7 @@ public class CalendarEntry {
      */
     public void removeRecipe(long recipeId) {
         for (int i = 0; i < recipes.size(); i++) {
-            if (recipes.get(i).getRecipeId() == recipeId) {
+            if (recipes.get(i).getRecipeID() == recipeId) {
                 recipes.remove(i);
                 return;
             }
