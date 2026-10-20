@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -12,8 +10,8 @@
         <relativePath/>
     </parent>
 
-    <groupId>hocuscoquus</groupId>
-    <artifactId>hocus-coquus</artifactId>
+    <groupId>com.hocuscoquus</groupId>
+    <artifactId>cookbook</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
     <name>Hocus Coquus</name>
@@ -30,6 +28,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
+        <dependency>
+		    <groupId>com.oracle.database.jdbc</groupId>
+		    <artifactId>ojdbc11</artifactId>
+		    <scope>runtime</scope>
+		</dependency>
 
         <!-- Security / Authentication -->
         <dependency>
