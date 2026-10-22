@@ -1,4 +1,4 @@
-package hocuscoquus.controller;
+package com.hocuscoquus.hocuscoquus.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

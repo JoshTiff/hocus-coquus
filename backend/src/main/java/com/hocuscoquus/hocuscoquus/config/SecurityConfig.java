@@ -1,4 +1,4 @@
-package hocuscoquus.config;
+package com.hocuscoquus.hocuscoquus.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
