@@ -1,8 +1,9 @@
-package hocuscoquus.model;
+package com.hocuscoquus.hocuscoquus.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import hocuscoquus.model.CalendarEntry;
+
+import com.hocuscoquus.hocuscoquus.model.CalendarEntry;
 
 /**
  * Represents a calendar containing a collection of calendar entries.

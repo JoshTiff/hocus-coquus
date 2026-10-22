@@ -1,4 +1,4 @@
-package hocuscoquus.model;
+package com.hocuscoquus.hocuscoquus.model;
 
 /**
  * Represents a note written about a recipe by a specific account.
