@@ -41,15 +41,6 @@ public class Recipe {
         return recipeID;
     }
 
-
-    /**
-     * Used to set the ID of a recipe.
-     * @param recipeID New recipe ID.
-     */
-    public void setRecipeID(long recipeID) {
-        this.recipeID = recipeID;
-    }
-
     /**
      * @return Recipe's Name
      */
@@ -78,7 +69,7 @@ public class Recipe {
      * @param recipeDescription New recipe description.
      */
     public void setRecipeDescription(String recipeDescription) {
-
+        this.recipeDescription = recipeDescription;
     }
 
     /**
@@ -104,6 +95,10 @@ public class Recipe {
         return instructions;
     }
 
+    public void setInstructions(String instructions) {
+        this.instructions = instructions;
+    }
+
     /**
      * @return Recipe image filepath or null if it does not have one.
      */
@@ -126,14 +121,14 @@ public class Recipe {
         return recipeTags;
     }
 
-    /**
-     * Used to set the array of RecipeTags associated with the recipe.
-     * @param recipeTags New array of RecipeTags to be associated with the recipe.
-     */
-    public void setRecipeTags(List<RecipeTag> recipeTags) {
-        this.recipeTags.clear();
-        this.recipeTags.addAll(recipeTags);
-    }
+    // /**
+    //  * Used to set the array of RecipeTags associated with the recipe.
+    //  * @param recipeTags New array of RecipeTags to be associated with the recipe.
+    //  */
+    // public void setRecipeTags(List<RecipeTag> recipeTags) {
+    //     this.recipeTags.clear();
+    //     this.recipeTags.addAll(recipeTags);
+    // }
 
     /**
      * @return Array of RecipeNotes associated with the recipe.
@@ -142,14 +137,14 @@ public class Recipe {
         return recipeNotes;
     }
 
-    /**
-     * Used to set the list of recipe notes associated with the recipe.
-     * @param recipeNotes New list of RecipeNotes to be associated with the recipe.
-     */
-    public void setRecipeNotes(List<RecipeNote> recipeNotes) {
-        this.recipeNotes.clear();
-        this.recipeNotes.addAll(recipeNotes);
-    }
+    // /**
+    //  * Used to set the list of recipe notes associated with the recipe.
+    //  * @param recipeNotes New list of RecipeNotes to be associated with the recipe.
+    //  */
+    // public void setRecipeNotes(List<RecipeNote> recipeNotes) {
+    //     this.recipeNotes.clear();
+    //     this.recipeNotes.addAll(recipeNotes);
+    // }
 
     /**
      * @return Array of reactions associated with the recipe.
@@ -158,25 +153,27 @@ public class Recipe {
         return reactions;
     }
 
-    /**
-     * Used to set the array of reactions associated with the recipe.
-     * @param reactions New array of reactions to be associated with the recipe.
-     */
-    public void setReactions(List<Reaction> reactions) {
-        this.reactions.clear();
-        this.reactions.addAll(reactions);
-    }
+    // /**
+    //  * Used to set the array of reactions associated with the recipe.
+    //  * @param reactions New array of reactions to be associated with the recipe.
+    //  */
+    // public void setReactions(List<Reaction> reactions) {
+    //     this.reactions.clear();
+    //     this.reactions.addAll(reactions);
+    // }
 
-    /**
-     * Used to compute the number of reactions in the {@code reactions} array of a specific type.
-     * @param reactionType The type of reaction we want to count.
-     * @return The number of reactions in {@code reactions} of the specified type.
-     */
-    public int computeNumReactions(ReactionType reactionType) {
-        int reactionCount = 0;
-        for (Reaction reaction : reactions) {
-            // TODO if reactionType == reaction.getType(), increment the count.
-        }
-        return reactionCount;
-    }
+    // /**
+    //  * Used to compute the number of reactions in the {@code reactions} array of a specific type.
+    //  * @param reactionType The type of reaction we want to count.
+    //  * @return The number of reactions in {@code reactions} of the specified type.
+    //  */
+    // public int computeNumReactions(ReactionType reactionType) {
+    //     int reactionCount = 0;
+    //     for (Reaction reaction : reactions) {
+    //         if (reaction.getReactionType() == reactionType) {
+    //             reactionCount++;
+    //         }
+    //     }
+    //     return reactionCount;
+    // }
 }

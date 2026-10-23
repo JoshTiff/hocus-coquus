@@ -1,11 +1,15 @@
 package com.hocuscoquus.hocuscoquus.model;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DietaryRestriction {
     
 	private long dietaryRestrictionId;
 	private String dietaryRestrictionName;
-	private List<Ingredient> ingredients;
+	private List<Ingredient> ingredients = new ArrayList<>();
+
+	public DietaryRestriction() {
+	}
 	
 	//Getters
 	public long getDietaryRestrictionId() {
@@ -21,15 +25,6 @@ public class DietaryRestriction {
 	//Setters
 	public void setDietaryRestrictionName(String dietaryRestrictionName) {
 		this.dietaryRestrictionName = dietaryRestrictionName;
-	}
-	public void setIngredients(List<Ingredient> ingredients) {
-		this.ingredients = ingredients;
-	}
-	public void addIngredient(Ingredient ingredient) {
-		this.ingredients.add(ingredient);
-	}
-	public void removeIngredient(Ingredient ingredient) {
-		this.ingredients.remove(ingredient);
 	}
 	
 }

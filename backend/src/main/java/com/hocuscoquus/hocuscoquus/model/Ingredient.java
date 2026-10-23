@@ -6,6 +6,16 @@ public class Ingredient {
 	private String ingredientName;
 	private int quantity;
 	private String measurement;
+
+	public Ingredient() {
+	}
+
+	public Ingredient(long ingredientId, String ingredientName, int quantity, String measurement) {
+		this.ingredientId = ingredientId;
+		this.ingredientName = ingredientName;
+		this.quantity = quantity;
+		this.measurement = measurement;
+	}
 	
 	//Getters
 	public long getIngredientId() {

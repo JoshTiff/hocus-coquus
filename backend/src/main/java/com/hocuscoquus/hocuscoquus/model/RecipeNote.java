@@ -34,6 +34,14 @@ public class RecipeNote {
         return this.recipeNoteId;
     }
 
+    public long getRecipeId() {
+        return recipeId;
+    }
+
+    public long getAccountId() {
+        return accountId;
+    }
+
     /**
      * Returns the message of the note.
      *
@@ -51,4 +59,5 @@ public class RecipeNote {
     public void setMessage(String message) {
         this.message = message;
     }
+    
 }

@@ -11,7 +11,10 @@ public class CalendarEntry {
     
     private long calendarEntryId;
     private Date dateTime;
-    private List<Recipe> recipes;
+    private List<Recipe> recipes = new ArrayList<>();
+
+    public CalendarEntry() {
+    }
 
     /**
      * Constructs a new CalendarEntry with a unique ID and date and time.
@@ -23,7 +26,6 @@ public class CalendarEntry {
     public CalendarEntry(long calendarEntryId, Date dateTime) {
         this.calendarEntryId = calendarEntryId;
         this.dateTime = dateTime;
-        this.recipes = new ArrayList<>();
     }
 
     /**
@@ -62,28 +64,28 @@ public class CalendarEntry {
         this.dateTime = dateTime;
     }
 
-    /**
-     * Adds a recipe to the calendar entry.
-     *
-     * @param recipe the recipe to add
-     */
-    public void addRecipe(Recipe recipe) {
-        recipes.add(recipe);
-    }
+    // /**
+    //  * Adds a recipe to the calendar entry.
+    //  *
+    //  * @param recipe the recipe to add
+    //  */
+    // public void addRecipe(Recipe recipe) {
+    //     recipes.add(recipe);
+    // }
 
-    /**
-     * Removes the recipe with the matching unique ID from the calendar entry.
-     * If no recipe with the given ID exists, the list remains unchanged.
-     *
-     * @param recipeId the ID of the recipe to remove
-     */
-    public void removeRecipe(long recipeId) {
-        for (int i = 0; i < recipes.size(); i++) {
-            if (recipes.get(i).getRecipeID() == recipeId) {
-                recipes.remove(i);
-                return;
-            }
-        }
-    }
+    // /**
+    //  * Removes the recipe with the matching unique ID from the calendar entry.
+    //  * If no recipe with the given ID exists, the list remains unchanged.
+    //  *
+    //  * @param recipeId the ID of the recipe to remove
+    //  */
+    // public void removeRecipe(long recipeId) {
+    //     for (int i = 0; i < recipes.size(); i++) {
+    //         if (recipes.get(i).getRecipeID() == recipeId) {
+    //             recipes.remove(i);
+    //             return;
+    //         }
+    //     }
+    // }
 
 }
