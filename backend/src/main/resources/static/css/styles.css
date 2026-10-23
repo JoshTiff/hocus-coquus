@@ -1,0 +1,246 @@
+:root {
+    --primary: #ff8c8c;
+    --light-primary: #ffb6b6;
+    --secondary-btn-top: #3e8a30;
+    --secondary-btn-bottom: #1c1308;
+    --white: #ffffff;
+    --letter-spacing: 0.3px;
+    --border-radius: 25px;
+    --font-size-1: 6rem;
+    --font-size-2: 3rem;
+    --font-size-regular: 1.25rem;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    min-height: 100%;
+}
+
+body {
+    min-height: 100vh;
+    font-family: "Times New Roman", Times, serif;
+    color: var(--white);
+    background: linear-gradient(
+        90deg,
+        #08002e 0%,
+        #1f1650 25%,
+        #3d2f7c 55%,
+        #6a56b4 85%,
+        #7b64c4 100%
+    );
+    background-attachment: fixed;
+    cursor: url("../images/wand.png"), auto;
+}
+
+/* ---------- Header ---------- */
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2rem 6rem 1rem 6rem;
+}
+
+.logo {
+    font-family: "Pinyon Script", cursive;
+    font-size: var(--font-size-2);
+    color: var(--primary);
+    text-decoration: none;
+    line-height: 1;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+nav a.link {
+    color: var(--white);
+    text-decoration: none;
+    font-size: var(--font-size-regular);
+    letter-spacing: var(--letter-spacing);
+}
+nav a.link:hover {
+    color: var(--primary);
+}
+
+.btn {
+    display: inline-block;
+    color: var(--white);
+    text-decoration: none;
+    font-family: inherit;
+    font-size: var(--font-size-regular);
+    letter-spacing: var(--letter-spacing);
+    padding: 1rem 3rem;
+    border: none;
+    border-radius: var(--border-radius);
+    background: linear-gradient(
+        180deg,
+        var(--secondary-btn-top) 0%,
+        var(--secondary-btn-bottom) 100%
+    );
+    transition:
+        filter 0.2s,
+        transform 0.1s;
+}
+.btn:hover {
+    filter: brightness(1.2);
+}
+.btn:active {
+    transform: translateY(2px);
+}
+
+nav .btn {
+    margin-left: 0;
+}
+nav a.link + .btn {
+    margin-left: 0.5rem;
+}
+
+/* ---------- Main ---------- */
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 3rem 1rem;
+}
+
+h1 {
+    font-family: "Italianno", "Tangerine", cursive;
+    font-weight: 400;
+    font-size: var(--font-size-1);
+    color: var(--primary);
+    text-align: center;
+    line-height: 1.1;
+    margin-bottom: 2rem;
+    text-shadow: 0 0 0.5rem rgba(255, 0, 0, 0.6);
+    animation: fadeBackground 2s ease-in-out infinite;
+}
+
+.fade-blink-bg {
+    animation: fadeBackground 2s ease-in-out infinite;
+}
+
+@keyframes fadeBackground {
+    0%,
+    100% {
+        color: var(--primary);
+    }
+    50% {
+        color: var(--light-primary);
+    }
+}
+
+.search {
+    width: 100%;
+    max-width: 55rem;
+}
+
+.search input {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--white);
+    border-radius: var(--border-radius);
+    padding: 1rem 2rem;
+    color: var(--white);
+    font-family: inherit;
+    font-size: var(--font-size-regular);
+    outline: none;
+    transition: box-shadow 0.2s;
+}
+.search input::placeholder {
+    color: var(--white);
+    opacity: 1;
+}
+
+.cauldron {
+    width: 100%;
+    max-width: 55rem;
+    margin-top: 2rem;
+    padding: 1rem 2rem;
+    border: 1px solid var(--white);
+    border-radius: var(--border-radius);
+}
+
+.cauldron h2 {
+    font-family: "Italianno", "Tangerine", cursive;
+    color: var(--primary);
+    font-weight: 400;
+    font-size: var(--font-size-2);
+    text-align: center;
+    margin-bottom: 4px;
+}
+
+.cauldron ul {
+    list-style: none;
+}
+
+.cauldron li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0.75rem 0.5rem 0.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.75);
+    font-size: var(--font-size-regular);
+}
+.cauldron li:last-child {
+    border-bottom: none;
+}
+
+.cauldron .icon {
+    background: none;
+    border: none;
+    width: 1rem;
+    height: 1rem;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.cauldron .icon svg {
+    width: 1rem;
+    height: 1rem;
+}
+
+.brew {
+    margin-top: 2rem;
+    padding: 1rem 2rem;
+}
+
+.material-symbols-outlined {
+    color: var(--white);
+    font-variation-settings:
+        "FILL" 0,
+        "wght" 400,
+        "GRAD" 0,
+        "opsz" 24;
+}
+.material-symbols-outlined:hover {
+    color: var(--primary);
+    transition: 0.2s;
+}
+
+.spiderweb {
+    filter: brightness(0) invert(1);
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    rotate: 270deg;
+    z-index: -1;
+}
+
+.spiderweb-2 {
+    filter: brightness(0) invert(1);
+    position: fixed;
+    bottom: 0px;
+    right: 0px;
+    rotate: 90deg;
+    transform: scaleX(-1);
+    z-index: -1;
+}

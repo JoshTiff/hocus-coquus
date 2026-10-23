@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head th:fragment="head(title)">
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title th:text="${title} + ' - Hocus Coquus'">Hocus Coquus</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Italianno&family=Tangerine:wght@700&family=Pinyon+Script&display=swap"
+            rel="stylesheet"
+        />
+        <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=delete,favorite"
+        />
+        <link rel="stylesheet" th:href="@{/css/styles.css}" />
+        <link rel="stylesheet" th:href="@{/css/account.css}" />
+    </head>
+    <body>
+        <header th:fragment="site-header">
+            <a th:href="@{/}" class="logo">Hocus Coquus</a>
+            <nav>
+                <a th:href="@{/}" class="link">Home</a>
+                <a href="#" class="link">Browse Recipes</a>
+                <a href="#" class="link">My Recipes</a>
+                <a href="#" class="link">Calendar</a>
+                <a th:href="@{/account}" class="btn">Account</a>
+            </nav>
+        </header>
+
+        <aside class="panel sidebar" th:fragment="sidebar(active)">
+            <h2 class="sidebar-title">Account Settings</h2>
+            <ul>
+                <li>
+                    <a
+                        th:href="@{/account}"
+                        th:classappend="${active == 'account'} ? 'active'"
+                        >My Account</a
+                    >
+                </li>
+                <li>
+                    <a
+                        th:href="@{/account/liked}"
+                        th:classappend="${active == 'liked'} ? 'active'"
+                        >Liked Recipes</a
+                    >
+                </li>
+                <li>
+                    <a
+                        th:href="@{/account/tagged}"
+                        th:classappend="${active == 'tagged'} ? 'active'"
+                        >Tagged Recipes</a
+                    >
+                </li>
+            </ul>
+        </aside>
+    </body>
+</html>
