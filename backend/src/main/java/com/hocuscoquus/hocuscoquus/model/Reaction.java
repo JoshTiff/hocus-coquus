@@ -5,7 +5,12 @@ package com.hocuscoquus.hocuscoquus.model;
 */
 
 public class Reaction {
+    private long reactionId;
+    private long recipeId;
+    private long accountId;
     private ReactionType reactionType;
+
+    // TODO: review/add constructor(s)
 
     /**
     * Constructs a new Reaction with a specified reactionType.
@@ -16,12 +21,31 @@ public class Reaction {
         this.reactionType = reactionType;
     }
 
-    /**
-    * Returns the unique ID of the recipe note.
-    * @return the reaction type.
-    */
+    public Reaction(long reactionId, long recipeId, long accountId, ReactionType reactionType) {
+        this.reactionId = reactionId;
+        this.recipeId = recipeId;
+        this.accountId = accountId;
+        this.reactionType = reactionType;
+    }
 
     public ReactionType getReactionType(){
         return this.reactionType;
     }
+
+    public long getReactionId() {
+        return reactionId;
+    }
+
+    public long getRecipeId() {
+        return recipeId;
+    }
+
+    public long getAccountId() {
+        return accountId;
+    }
+
+    public void setReactionType(ReactionType reactionType) {
+        this.reactionType = reactionType;
+    }
+    
 }

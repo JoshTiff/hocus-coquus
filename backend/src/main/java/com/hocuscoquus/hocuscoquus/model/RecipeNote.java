@@ -9,6 +9,8 @@ public class RecipeNote {
     private long accountId;
     private String message;
 
+    // TODO: review/add constructor(s)
+
     /**
      * Constructs a new RecipeNote with a unique ID, recipe, account, and
      * and the note message.
@@ -34,6 +36,14 @@ public class RecipeNote {
         return this.recipeNoteId;
     }
 
+    public long getRecipeId() {
+        return recipeId;
+    }
+
+    public long getAccountId() {
+        return accountId;
+    }
+
     /**
      * Returns the message of the note.
      *
@@ -51,4 +61,5 @@ public class RecipeNote {
     public void setMessage(String message) {
         this.message = message;
     }
+    
 }

@@ -3,7 +3,6 @@ package com.hocuscoquus.hocuscoquus.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.hocuscoquus.hocuscoquus.model.CalendarEntry;
 
 /**
  * Represents a calendar containing a collection of calendar entries.
@@ -13,7 +12,12 @@ public class Calendar {
     private long calendarId;
     private String calendarName;
     private String description;
-    private List<CalendarEntry> entries;
+    private List<CalendarEntry> entries = new ArrayList<>();
+
+    // TODO: review/add constructor(s)
+    
+    public Calendar() {
+    }
 
     /**
      * Constructs a new Calendar with a unique ID, name, and description.
@@ -27,7 +31,6 @@ public class Calendar {
         this.calendarId = calendarId;
         this.calendarName = calendarName;
         this.description = description;
-        this.entries = new ArrayList<>();
     }
 
     /**
@@ -82,55 +85,6 @@ public class Calendar {
      */
     public void setDescription(String description) {
         this.description = description;
-    }
-
-     /**
-     * Adds a calendar entry to the calendar.
-     *
-     * @param entry the calendar entry to add
-     */
-    public void addEntry(CalendarEntry entry) {
-        entries.add(entry);
-    }
-
-    /**
-     * Removes the calendar entry with the matching unique ID.
-     * If no entry with the given ID exists, the list remains unchanged.
-     *
-     * @param calendarEntryId the ID of the calendar entry to remove
-     */
-    public void deleteEntry(long calendarEntryId) {
-        for (int i = 0; i < entries.size(); i++) {
-            if (entries.get(i).getCalendarEntryId() == calendarEntryId) {
-                entries.remove(i);
-                return;
-            }
-        }
-    }
-
-    /**
-     * Downloads the calendar.
-     *
-     * @return true when calendar download is successful, false otherwise
-     */
-    public boolean downloadCalendar() {
-        
-        // TODO: add implementation for this method
-
-        return false;
-    }
-
-    /**
-     * Synchronizes the calendar with the specified Google account.
-     *
-     * @param email the email address of the Google account to synchronize with
-     * @return true when sync with Google Account is successful, false otherwise
-     */
-    public boolean syncGoogleAccount(String email) {
-       
-        // TODO: add implementation for this method
-
-        return false;
     }
 
 }
