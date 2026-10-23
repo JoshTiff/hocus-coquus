@@ -12,6 +12,8 @@ public class RecipeTag {
     private long accountId;
     private List<String> tags;
 
+    // TODO: review/add constructor(s)
+
     /**
      * Constructs a new RecipeTag with a unique ID, recipe, account, and
      * an initial list of tags.
@@ -67,25 +69,4 @@ public class RecipeTag {
         }
     }
 
-    // /**
-    //  * Adds a tag to the list of tags.
-    //  *
-    //  * @param tag the tag to add
-    //  */
-    // public void addRecipeTag(String tag) {
-    //     if (tag != null && !tag.strip().isEmpty() && !this.tags.contains(tag)) {
-    //         this.tags.add(tag);
-    //     }
-    // }
-
-    // /**
-    //  * Removes the given tag from the list of tags.
-    //  *
-    //  * @param tag the tag to remove
-    //  */
-    // public void removeRecipeTag(String tag) {
-    //     if (tag != null) {
-    //         this.tags.remove(tag);
-    //     }
-    // }
 }

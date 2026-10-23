@@ -8,27 +8,35 @@ import com.hocuscoquus.hocuscoquus.repository.RecipeTagRepository;
 public class RecipeTagService {
     private final RecipeTagRepository repository;
 
+    // TODO: review/add constructor(s)
     public RecipeTagService(RecipeTagRepository repository) {
         this.repository = Objects.requireNonNull(repository);
     }
 
-    public RecipeTag addRecipeTag(RecipeTag recipeTag, String tag) {
-        // Objects.requireNonNull(recipeTag).addRecipeTag(tag);
-        // return repository.save(recipeTag);
-        return new RecipeTag(0, 0, 0, null);
+    /**
+     * Adds a tag to the list of tags.
+     *
+     * @param tag the tag to add
+     */
+    public void addRecipeTag(String tag) {
+        // if (tag != null && !tag.strip().isEmpty() && !this.tags.contains(tag)) {
+        //     this.tags.add(tag);
+        // }
     }
 
-    public void removeRecipeTag(long recipeTagId, String tag) {
-        // RecipeTag recipeTag = repository.findById(recipeTagId);
-        // if (recipeTag == null) {
-        //     throw new IllegalArgumentException("Recipe tag not found: " + recipeTagId);
+    /**
+     * Removes the given tag from the list of tags.
+     *
+     * @param tag the tag to remove
+     */
+    public void removeRecipeTag(String tag) {
+        // if (tag != null) {
+        //     this.tags.remove(tag);
         // }
-        // recipeTag.removeRecipeTag(tag);
-        // repository.save(recipeTag);
     }
 
     public RecipeTag updateRecipeTag(RecipeTag recipeTag) {
-        // return repository.save(Objects.requireNonNull(recipeTag));
+        // TODO: add implementation for this method
         return new RecipeTag(0, 0, 0, null);
     }
 }

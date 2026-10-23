@@ -13,16 +13,16 @@ public class IngredientService {
     }
 
     public Ingredient createIngredient(Ingredient ingredient) {
-        // return repository.save(Objects.requireNonNull(ingredient));
+        // TODO: add implementation for this method
         return new Ingredient();
     }
 
     public void deleteIngredient(long ingredientId) {
-        // repository.deleteById(ingredientId);
+        // TODO: add implementation for this method
     }
 
     public Ingredient updateIngredient(Ingredient ingredient) {
-        // return repository.save(Objects.requireNonNull(ingredient));
+       // TODO: add implementation for this method
         return new Ingredient();
     }
 }

@@ -8,6 +8,7 @@ public class DietaryRestriction {
 	private String dietaryRestrictionName;
 	private List<Ingredient> ingredients = new ArrayList<>();
 
+	// TODO: review/add constructor(s)
 	public DietaryRestriction() {
 	}
 	

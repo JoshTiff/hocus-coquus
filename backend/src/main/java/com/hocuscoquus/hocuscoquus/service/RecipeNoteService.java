@@ -8,21 +8,22 @@ import com.hocuscoquus.hocuscoquus.repository.RecipeNoteRepository;
 public class RecipeNoteService {
     private final RecipeNoteRepository repository;
 
+    // TODO: review/add constructor(s)
     public RecipeNoteService(RecipeNoteRepository repository) {
         this.repository = Objects.requireNonNull(repository);
     }
 
     public RecipeNote addRecipeNote(String message) {
-        // return repository.save(Objects.requireNonNull(note));
+        // TODO: add implementation for this method
         return new RecipeNote(0, 0, 0, message);
     }
 
     public RecipeNote updateRecipeNote(RecipeNote note) {
-        // return repository.save(Objects.requireNonNull(note));
+        // TODO: add implementation for this method
         return new RecipeNote(0, 0, 0, null);
     }
 
     public void deleteRecipeNote(long recipeNoteId) {
-        // repository.deleteById(recipeNoteId);
+        // TODO: add implementation for this method
     }
 }

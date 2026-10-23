@@ -1,8 +1,18 @@
 package com.hocuscoquus.hocuscoquus.controller;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.hocuscoquus.hocuscoquus.model.RecipeTag;
 import com.hocuscoquus.hocuscoquus.service.RecipeTagService;
 
+@RestController
+@RequestMapping("/api/recipe-tags")
 public class RecipeTagController {
     private final RecipeTagService recipeTagService;
 
@@ -10,11 +20,14 @@ public class RecipeTagController {
         this.recipeTagService = recipeTagService;
     }
 
-    public RecipeTag addRecipeTag(RecipeTag recipeTag, String tag) {
-        return recipeTagService.addRecipeTag(recipeTag, tag);
+    @PostMapping
+    public RecipeTag addRecipeTag(@RequestBody RecipeTag recipeTag, @RequestParam String tag) {
+        // TODO: implement this method
+        return new RecipeTag(0, 0, 0, null);
     }
 
-    public void removeRecipeTag(long recipeTagId, String tag) {
-        recipeTagService.removeRecipeTag(recipeTagId, tag);
+    @DeleteMapping("/{recipeTagId}")
+    public void removeRecipeTag(@PathVariable long recipeTagId, @RequestParam String tag) {
+        // TODO: implement this method
     }
 }

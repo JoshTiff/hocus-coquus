@@ -7,6 +7,7 @@ public class Ingredient {
 	private int quantity;
 	private String measurement;
 
+	// TODO: review/add constructor(s)
 	public Ingredient() {
 	}
 

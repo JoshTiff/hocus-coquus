@@ -13,6 +13,7 @@ public class CalendarEntry {
     private Date dateTime;
     private List<Recipe> recipes = new ArrayList<>();
 
+    // TODO: review/add constructor(s)
     public CalendarEntry() {
     }
 

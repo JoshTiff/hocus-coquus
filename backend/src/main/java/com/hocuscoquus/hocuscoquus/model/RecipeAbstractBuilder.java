@@ -10,29 +10,38 @@ public abstract class RecipeAbstractBuilder {
     protected String image;
 
     public RecipeAbstractBuilder buildRecipeName(String name) {
+        // TODO: add implementation for this method
+
         this.name = name;
         return this;
     }
 
     public RecipeAbstractBuilder buildRecipeDescription(String description) {
+        // TODO: add implementation for this method
+        
         this.description = description;
         return this;
     }
 
     public RecipeAbstractBuilder buildIngredients(List<Ingredient> ingredients) {
+        // TODO: add implementation for this method
+        
         this.ingredients = List.copyOf(ingredients);
         return this;
     }
 
     public RecipeAbstractBuilder buildInstructions(String instructions) {
+        // TODO: add implementation for this method
+        
         this.instructions = instructions;
         return this;
     }
 
     public RecipeAbstractBuilder buildImage(String image) {
+        // TODO: add implementation for this method
+        
         this.image = image;
         return this;
     }
 
-    // public abstract Recipe build();
 }

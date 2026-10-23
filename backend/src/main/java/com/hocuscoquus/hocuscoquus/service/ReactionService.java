@@ -4,7 +4,6 @@ import java.util.Objects;
 
 import com.hocuscoquus.hocuscoquus.model.Reaction;
 import com.hocuscoquus.hocuscoquus.model.ReactionType;
-import com.hocuscoquus.hocuscoquus.model.Recipe;
 import com.hocuscoquus.hocuscoquus.repository.ReactionRepository;
 import com.hocuscoquus.hocuscoquus.repository.RecipeRepository;
 
@@ -12,12 +11,15 @@ public class ReactionService {
     private final ReactionRepository reactionRepository;
     private final RecipeRepository recipeRepository;
 
+    // TODO: review/add constructor(s)
     public ReactionService(ReactionRepository reactionRepository, RecipeRepository recipeRepository) {
         this.reactionRepository = Objects.requireNonNull(reactionRepository);
         this.recipeRepository = Objects.requireNonNull(recipeRepository);
     }
 
     public Reaction addReactionToRecipe(long recipeId, long accountId, ReactionType type) {
+        // TODO: add implementation for this method
+
         // Recipe recipe = recipeRepository.findById(recipeId);
         // if (recipe == null) {
         //     throw new IllegalArgumentException("Recipe not found: " + recipeId);
@@ -31,6 +33,8 @@ public class ReactionService {
     }
 
     public void removeReactionFromRecipe(long recipeId, long accountId) {
+        // TODO: add implementation for this method
+
         // Reaction reaction = reactionRepository.findByRecipe(recipeId).stream()
         //         .filter(reaction -> reaction.getAccountId() == accountId)
         //         .findFirst()

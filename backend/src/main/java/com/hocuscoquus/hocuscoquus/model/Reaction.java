@@ -10,6 +10,8 @@ public class Reaction {
     private long accountId;
     private ReactionType reactionType;
 
+    // TODO: review/add constructor(s)
+
     /**
     * Constructs a new Reaction with a specified reactionType.
     * @param reactionType the type of reaction.
@@ -25,11 +27,6 @@ public class Reaction {
         this.accountId = accountId;
         this.reactionType = reactionType;
     }
-
-    /**
-    * Returns the unique ID of the recipe note.
-    * @return the reaction type.
-    */
 
     public ReactionType getReactionType(){
         return this.reactionType;

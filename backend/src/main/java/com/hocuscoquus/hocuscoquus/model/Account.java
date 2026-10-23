@@ -16,6 +16,10 @@ public class Account {
 	private HashMap<Long, List<RecipeTag>> tags = new HashMap<>();
 	private HashMap<Long, List<RecipeNote>> recipeNotes = new HashMap<>();
 	private List<Calendar> calendars = new ArrayList<>();
+
+
+	// TODO: add constructor(s)
+
 	
 	//Getters
 	public long getAccountId() {

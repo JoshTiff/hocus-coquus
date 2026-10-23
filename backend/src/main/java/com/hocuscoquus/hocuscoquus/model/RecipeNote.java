@@ -9,6 +9,8 @@ public class RecipeNote {
     private long accountId;
     private String message;
 
+    // TODO: review/add constructor(s)
+
     /**
      * Constructs a new RecipeNote with a unique ID, recipe, account, and
      * and the note message.
