@@ -1,8 +1,10 @@
 package com.hocuscoquus.hocuscoquus.repository;
 
-import com.hocuscoquus.hocuscoquus.model.Account;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface AccountRepository {
+import com.hocuscoquus.hocuscoquus.entity.Account;
+
+public interface AccountRepository extends JpaRepository<Account, Long> {
     Account findById(long accountId);
     Account findByEmail(String email);
 }

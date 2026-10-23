@@ -6,6 +6,7 @@ import com.hocuscoquus.hocuscoquus.model.CalendarEntry;
 import com.hocuscoquus.hocuscoquus.model.Recipe;
 import com.hocuscoquus.hocuscoquus.repository.CalendarEntryRepository;
 
+// @Service
 public class CalendarEntryService {
     private final CalendarEntryRepository repository;
 

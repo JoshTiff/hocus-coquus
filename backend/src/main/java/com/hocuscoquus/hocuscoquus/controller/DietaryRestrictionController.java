@@ -1,5 +1,6 @@
 package com.hocuscoquus.hocuscoquus.controller;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.hocuscoquus.hocuscoquus.model.DietaryRestriction;
 import com.hocuscoquus.hocuscoquus.service.DietaryRestrictionService;
 
+@Profile("dietaryRestriction") // TODO: remove once activate controller
 @RestController
 @RequestMapping("/api/dietary-restrictions")
 public class DietaryRestrictionController {

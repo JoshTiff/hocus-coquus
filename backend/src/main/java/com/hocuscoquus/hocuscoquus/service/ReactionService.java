@@ -7,6 +7,7 @@ import com.hocuscoquus.hocuscoquus.model.ReactionType;
 import com.hocuscoquus.hocuscoquus.repository.ReactionRepository;
 import com.hocuscoquus.hocuscoquus.repository.RecipeRepository;
 
+// @Service 
 public class ReactionService {
     private final ReactionRepository reactionRepository;
     private final RecipeRepository recipeRepository;

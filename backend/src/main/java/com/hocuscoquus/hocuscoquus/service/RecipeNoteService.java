@@ -5,6 +5,7 @@ import java.util.Objects;
 import com.hocuscoquus.hocuscoquus.model.RecipeNote;
 import com.hocuscoquus.hocuscoquus.repository.RecipeNoteRepository;
 
+// @Service 
 public class RecipeNoteService {
     private final RecipeNoteRepository repository;
 

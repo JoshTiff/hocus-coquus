@@ -10,6 +10,7 @@ import com.hocuscoquus.hocuscoquus.model.Recipe;
 import com.hocuscoquus.hocuscoquus.repository.RecipeRepository;
 import com.hocuscoquus.hocuscoquus.repository.RecipeTagRepository;
 
+// @Service 
 public class RecipeService {
     private final RecipeRepository recipeRepository;
     private final RecipeTagRepository recipeTagRepository;

@@ -1,5 +1,6 @@
 package com.hocuscoquus.hocuscoquus.controller;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,8 +12,9 @@ import com.hocuscoquus.hocuscoquus.model.Reaction;
 import com.hocuscoquus.hocuscoquus.model.ReactionType;
 import com.hocuscoquus.hocuscoquus.service.ReactionService;
 
+@Profile("reaction") // TODO: remove once activate controller
 @RestController
-@RequestMapping("/api/recipes")
+@RequestMapping("/api/reactions")
 public class ReactionController {
     private final ReactionService reactionService;
 

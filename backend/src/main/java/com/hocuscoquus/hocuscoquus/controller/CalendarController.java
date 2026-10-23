@@ -1,5 +1,6 @@
 package com.hocuscoquus.hocuscoquus.controller;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +14,7 @@ import com.hocuscoquus.hocuscoquus.model.Calendar;
 import com.hocuscoquus.hocuscoquus.model.CalendarEntry;
 import com.hocuscoquus.hocuscoquus.service.CalendarService;
 
+@Profile("calendar") // TODO: remove once activate controller
 @RestController
 @RequestMapping("/api/calendars")
 public class CalendarController {

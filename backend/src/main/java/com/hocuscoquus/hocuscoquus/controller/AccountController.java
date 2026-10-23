@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hocuscoquus.hocuscoquus.model.Account;
+import com.hocuscoquus.hocuscoquus.entity.Account;
 import com.hocuscoquus.hocuscoquus.service.AccountService;
 
 @RestController
-@RequestMapping("/api/accounts")
+@RequestMapping("/api/account")
 public class AccountController {
     private final AccountService accountService;
 

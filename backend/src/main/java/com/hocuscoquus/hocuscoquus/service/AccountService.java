@@ -2,9 +2,12 @@ package com.hocuscoquus.hocuscoquus.service;
 
 import java.util.Objects;
 
-import com.hocuscoquus.hocuscoquus.model.Account;
+import org.springframework.stereotype.Service;
+
+import com.hocuscoquus.hocuscoquus.entity.Account;
 import com.hocuscoquus.hocuscoquus.repository.AccountRepository;
 
+@Service
 public class AccountService {
     private final AccountRepository accountRepository;
 

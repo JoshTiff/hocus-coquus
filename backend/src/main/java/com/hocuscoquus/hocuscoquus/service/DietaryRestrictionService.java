@@ -5,6 +5,7 @@ import java.util.Objects;
 import com.hocuscoquus.hocuscoquus.model.DietaryRestriction;
 import com.hocuscoquus.hocuscoquus.repository.DietaryRestrictionRepository;
 
+// @Service 
 public class DietaryRestrictionService {
     private final DietaryRestrictionRepository repository;
 
