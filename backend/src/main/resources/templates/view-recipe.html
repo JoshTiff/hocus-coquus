@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Cozy Pumpkin Soup - Hocus Coquus</title>
+        <!-- <title th:text="${recipe != null ? recipe.recipeName + ' - Hocus Coquus' : 'View Recipe - Hocus Coquus'}">View Recipe - Hocus Coquus</title> -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Italianno&family=Tangerine:wght@700&family=Pinyon+Script&display=swap"
+            rel="stylesheet"
+        />
+        <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=delete,favorite"
+        />
+        <link rel="stylesheet" th:href="@{/css/styles.css}" />
+        <link rel="stylesheet" th:href="@{/css/account.css}" />
+        <link rel="stylesheet" th:href="@{/css/view-recipe.css}" />
+    </head>
+    <body>
+        <header th:replace="~{fragments/layout :: site-header}"></header>
+
+        <main class="recipe-page">
+            <a class="recipe-back-link" th:href="@{/}">&larr; Back to recipes</a>
+
+            <!-- Dynamic version can conditionally display this recipe:
+            <article class="recipe-view" th:if="${recipe != null}">
+            -->
+            <article class="recipe-view">
+                <section class="recipe-hero">
+                    <div class="recipe-hero-placeholder" aria-hidden="true"></div>
+                    <!-- Dynamic image alternative:
+                    <img class="recipe-hero-image"
+                         th:if="${recipe.image != null and !#strings.isEmpty(recipe.image)}"
+                         th:src="${recipe.image}"
+                         th:alt="${recipe.recipeName}" />
+                    <div class="recipe-hero-placeholder"
+                         th:unless="${recipe.image != null and !#strings.isEmpty(recipe.image)}"
+                         aria-hidden="true"></div>
+                    -->
+                    <div class="recipe-hero-shade"></div>
+                    <div class="recipe-hero-title">
+                        <p class="recipe-kicker">From the Hocus Coquus kitchen</p>
+                        <h1>Cozy Pumpkin Soup</h1>
+                        <p class="recipe-description">
+                            A silky, warmly spiced soup for crisp autumn evenings.
+                        </p>
+                        <!-- Dynamic alternative:
+                        <h1 th:text="${recipe.recipeName}">Recipe name</h1>
+                        <p class="recipe-description"
+                           th:if="${recipe.recipeDescription != null and !#strings.isEmpty(recipe.recipeDescription)}"
+                           th:text="${recipe.recipeDescription}">A little kitchen magic.</p>
+                        -->
+                    </div>
+                </section>
+
+                <section class="recipe-tags" aria-label="Recipe tags">
+                    <span class="recipe-tag">Easy</span>
+                    <span class="recipe-tag">Dinner</span>
+                    <span class="recipe-tag">Autumn</span>
+                    <span class="recipe-tag">Vegetarian</span>
+                </section>
+                <!-- Dynamic tags alternative:
+                <section class="recipe-tags" aria-label="Recipe tags"
+                         th:if="${recipe.recipeTags != null and !#lists.isEmpty(recipe.recipeTags)}">
+                    <th:block th:each="tagGroup : ${recipe.recipeTags}">
+                        <span class="recipe-tag" th:each="tag : ${tagGroup.recipeTags}"
+                              th:text="${tag}">Tag</span>
+                    </th:block>
+                </section>
+                -->
+
+                <div class="recipe-content">
+                    <div class="recipe-sidebar">
+                        <section class="recipe-section ingredients-section">
+                            <h2>Ingredients</h2>
+                            <ul class="ingredient-list">
+                                <li>
+                                    <span class="ingredient-quantity">2</span>
+                                    <span class="ingredient-measurement">cups</span>
+                                    pumpkin puree
+                                </li>
+                                <li>
+                                    <span class="ingredient-quantity">3</span>
+                                    <span class="ingredient-measurement">cups</span>
+                                    vegetable broth
+                                </li>
+                                <li>
+                                    <span class="ingredient-quantity">1</span>
+                                    <span class="ingredient-measurement">small</span>
+                                    yellow onion, diced
+                                </li>
+                                <li>
+                                    <span class="ingredient-quantity">2</span>
+                                    <span class="ingredient-measurement">cloves</span>
+                                    garlic, minced
+                                </li>
+                                <li>
+                                    <span class="ingredient-measurement">to taste</span>
+                                    cream
+                                </li>
+                            </ul>
+                            <!-- Dynamic ingredients alternative:
+                            <ul class="ingredient-list"
+                                th:if="${recipe.ingredients != null and !#lists.isEmpty(recipe.ingredients)}">
+                                <li th:each="ingredient : ${recipe.ingredients}">
+                                    <span class="ingredient-quantity"
+                                          th:if="${ingredient.quantity > 0}"
+                                          th:text="${ingredient.quantity}">1</span>
+                                    <span class="ingredient-measurement"
+                                          th:if="${ingredient.measurement != null and !#strings.isEmpty(ingredient.measurement)}"
+                                          th:text="${ingredient.measurement}">cup</span>
+                                    <span th:text="${ingredient.ingredientName}">Ingredient</span>
+                                </li>
+                            </ul>
+                            <p class="empty-section"
+                               th:if="${recipe.ingredients == null or #lists.isEmpty(recipe.ingredients)}">
+                                No ingredients have been added yet.
+                            </p>
+                            -->
+                        </section>
+
+                        <section class="recipe-section notes-section">
+                            <h2>Notes</h2>
+                            <ul class="recipe-note-list">
+                                <li>Top with toasted pumpkin seeds and a swirl of cream.</li>
+                            </ul>
+                            <!-- Dynamic notes alternative:
+                            <section class="recipe-section notes-section"
+                                     th:if="${recipe.recipeNotes != null and !#lists.isEmpty(recipe.recipeNotes)}">
+                                <h2>Notes</h2>
+                                <ul class="recipe-note-list">
+                                <li th:each="note : ${recipe.recipeNotes}"
+                                    th:text="${note.message}">Recipe notes will appear here.</li>
+                                </ul>
+                            </section>
+                            -->
+                        </section>
+                    </div>
+
+                    <section class="recipe-section instructions-section">
+                        <h2>Instructions</h2>
+                        <p class="recipe-instructions">
+                            1. Warm the olive oil in a large pot over medium heat.
+                            2. Add the onion and garlic; cook until soft and fragrant.
+                            3. Stir in the pumpkin, broth, and spices. Simmer for 20 minutes.
+                            4. Blend until smooth, then stir in the cream and season to taste.
+                        </p>
+                        <!-- Dynamic instructions alternative:
+                        <p class="recipe-instructions"
+                           th:if="${recipe.instructions != null and !#strings.isEmpty(recipe.instructions)}"
+                           th:text="${recipe.instructions}">Follow the recipe instructions here.</p>
+                        <p class="empty-section"
+                           th:if="${recipe.instructions == null or #strings.isEmpty(recipe.instructions)}">
+                            No instructions have been added yet.
+                        </p>
+                        -->
+                    </section>
+                </div>
+            </article>
+            <!-- Dynamic empty state alternative:
+            <section class="recipe-empty-state" th:unless="${recipe != null}">
+                <h1>Recipe not found</h1>
+                <p>Choose a recipe from the kitchen to see its ingredients and instructions.</p>
+            </section>
+            -->
+        </main>
+    </body>
+</html>

@@ -15,6 +15,7 @@ public class SecurityConfig {
 						"/index",
 						"/css/**",
 						"/images/**",
+						"/view-recipe",
 						// TODO - delete account endpoints below.
 						// This is for the sake of seeing account
 						// pages before login is implemented.
