@@ -25,4 +25,10 @@ public class PageController {
 	public String taggedRecipes() {
 		return "account-tagged";
 	}
+
+	@GetMapping("/404")
+	public String notFound() {
+		return "404";
+	}
+
 }
