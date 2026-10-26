@@ -1,6 +1,7 @@
 package com.hocuscoquus.hocuscoquus.model;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 
 public class Account {
@@ -9,12 +10,16 @@ public class Account {
 	private String firstName;
 	private String email;
 	private String password;
-	private List<Recipe> recipes;
-	private List<Recipe> favorites;
-	private List<DietaryRestriction> dietaryrestrictions;
-	private HashMap<Long, List<RecipeTag>> tags;
-	private HashMap<Long, List<RecipeNote>> recipeNotes;
-	private List<Calendar> calendars;
+	private List<Recipe> recipes = new ArrayList<>();
+	private List<Recipe> favorites = new ArrayList<>();
+	private List<DietaryRestriction> dietaryRestrictions = new ArrayList<>();
+	private HashMap<Long, List<RecipeTag>> tags = new HashMap<>();
+	private HashMap<Long, List<RecipeNote>> recipeNotes = new HashMap<>();
+	private List<Calendar> calendars = new ArrayList<>();
+
+
+	// TODO: add constructor(s)
+
 	
 	//Getters
 	public long getAccountId() {
@@ -29,16 +34,18 @@ public class Account {
 	public String getPassword() {
 		return password;
 	}
+
 	/*
-	public ArrayList<Recipe> getRecipes() {
+	public List<Recipe> getRecipes() {
 		return recipes;
 	}
 	*/
+
 	public List<Recipe> getFavorites() {
 		return favorites;
 	}
 	public List<DietaryRestriction> getDietaryrestrictions() {
-		return dietaryrestrictions;
+		return dietaryRestrictions;
 	}
 	public HashMap<Long, List<RecipeTag>> getTags() {
 		return tags;
@@ -59,85 +66,6 @@ public class Account {
 	}
 	public void setPassword(String password) {
 		this.password = password;
-	}
-	/*
-	public void setRecipes(ArrayList<Recipe> recipes) {
-		this.recipes = recipes;
-	}
-	
-	public void setFavorites(ArrayList<Recipe> favorites) {
-		this.favorites = favorites;
-	}
-	public void setDietaryrestrictions(ArrayList<DietaryRestriction> dietaryrestrictions) {
-		this.dietaryrestrictions = dietaryrestrictions;
-	}
-	public void setTags(HashMap<int, ArrayList<RecipeTag>> tags) {
-		this.tags = tags;
-	}
-	public void setRecipeNotes(HashMap<int, ArrayList<RecipeNote>> recipeNotes) {
-		this.recipeNotes = recipeNotes;
-	}
-	public void setCalendars(ArrayList<Calendar> calendars) {
-		this.calendars = calendars;
-	}
-	*/
-	
-	//adds a reaction to the specified recipe
-	public void addReactionToRecipe(Recipe recipe) {
-		
-	}
-	
-	//removes a reaction from the recipe with the specified Id
-	public void removeReactionFromRecipe(long recipeId) {
-		
-	}
-	
-
-	
-	//deletes the calendar with the specified Id
-	public void deleteCalendar(long calendarID) {
-		
-	}
-	
-	//creates a dietary restriction for the calling account with the provided ingredient
-	public void createDietaryRestriction(String ingredientName) {
-		
-	}
-	
-	//deletes the dietary restriction with the specified Id
-	public void deleteDietaryRestriction(long dietaryRestrictionId) {
-		
-	}
-	
-	//adds a tag with the provided tag name to a recipe
-	public void addTagToRecipe(String tag) {
-		
-	}
-	
-	//deletes the recipe tag with the specified Id
-	public void deleteRecipeTag(long recipeTagId) {
-		
-	}
-	
-	//adds a note to a recipe with the provided message
-	public void addRecipeNote(String message) {
-		
-	}
-	
-	//deletes the recipe note with the specified Id
-	public void deleteRecipeNote(long recipeNoteId) {
-		
-	}
-	
-	//deletes the calling account from the hocuscoquus system
-	public void deleteAccount() {
-		
-	}
-	public List<Recipe> getRecipes() {
-		return recipes;
-	}
-	public void setRecipes(List<Recipe> recipes) {
-		this.recipes = recipes;
 	}
 	
 }
