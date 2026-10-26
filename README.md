@@ -4,21 +4,31 @@ Cookbook web application developed for IT 326.
 
 ## Project Structure
 
-- `frontend/` - Web frontend
-- `backend/` - Java Spring Boot backend
-- `python-service/` - Python data-processing service
+The Spring Boot application lives at the repository root. Its Thymeleaf templates
+and static assets are in `src/main/resources`, and are served by the application.
 
-## Backend Requirements
+## Requirements
 
 - Java 25
 - Maven Wrapper included
 
-## Running the Backend
+## Running the Application
 
-cd backend
+On Windows:
+
+```powershell
+.\mvnw.cmd spring-boot:run
+```
+
+On macOS or Linux:
+
+```sh
 ./mvnw spring-boot:run
+```
+
+The application imports database settings from a root-level `.env` file, if
+present. Keep credentials out of version control.
 
 ## Testing
 
-cd backend
-./mvnw test
+On Windows, run `.\mvnw.cmd test`. On macOS or Linux, run `./mvnw test`.
