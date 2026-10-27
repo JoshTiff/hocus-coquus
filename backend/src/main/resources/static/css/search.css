@@ -1,0 +1,16 @@
+.recipe-list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1rem 2.5rem;
+    padding: 0 1.5rem;
+}
+
+.search-decorator {
+    padding: 1rem 1rem;
+    text-align: center;
+    color: var(--white);
+    text-decoration: none;
+    font-size: var(--font-size-regular);
+    letter-spacing: var(--letter-spacing);
+}
