@@ -11,11 +11,6 @@
     --font-size-regular: 1.25rem;
 }
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
 
 html,
 body {
@@ -245,21 +240,6 @@ h1 {
     z-index: -1;
 }
 
-.recipe-edit-field {
-    width: 100%;
-    max-width: 55rem;
-    padding: 1rem 1rem;
-}
-
-.recipe-edit-field textarea {
-    width: 100%;
-    background: transparent;
-    border: 1px solid var(--white);
-    border-radius: var(--border-radius);
-    padding: 1rem 2rem;
-    color: var(--white);
-    font-family: inherit;
-    font-size: var(--font-size-small);
-    outline: none;
-    transition: box-shadow 0.2s;
+#editRecipeContainer .form-label {
+    color: white !important;
 }
