@@ -30,4 +30,14 @@ public class PageController {
 	public String taggedRecipes() {
 		return "account-tagged";
 	}
+
+	@GetMapping("/search")
+	public String search() {
+		return "search";
+	}
+
+	@GetMapping("/edit/recipe")
+	public String editRecipe() {
+		return "edit-recipe";
+	}
 }

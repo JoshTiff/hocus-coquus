@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragments/layout :: head('Search')}"></head>
+    <body>
+        <header th:replace="~{fragments/layout :: site-header}"></header>
+
+        <main class="panel">
+            <h4 class="panel-title">Given the ingredients in your cauldron, we suggest the following recipes...</h4>
+
+            <p class="search-decorator">6 recipes found matching criteria.</p>
+
+            <ul class="recipe-list">
+                <li class="recipe-card">
+                    <img th:src="@{/images/recipes/recipe-1.png}" alt="" />
+                    <span class="recipe-name">Name of Recipe One</span>
+                    <button class="btn" style="font-size: 9pt">View Recipe</button>
+                    <button class="icon">
+                        <span class="material-symbols-outlined filled"
+                            >favorite</span
+                        >
+                    </button>
+                </li>
+                <li class="recipe-card">
+                    <img th:src="@{/images/recipes/recipe-4.png}" alt="" />
+                    <span class="recipe-name">Name of Recipe Four</span>
+                    <button class="btn" style="font-size: 9pt">View Recipe</button>
+                    <button class="icon">
+                        <span class="material-symbols-outlined filled"
+                            >favorite</span
+                        >
+                    </button>
+                </li>
+                <li class="recipe-card">
+                    <img th:src="@{/images/recipes/recipe-2.png}" alt="" />
+                    <span class="recipe-name">Name of Recipe Two</span>
+                    <button class="btn" style="font-size: 9pt">View Recipe</button>
+                    <button class="icon">
+                        <span class="material-symbols-outlined filled"
+                            >favorite</span
+                        >
+                    </button>
+                </li>
+                <li class="recipe-card">
+                    <img th:src="@{/images/recipes/recipe-5.png}" alt="" />
+                    <span class="recipe-name">Name of Recipe Five</span>
+                    <button class="btn" style="font-size: 9pt">View Recipe</button>
+                    <button class="icon">
+                        <span class="material-symbols-outlined filled"
+                            >favorite</span
+                        >
+                    </button>
+                </li>
+                <li class="recipe-card">
+                    <img th:src="@{/images/recipes/recipe-3.png}" alt="" />
+                    <span class="recipe-name">Name of Recipe Three</span>
+                    <button class="btn" style="font-size: 9pt">View Recipe</button>
+                    <button class="icon">
+                        <span class="material-symbols-outlined filled"
+                            >favorite</span
+                        >
+                    </button>
+                </li>
+                <li class="recipe-card">
+                    <img th:src="@{/images/recipes/recipe-6.png}" alt="" />
+                    <span class="recipe-name">Name of Recipe Six</span>
+                    <button class="btn" style="font-size: 9pt">View Recipe</button>
+                    <button class="icon">
+                        <span class="material-symbols-outlined filled"
+                            >favorite</span
+                        >
+                    </button>
+                </li>
+            </ul>
+
+            <p class="search-decorator">Page 1 of 1</p>
+
+        </main>
+
+    </body>
+</html>
