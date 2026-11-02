@@ -16,6 +16,7 @@
         />
         <link rel="stylesheet" th:href="@{/css/styles.css}" />
         <link rel="stylesheet" th:href="@{/css/account.css}" />
+        <link rel="stylesheet" th:href="@{/css/calendar.css}" />
     </head>
     <body>
         <header th:fragment="site-header">
@@ -24,7 +25,7 @@
                 <a th:href="@{/}" class="link">Home</a>
                 <a href="#" class="link">Browse Recipes</a>
                 <a href="#" class="link">My Recipes</a>
-                <a href="#" class="link">Calendar</a>
+                <a th:href="@{/calendar}" class="link">Calendar</a>
                 <a th:href="@{/account}" class="btn">Account</a>
             </nav>
         </header>

@@ -1,0 +1,158 @@
+/* Calendar page. Shared colors, fonts, and button styling come from styles.css. */
+
+.calendar-page {
+    display: block;
+    width: min(76rem, 100%);
+    margin: 0 auto;
+    padding: 1rem 3rem 3rem;
+}
+
+.calendar-panel {
+    padding: 2rem;
+}
+
+.calendar-heading {
+    margin-bottom: 1.75rem;
+    text-align: center;
+}
+
+.calendar-heading p {
+    margin: 0 0 0.65rem;
+    font-size: var(--font-size-regular);
+    letter-spacing: var(--letter-spacing);
+}
+
+.calendar-month-navigation {
+    display: grid;
+    grid-template-columns: 3.5rem minmax(0, 1fr) 3.5rem;
+    align-items: center;
+    gap: 1rem;
+}
+
+.calendar-heading h1 {
+    margin: 0;
+    font-family: "Italianno", "Tangerine", cursive;
+    font-size: 5rem;
+    font-weight: 400;
+    line-height: 0.9;
+    color: var(--primary);
+}
+
+.calendar-nav-btn {
+    display: grid;
+    width: 3rem;
+    height: 3rem;
+    place-items: center;
+    border: 1px solid var(--white);
+    border-radius: 50%;
+    color: var(--white);
+    font-size: 1.6rem;
+    line-height: 1;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+}
+
+.calendar-nav-btn:hover {
+    background: var(--primary);
+    color: #1f1650;
+}
+
+.calendar-nav-btn.is-disabled {
+    border-color: rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.3);
+    cursor: not-allowed;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.75);
+    border-radius: 0.75rem;
+}
+
+.calendar-weekday {
+    padding: 0.75rem 0.35rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.75);
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--primary);
+    font-weight: bold;
+    text-align: center;
+}
+
+.calendar-day {
+    display: flex;
+    min-height: 6.75rem;
+    flex-direction: column;
+    gap: 0.45rem;
+    padding: 0.6rem;
+    border-right: 1px solid rgba(255, 255, 255, 0.4);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.calendar-day:nth-child(7n) {
+    border-right: none;
+}
+
+.calendar-day:nth-last-child(-n + 7) {
+    border-bottom: none;
+}
+
+.calendar-day.empty {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.calendar-day span {
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.calendar-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.75rem;
+}
+
+.calendar-actions .btn {
+    cursor: pointer;
+}
+
+@media (max-width: 44rem) {
+    .calendar-page {
+        padding: 1rem;
+    }
+
+    .calendar-panel {
+        padding: 1rem;
+    }
+
+    .calendar-heading h1 {
+        font-size: 4rem;
+    }
+
+    .calendar-month-navigation {
+        grid-template-columns: 2.5rem minmax(0, 1fr) 2.5rem;
+        gap: 0.25rem;
+    }
+
+    .calendar-nav-btn {
+        width: 2.25rem;
+        height: 2.25rem;
+        font-size: 1.25rem;
+    }
+
+    .calendar-weekday {
+        font-size: 0.75rem;
+    }
+
+    .calendar-day {
+        min-height: 4.5rem;
+        padding: 0.35rem;
+    }
+
+    .calendar-actions .btn {
+        padding: 0.75rem 1.25rem;
+    }
+}

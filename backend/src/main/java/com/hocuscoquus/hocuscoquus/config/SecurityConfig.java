@@ -16,13 +16,17 @@ public class SecurityConfig {
 						"/css/**",
 						"/images/**",
 						"/404",
+						"/error",
+						"/calendar",
 						// TODO - delete account endpoints below.
 						// This is for the sake of seeing account
 						// pages before login is implemented.
 						"/account",
 						"/account/liked",
 						"/account/tagged").permitAll()
-						.anyRequest().authenticated())
+						// Authentication is not implemented yet; let unmatched URLs
+						// reach Spring Boot's error handler and render error/404.html.
+						.anyRequest().permitAll())
 				.formLogin(form -> form.defaultSuccessUrl("/", true));
 		return http.build();
 	}

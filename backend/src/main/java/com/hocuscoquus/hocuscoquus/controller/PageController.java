@@ -28,7 +28,7 @@ public class PageController {
 
 	@GetMapping("/404")
 	public String notFound() {
-		return "404";
+		return "error/404";
 	}
 
 }
