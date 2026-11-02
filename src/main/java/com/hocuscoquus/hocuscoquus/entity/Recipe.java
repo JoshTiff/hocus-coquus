@@ -9,8 +9,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -33,24 +34,24 @@ public class Recipe {
 	@Column
     private String image;
 	
-	@ManyToMany
-	@JoinTable(
-			name = "recipe_ingredient", 
-			joinColumns = @JoinColumn(name = "recipe_id"), 
-			inverseJoinColumns = @JoinColumn(name = "ingredient_id"))
-    private final List<Ingredient> ingredients = new ArrayList<>();
+	@ManyToMany(mappedBy="recipes")
+    private List<Ingredient> ingredients = new ArrayList<>();
     
-	
+	@OneToMany(mappedBy="recipe")
 	private final List<RecipeTag> recipeTags = new ArrayList<>();
     
-	
+	@OneToMany(mappedBy="recipe")
 	private final List<RecipeNote> recipeNotes = new ArrayList<>();
     
-	
+	@OneToMany(mappedBy="recipe")
 	private final List<Reaction> reactions = new ArrayList<>();
 
     @ManyToMany(mappedBy="recipes")
     private List<CalendarEntry> calendarEntries;
+    
+    @ManyToOne
+    @JoinColumn(name="account_id")
+    private Account account;
 
 	public long getRecipeId() {
 		return recipeId;
@@ -115,7 +116,24 @@ public class Recipe {
 	public List<Reaction> getReactions() {
 		return reactions;
 	}
+
+	public Account getAccount() {
+		return account;
+	}
+
+	public void setAccount(Account account) {
+		this.account = account;
+	}
+
+	public void setRecipeId(long recipeId) {
+		this.recipeId = recipeId;
+	}
+
+	public void setIngredients(List<Ingredient> ingredients) {
+		this.ingredients = ingredients;
+	}
     
+	
     
     
 }

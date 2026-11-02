@@ -80,7 +80,8 @@ public class RecipeService {
     public List<Recipe> searchRecipesByIngredients(List<IngredientModel> ingredients) {
         // TODO: add implementation for this method
 
-        return recipeRepository.findByIngredients(List.copyOf(ingredients));
+        //return recipeRepository.findByIngredients(List.copyOf(ingredients));
+    	return null;
     }
 
     public void scaleIngredients(long recipeId, long scalar) {

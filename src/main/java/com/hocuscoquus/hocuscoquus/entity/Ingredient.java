@@ -1,5 +1,6 @@
 package com.hocuscoquus.hocuscoquus.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.Column;
@@ -7,6 +8,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
@@ -27,9 +30,22 @@ public class Ingredient {
 	@Column
 	private String measurement;
 	
-	@ManyToMany(mappedBy="ingredients")
-	private List<Recipe> recipes;
+	
+	@ManyToMany
+	@JoinTable(
+			name = "ingredient_recipe", 
+			joinColumns = @JoinColumn(name = "ingredient_id"), 
+			inverseJoinColumns = @JoinColumn(name = "recipe_id"))
+	private List<Recipe> recipes = new ArrayList<>();
+	
+	@ManyToMany
+	@JoinTable(
+			name = "ingredient_dietaryRestriction", 
+			joinColumns = @JoinColumn(name = "ingredientId"), 
+			inverseJoinColumns = @JoinColumn(name = "dietary_restriction_id"))
+	private List<DietaryRestriction> dietaryRestriction = new ArrayList<>();
 
+	
 	public long getIngredientId() {
 		return ingredientId;
 	}
@@ -69,6 +85,16 @@ public class Ingredient {
 	public void setRecipes(List<Recipe> recipes) {
 		this.recipes = recipes;
 	}
+
+	public List<DietaryRestriction> getDietaryRestriction() {
+		return dietaryRestriction;
+	}
+
+	public void setDietaryRestriction(List<DietaryRestriction> dietaryRestriction) {
+		this.dietaryRestriction = dietaryRestriction;
+	}
+	
+	
 	
 	
 }

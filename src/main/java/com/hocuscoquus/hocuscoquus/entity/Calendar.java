@@ -24,9 +24,48 @@ public class Calendar {
 	@Column
     private String description;
 	
-	
 	@OneToMany(mappedBy="calendar")
     private List<CalendarEntry> entries;
+
+
+	public long getCalendarId() {
+		return calendarId;
+	}
+
+
+	public void setCalendarId(long calendarId) {
+		this.calendarId = calendarId;
+	}
+
+
+	public String getCalendarName() {
+		return calendarName;
+	}
+
+
+	public void setCalendarName(String calendarName) {
+		this.calendarName = calendarName;
+	}
+
+
+	public String getDescription() {
+		return description;
+	}
+
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+
+	public List<CalendarEntry> getEntries() {
+		return entries;
+	}
+
+
+	public void setEntries(List<CalendarEntry> entries) {
+		this.entries = entries;
+	}
     
     
 }

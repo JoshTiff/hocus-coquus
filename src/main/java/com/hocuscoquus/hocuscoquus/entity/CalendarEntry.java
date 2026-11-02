@@ -37,4 +37,39 @@ public class CalendarEntry {
 			joinColumns = @JoinColumn(name = "calendarEntryId"), 
 			inverseJoinColumns = @JoinColumn(name = "recipe_id"))
 	private List<Recipe> recipes = new ArrayList<>();
+
+	
+	public long getCalendarEntryId() {
+		return calendarEntryId;
+	}
+
+	public void setCalendarEntryId(long calendarEntryId) {
+		this.calendarEntryId = calendarEntryId;
+	}
+
+	public Date getDateTime() {
+		return dateTime;
+	}
+
+	public void setDateTime(Date dateTime) {
+		this.dateTime = dateTime;
+	}
+
+	public Calendar getCalendar() {
+		return calendar;
+	}
+
+	public void setCalendar(Calendar calendar) {
+		this.calendar = calendar;
+	}
+
+	public List<Recipe> getRecipes() {
+		return recipes;
+	}
+
+	public void setRecipes(List<Recipe> recipes) {
+		this.recipes = recipes;
+	}
+	
+	
 }
