@@ -2,7 +2,7 @@ package com.hocuscoquus.hocuscoquus.repository;
 
 import java.util.List;
 
-import com.hocuscoquus.hocuscoquus.model.Ingredient;
+import com.hocuscoquus.hocuscoquus.entity.Ingredient;
 
 public interface IngredientRepository {
     Ingredient findById(long ingredientId);

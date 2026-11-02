@@ -13,7 +13,7 @@ public class Recipe {
     private String recipeDescription;
     private String instructions;
     private String image;
-    private final List<Ingredient> ingredients = new ArrayList<>();
+    private final List<IngredientModel> ingredients = new ArrayList<>();
     private final List<RecipeTag> recipeTags = new ArrayList<>();
     private final List<RecipeNote> recipeNotes = new ArrayList<>();
     private final List<Reaction> reactions = new ArrayList<>();
@@ -76,7 +76,7 @@ public class Recipe {
     /**
      * @return List of ingredient sused in the recipe.
      */
-    public List<Ingredient> getIngredients() {
+    public List<IngredientModel> getIngredients() {
         return ingredients;
     }
 
@@ -84,7 +84,7 @@ public class Recipe {
      * Used to set the ingredients of a recipe.
      * @param ingredients New recipe ingredients array.
      */
-    public void setIngredients(List<Ingredient> ingredients) {
+    public void setIngredients(List<IngredientModel> ingredients) {
         this.ingredients.clear();
         this.ingredients.addAll(ingredients);
     }

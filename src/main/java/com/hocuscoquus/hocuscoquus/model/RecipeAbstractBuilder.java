@@ -5,7 +5,7 @@ import java.util.List;
 public abstract class RecipeAbstractBuilder {
     protected String name;
     protected String description;
-    protected List<Ingredient> ingredients = List.of();
+    protected List<IngredientModel> ingredients = List.of();
     protected String instructions;
     protected String image;
 
@@ -23,7 +23,7 @@ public abstract class RecipeAbstractBuilder {
         return this;
     }
 
-    public RecipeAbstractBuilder buildIngredients(List<Ingredient> ingredients) {
+    public RecipeAbstractBuilder buildIngredients(List<IngredientModel> ingredients) {
         // TODO: add implementation for this method
         
         this.ingredients = List.copyOf(ingredients);
