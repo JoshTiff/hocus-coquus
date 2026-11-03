@@ -38,6 +38,9 @@ public class CalendarEntry {
 			inverseJoinColumns = @JoinColumn(name = "recipe_id"))
 	private List<Recipe> recipes = new ArrayList<>();
 
+	public CalendarEntry() {
+		
+	}
 	
 	public long getCalendarEntryId() {
 		return calendarEntryId;

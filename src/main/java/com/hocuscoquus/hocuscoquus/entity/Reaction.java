@@ -30,6 +30,10 @@ public class Reaction {
 	@Column(nullable = false)
     private ReactionType reactionType;
 
+	public Reaction() {
+		
+	}
+	
 	public long getReactionId() {
 		return reactionId;
 	}

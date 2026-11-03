@@ -28,6 +28,9 @@ public class RecipeNote {
 	@Column(nullable = false)
     private String message;
 
+	public RecipeNote() {
+		
+	}
 	
 	public long getRecipeNoteId() {
 		return recipeNoteId;
