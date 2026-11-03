@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.hocuscoquus.hocuscoquus.entity.Account;
 import com.hocuscoquus.hocuscoquus.service.AccountService;
@@ -22,9 +23,18 @@ public class AccountController {
         this.accountService = accountService;
     }
 
-    @PostMapping
-    public Account createAccount() {
-        return accountService.createAccount();
+    // @PostMapping
+    // public Account createAccount() {
+    //     return accountService.createAccount();
+    // }
+
+    @PostMapping("/signup")
+    public RedirectView createAccount(
+            @RequestParam String firstName,
+            @RequestParam String email,
+            @RequestParam String password) {
+        accountService.createAccount(firstName, email, password);
+        return new RedirectView("/login");
     }
 
     @DeleteMapping("/{accountId}")

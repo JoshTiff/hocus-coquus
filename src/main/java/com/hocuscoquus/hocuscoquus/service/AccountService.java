@@ -16,9 +16,23 @@ public class AccountService {
         this.accountRepository = Objects.requireNonNull(accountRepository);
     }
 
-    public Account createAccount() {
-        // TODO: add implementation for this method
-        return new Account();
+    // public Account createAccount() {
+    //     // TODO: add implementation for this method
+    //     return new Account();
+    // }
+
+    public Account createAccount(String firstName, String email, String password) {
+        if (firstName == null || firstName.isBlank()
+                || email == null || email.isBlank()
+                || password == null || password.isBlank()) {
+            throw new IllegalArgumentException("First name, email, and password are required.");
+        }
+
+        Account account = new Account();
+        account.setFirstName(firstName.trim());
+        account.setEmail(email.trim());
+        account.setPassword(password);
+        return accountRepository.save(account);
     }
 
     public void deleteAccount(long accountId) {

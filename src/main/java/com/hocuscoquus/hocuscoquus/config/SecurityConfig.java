@@ -13,6 +13,8 @@ public class SecurityConfig {
 		http.authorizeHttpRequests(
 				auth -> auth.requestMatchers("/",
 						"/index",
+						"/signup",
+						"/api/account/signup",
 						"/css/**",
 						"/images/**",
 						"/search",
