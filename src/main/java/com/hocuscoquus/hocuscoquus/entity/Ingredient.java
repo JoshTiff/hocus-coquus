@@ -40,11 +40,21 @@ public class Ingredient {
 	
 	@ManyToMany
 	@JoinTable(
+			name = "ingredient_account", 
+			joinColumns = @JoinColumn(name = "ingredient_id"), 
+			inverseJoinColumns = @JoinColumn(name = "account_id"))
+	private List<Account> accounts = new ArrayList<>();
+	
+	@ManyToMany
+	@JoinTable(
 			name = "ingredient_dietaryRestriction", 
 			joinColumns = @JoinColumn(name = "ingredientId"), 
 			inverseJoinColumns = @JoinColumn(name = "dietary_restriction_id"))
 	private List<DietaryRestriction> dietaryRestriction = new ArrayList<>();
 
+	public Ingredient() {
+		
+	}
 	
 	public long getIngredientId() {
 		return ingredientId;
@@ -92,6 +102,14 @@ public class Ingredient {
 
 	public void setDietaryRestriction(List<DietaryRestriction> dietaryRestriction) {
 		this.dietaryRestriction = dietaryRestriction;
+	}
+
+	public List<Account> getAccounts() {
+		return accounts;
+	}
+
+	public void setAccounts(List<Account> accounts) {
+		this.accounts = accounts;
 	}
 	
 	

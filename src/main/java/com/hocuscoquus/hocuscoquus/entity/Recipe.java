@@ -53,6 +53,10 @@ public class Recipe {
     @JoinColumn(name="account_id")
     private Account account;
 
+    public Recipe() {
+    	
+    }
+    
 	public long getRecipeId() {
 		return recipeId;
 	}

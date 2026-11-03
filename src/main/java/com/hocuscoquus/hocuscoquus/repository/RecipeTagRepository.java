@@ -2,9 +2,12 @@ package com.hocuscoquus.hocuscoquus.repository;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+
 import com.hocuscoquus.hocuscoquus.entity.RecipeTag;
 
-public interface RecipeTagRepository {
+public interface RecipeTagRepository extends JpaRepository<RecipeTag, Long> {
+	
     RecipeTag findById(long recipeTagId);
     List<RecipeTag> findByAccount(long accountId);
     List<RecipeTag> findByRecipe(long recipeId);

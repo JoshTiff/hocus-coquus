@@ -8,7 +8,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -22,9 +24,16 @@ public class DietaryRestriction {
 	@Column(nullable = false)
 	private String dietaryRestrictionName;
 	
+	@ManyToOne
+	@JoinColumn(name="account_id")
+	private Account account;
+	
 	@ManyToMany(mappedBy="dietaryRestriction")
 	private List<Ingredient> ingredients = new ArrayList<>();
 
+	public DietaryRestriction() {
+		
+	}
 	
 	public long getDietaryRestrictionId() {
 		return dietaryRestrictionId;
