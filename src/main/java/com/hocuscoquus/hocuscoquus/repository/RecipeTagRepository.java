@@ -2,7 +2,7 @@ package com.hocuscoquus.hocuscoquus.repository;
 
 import java.util.List;
 
-import com.hocuscoquus.hocuscoquus.model.RecipeTag;
+import com.hocuscoquus.hocuscoquus.entity.RecipeTag;
 
 public interface RecipeTagRepository {
     RecipeTag findById(long recipeTagId);

@@ -2,7 +2,7 @@ package com.hocuscoquus.hocuscoquus.repository;
 
 import java.util.List;
 
-import com.hocuscoquus.hocuscoquus.model.Reaction;
+import com.hocuscoquus.hocuscoquus.entity.Reaction;
 
 public interface ReactionRepository {
     Reaction findById(long reactionId);

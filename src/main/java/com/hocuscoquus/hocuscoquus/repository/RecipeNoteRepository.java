@@ -2,7 +2,7 @@ package com.hocuscoquus.hocuscoquus.repository;
 
 import java.util.List;
 
-import com.hocuscoquus.hocuscoquus.model.RecipeNote;
+import com.hocuscoquus.hocuscoquus.entity.RecipeNote;
 
 public interface RecipeNoteRepository {
     RecipeNote findById(long recipeNoteId);
