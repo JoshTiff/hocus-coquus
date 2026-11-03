@@ -28,6 +28,9 @@ public class RecipeTag {
 	@Column(nullable = false)
     private String tag;
 
+	public RecipeTag() {
+		
+	}
 	
 	public long getRecipeTagId() {
 		return recipeTagId;

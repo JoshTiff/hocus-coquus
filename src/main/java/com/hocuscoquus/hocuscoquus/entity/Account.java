@@ -8,6 +8,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -40,7 +41,18 @@ public class Account {
 	@OneToMany(mappedBy="account")
 	private List<Recipe> recipes = new ArrayList<>();
 	
+	@OneToMany(mappedBy="account")
+	private List<DietaryRestriction> dietaryRestrictions = new ArrayList<>();
 	
+	@ManyToMany(mappedBy="accounts")
+	private List<Ingredient> ingredients = new ArrayList<>();
+	
+	@OneToMany(mappedBy="account")
+	private List<Calendar> calendars = new ArrayList<>();
+	
+	public Account() {
+		
+	}
 	
 	public long getAccountId() {
 		return accountId;
@@ -105,8 +117,16 @@ public class Account {
 	public void setRecipes(List<Recipe> recipes) {
 		this.recipes = recipes;
 	}
-	
-	
 
+	public List<Ingredient> getIngredients() {
+		return ingredients;
+	}
+
+	public void setIngredients(List<Ingredient> ingredients) {
+		this.ingredients = ingredients;
+	}
+	
+	
+	
 	
 }

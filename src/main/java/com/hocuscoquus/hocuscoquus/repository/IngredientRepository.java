@@ -2,10 +2,15 @@ package com.hocuscoquus.hocuscoquus.repository;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
 import com.hocuscoquus.hocuscoquus.entity.Ingredient;
 
-public interface IngredientRepository {
+public interface IngredientRepository extends JpaRepository<Ingredient, Long> {
     Ingredient findById(long ingredientId);
-    List<Ingredient> findByRecipe(long recipeId);
-    List<Ingredient> findByAccount(long accountId);
+    
+    List<Ingredient> findByRecipes_RecipeId(long recipeId);
+    
+    List<Ingredient> findByAccounts_AccountId(long accountId);
 }
