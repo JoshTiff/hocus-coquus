@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import com.hocuscoquus.hocuscoquus.model.Ingredient;
+import com.hocuscoquus.hocuscoquus.model.IngredientModel;
 import com.hocuscoquus.hocuscoquus.model.ReactionType;
 import com.hocuscoquus.hocuscoquus.model.Recipe;
 import com.hocuscoquus.hocuscoquus.repository.RecipeRepository;
@@ -77,10 +77,11 @@ public class RecipeService {
         return 0;
     }
 
-    public List<Recipe> searchRecipesByIngredients(List<Ingredient> ingredients) {
+    public List<Recipe> searchRecipesByIngredients(List<IngredientModel> ingredients) {
         // TODO: add implementation for this method
 
-        return recipeRepository.findByIngredients(List.copyOf(ingredients));
+        //return recipeRepository.findByIngredients(List.copyOf(ingredients));
+    	return null;
     }
 
     public void scaleIngredients(long recipeId, long scalar) {

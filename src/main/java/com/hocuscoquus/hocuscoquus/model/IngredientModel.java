@@ -1,6 +1,6 @@
 package com.hocuscoquus.hocuscoquus.model;
 
-public class Ingredient {
+public class IngredientModel {
     
 	private long ingredientId;
 	private String ingredientName;
@@ -8,10 +8,10 @@ public class Ingredient {
 	private String measurement;
 
 	// TODO: review/add constructor(s)
-	public Ingredient() {
+	public IngredientModel() {
 	}
 
-	public Ingredient(long ingredientId, String ingredientName, int quantity, String measurement) {
+	public IngredientModel(long ingredientId, String ingredientName, int quantity, String measurement) {
 		this.ingredientId = ingredientId;
 		this.ingredientName = ingredientName;
 		this.quantity = quantity;

@@ -6,7 +6,7 @@ public class DietaryRestriction {
     
 	private long dietaryRestrictionId;
 	private String dietaryRestrictionName;
-	private List<Ingredient> ingredients = new ArrayList<>();
+	private List<IngredientModel> ingredients = new ArrayList<>();
 
 	// TODO: review/add constructor(s)
 	public DietaryRestriction() {
@@ -19,7 +19,7 @@ public class DietaryRestriction {
 	public String getDietaryRestrictionName() {
 		return dietaryRestrictionName;
 	}
-	public List<Ingredient> getIngredients() {
+	public List<IngredientModel> getIngredients() {
 		return ingredients;
 	}
 	

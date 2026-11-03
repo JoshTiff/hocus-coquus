@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hocuscoquus.hocuscoquus.model.Ingredient;
+import com.hocuscoquus.hocuscoquus.model.IngredientModel;
 import com.hocuscoquus.hocuscoquus.model.Recipe;
 import com.hocuscoquus.hocuscoquus.service.RecipeService;
 
@@ -23,7 +23,7 @@ public class RecipeController {
     }
 
     @GetMapping("/search/ingredients")
-    public List<Recipe> getRecipesByIngredients(@RequestParam List<Ingredient> ingredients) {
+    public List<Recipe> getRecipesByIngredients(@RequestParam List<IngredientModel> ingredients) {
         return recipeService.searchRecipesByIngredients(ingredients);
     }
 }
