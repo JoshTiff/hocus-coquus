@@ -41,14 +41,18 @@ public class AccountService implements UserDetailsService {
 
     public void deleteAccount(long accountId, String email, String password) {
         // Confirm account exists
-        Account account = accountRepository.findById(accountId);
-        if (account == null) {
+        Account acc = accountRepository.findById(accountId);
+        if (acc == null) {
             throw new IllegalArgumentException("Account not found: " + accountId);
         }
 
         // TODO - Confirm requesting account is the same as account to delete
 
-        // TODO - Confirm password match
+        // Confirm password match
+        String pwd = accountRepository.findById(accountId).getPassword();
+        if (!pwd.equals(password)) {
+            throw new IllegalArgumentException("Invalid password: " + accountId);
+        }
 
         // Delete the account
         this.accountRepository.deleteById(accountId);
