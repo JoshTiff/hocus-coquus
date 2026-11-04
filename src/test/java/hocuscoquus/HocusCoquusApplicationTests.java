@@ -1,4 +1,4 @@
-package hocuscoquus;
+package com.hocuscoquus.hocuscoquus;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
