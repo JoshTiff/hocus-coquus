@@ -118,6 +118,10 @@ h1 {
     animation: fadeBackground 2s ease-in-out infinite;
 }
 
+h1.welcome {
+    margin-bottom: 0.5rem;
+}
+
 .fade-blink-bg {
     animation: fadeBackground 2s ease-in-out infinite;
 }

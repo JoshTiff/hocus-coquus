@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragments/layout :: head('Sign Up')}"></head>
+    <body>
+        <header>
+            <a th:href="@{/}" class="logo">Hocus Coquus</a>
+            <nav>
+                <a th:href="@{/}" class="link">Home</a>
+                <a th:href="@{/login}" class="btn">Log In</a>
+            </nav>
+        </header>
+
+        <main class="signup-page">
+            <h1>Join Hocus Coquus</h1>
+            <section class="panel signup-panel">
+                <p th:if="${signupError}" th:text="${signupError}" role="alert"></p>
+                <form
+                    class="account-form"
+                    th:action="@{/account/signup}"
+                    method="post"
+                >
+                    <label for="firstName">First name</label>
+                    <input
+                        id="firstName"
+                        name="firstName"
+                        type="text"
+                        autocomplete="given-name"
+                        th:value="${firstName}"
+                        required
+                    />
+
+                    <label for="email">Email</label>
+                    <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        autocomplete="email"
+                        th:value="${email}"
+                        required
+                    />
+
+                    <label for="password">Password</label>
+                    <input
+                        id="password"
+                        name="password"
+                        type="password"
+                        autocomplete="new-password"
+                        required
+                    />
+
+                    <button class="btn" type="submit">Sign Up</button>
+                </form>
+
+                <p class="signup-login">
+                    Already have an account?
+                    <a th:href="@{/login}">Login here</a>
+                </p>
+            </section>
+        </main>
+    </body>
+</html>

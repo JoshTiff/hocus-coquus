@@ -102,6 +102,34 @@
     box-shadow: 0 0 0 2px var(--primary);
 }
 
+.signup-page {
+    padding-top: 1rem;
+}
+
+.signup-page h1 {
+    font-size: 4.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.signup-panel {
+    width: 100%;
+    max-width: 34rem;
+}
+
+.signup-panel .account-form .btn {
+    align-self: center;
+    margin-top: 1rem;
+}
+
+.signup-login {
+    margin-top: 1.5rem;
+    text-align: center;
+}
+
+.signup-login a {
+    color: var(--primary);
+}
+
 /* ---------- Liked Recipes ---------- */
 .recipe-grid {
     list-style: none;

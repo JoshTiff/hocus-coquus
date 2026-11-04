@@ -11,6 +11,11 @@ public class PageController {
 		return "index";
 	}
 
+	@GetMapping("/signup")
+	public String signup() {
+		return "signup";
+	}
+
 	@GetMapping("/view-recipe")
 	public String viewRecipe() {
 		return "view-recipe";
