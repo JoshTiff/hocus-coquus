@@ -1,21 +1,20 @@
 package com.hocuscoquus.hocuscoquus.controller;
 
+import org.springframework.ui.Model;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.view.RedirectView;
 
 import com.hocuscoquus.hocuscoquus.entity.Account;
 import com.hocuscoquus.hocuscoquus.service.AccountService;
 
-@RestController
-@RequestMapping("/api/account")
+@Controller
+@RequestMapping("/account")
 public class AccountController {
     private final AccountService accountService;
 
@@ -23,18 +22,21 @@ public class AccountController {
         this.accountService = accountService;
     }
 
-    // @PostMapping
-    // public Account createAccount() {
-    //     return accountService.createAccount();
-    // }
-
     @PostMapping("/signup")
-    public RedirectView createAccount(
+    public String createAccount(
             @RequestParam String firstName,
             @RequestParam String email,
-            @RequestParam String password) {
-        accountService.createAccount(firstName, email, password);
-        return new RedirectView("/login");
+            @RequestParam String password,
+            Model model) {
+        try {
+            accountService.createAccount(firstName, email, password);
+        } catch (IllegalArgumentException ex) {
+            model.addAttribute("signupError", ex.getMessage());
+            model.addAttribute("firstName", firstName);
+            model.addAttribute("email", email);
+            return "signup";
+        }
+        return "login";
     }
 
     @DeleteMapping("/{accountId}")
@@ -47,8 +49,4 @@ public class AccountController {
         return accountService.updateAccount(account);
     }
 
-    @GetMapping("/login")
-    public Account login(@RequestParam String email) {
-        return accountService.login(email);
-    }
 }

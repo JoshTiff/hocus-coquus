@@ -1,25 +1,24 @@
 package com.hocuscoquus.hocuscoquus.service;
 
-import java.util.Objects;
-
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.hocuscoquus.hocuscoquus.entity.Account;
+import com.hocuscoquus.hocuscoquus.entity.AccountDetails;
 import com.hocuscoquus.hocuscoquus.repository.AccountRepository;
 
 @Service
-public class AccountService {
+public class AccountService implements UserDetailsService {
     private final AccountRepository accountRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    // TODO: review/add constructor(s)
-    public AccountService(AccountRepository accountRepository) {
-        this.accountRepository = Objects.requireNonNull(accountRepository);
+    public AccountService(AccountRepository accountRepository, PasswordEncoder passwordEncoder) {
+        this.accountRepository = accountRepository;
+        this.passwordEncoder = passwordEncoder;
     }
-
-    // public Account createAccount() {
-    //     // TODO: add implementation for this method
-    //     return new Account();
-    // }
 
     public Account createAccount(String firstName, String email, String password) {
         if (firstName == null || firstName.isBlank()
@@ -28,10 +27,15 @@ public class AccountService {
             throw new IllegalArgumentException("First name, email, and password are required.");
         }
 
+        String normalizedEmail = email.trim();
+        if (accountRepository.existsByEmail(normalizedEmail)) {
+            throw new IllegalArgumentException("An account with this email already exists.");
+        }
+
         Account account = new Account();
         account.setFirstName(firstName.trim());
-        account.setEmail(email.trim());
-        account.setPassword(password);
+        account.setEmail(normalizedEmail);
+        account.setPassword(passwordEncoder.encode(password));
         return accountRepository.save(account);
     }
 
@@ -44,10 +48,13 @@ public class AccountService {
         return new Account();
     }
 
-    public Account login(String email) {
-        
-        // TODO: add implementation for this method
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Account account = accountRepository.findByEmail(email);
+        if (account == null) {
+            throw new UsernameNotFoundException("Account not found for email: " + email);
+        }
 
-        return accountRepository.findByEmail(email);
+        return new AccountDetails(account);
     }
 }
