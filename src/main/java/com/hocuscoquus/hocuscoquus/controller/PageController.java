@@ -53,7 +53,7 @@ public class PageController {
 
 	@GetMapping("/404")
 	public String notFound() {
-		return "error/404";
+		return "404";
 	}
 
 
