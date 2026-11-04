@@ -1,0 +1,61 @@
+/* 404 page */
+
+.error-page {
+    overflow: hidden;
+}
+
+.error-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 3rem 1.5rem 18rem;
+    text-align: center;
+}
+
+.error-code {
+    font-family: "Italianno", "Tangerine", cursive;
+    font-size: clamp(7rem, 18vw, 15rem);
+    line-height: 0.7;
+    color: var(--primary);
+    text-shadow: 0 0 0.9rem rgba(255, 140, 140, 0.45);
+}
+
+.error-content h1 {
+    max-width: 42rem;
+    margin: 1.75rem 0 0;
+    font-family: "Italianno", "Tangerine", cursive;
+    font-size: clamp(3.1rem, 7vw, 6rem);
+    font-weight: 400;
+    line-height: 0.95;
+    color: var(--white);
+    text-shadow: 0 0 0.6rem rgba(0, 0, 0, 0.35);
+}
+
+/* Swap this element for an image, or add an <img> inside it, when artwork is available. */
+.error-image-placeholder {
+    position: absolute;
+    bottom: 2rem;
+    display: grid;
+    width: min(22rem, calc(100vw - 3rem));
+    height: 10rem;
+    place-items: center;
+    border: 1px dashed rgba(255, 255, 255, 0.75);
+    border-radius: var(--border-radius);
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1rem;
+    letter-spacing: var(--letter-spacing);
+}
+
+@media (max-width: 36rem) {
+    .error-content {
+        padding-bottom: 15rem;
+    }
+
+    .error-image-placeholder {
+        bottom: 1.25rem;
+        height: 8rem;
+    }
+}
