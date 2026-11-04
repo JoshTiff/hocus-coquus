@@ -67,7 +67,7 @@ public class PageController {
 	}
 
 	@GetMapping("/calendar")
-	public string calendar(){
+	public String calendar(){
 		return "calendar";
 	}
 }

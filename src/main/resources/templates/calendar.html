@@ -9,21 +9,13 @@
                 <div class="calendar-heading">
                     <p>Your recipe calendar</p>
                     <div class="calendar-month-navigation">
-                        <a th:if="${canGoPrevious}" class="calendar-nav-btn"
-                           th:href="@{/calendar(year=${previousMonth.year}, month=${previousMonth.monthValue})}"
-                           aria-label="Previous month">&#8592;</a>
-                        <span th:unless="${canGoPrevious}" class="calendar-nav-btn is-disabled" aria-hidden="true">&#8592;</span>
-
-                        <h1 id="calendar-title" th:text="${monthName} + ' ' + ${year}">October 2026</h1>
-
-                        <a th:if="${canGoNext}" class="calendar-nav-btn"
-                           th:href="@{/calendar(year=${nextMonth.year}, month=${nextMonth.monthValue})}"
-                           aria-label="Next month">&#8594;</a>
-                        <span th:unless="${canGoNext}" class="calendar-nav-btn is-disabled" aria-hidden="true">&#8594;</span>
+                        <button class="btn calendar-month-button prev-month-button" type="button" title="prev-month-button">Prev month</button>
+                        <h1 id="calendar-title">November</h1>
+                        <button class="btn calendar-month-button next-month-button" type="button" title="next-month-button">Next month</button>
                     </div>
                 </div>
 
-                <div class="calendar-grid" role="grid" th:attr="aria-label=${monthName} + ' ' + ${year} + ' calendar'">
+                <div class="calendar-grid" role="grid" aria-label="November calendar">
                     <div class="calendar-weekday" role="columnheader">Sun</div>
                     <div class="calendar-weekday" role="columnheader">Mon</div>
                     <div class="calendar-weekday" role="columnheader">Tue</div>
@@ -32,11 +24,41 @@
                     <div class="calendar-weekday" role="columnheader">Fri</div>
                     <div class="calendar-weekday" role="columnheader">Sat</div>
 
-                    <div th:each="day : ${days}" class="calendar-day"
-                         th:classappend="${day == null} ? ' empty'" role="gridcell"
-                         th:attr="aria-label=${day != null ? day : null}">
-                        <span th:if="${day != null}" th:text="${day.dayOfMonth}">1</span>
-                    </div>
+                    <div class="calendar-day" role="gridcell"><span>1</span></div>
+                    <div class="calendar-day" role="gridcell"><span>2</span></div>
+                    <div class="calendar-day" role="gridcell"><span>3</span></div>
+                    <div class="calendar-day" role="gridcell"><span>4</span></div>
+                    <div class="calendar-day" role="gridcell"><span>5</span></div>
+                    <div class="calendar-day" role="gridcell"><span>6</span></div>
+                    <div class="calendar-day" role="gridcell"><span>7</span></div>
+                    <div class="calendar-day" role="gridcell"><span>8</span></div>
+                    <div class="calendar-day" role="gridcell"><span>9</span></div>
+                    <div class="calendar-day" role="gridcell"><span>10</span></div>
+                    <div class="calendar-day" role="gridcell"><span>11</span></div>
+                    <div class="calendar-day" role="gridcell"><span>12</span></div>
+                    <div class="calendar-day" role="gridcell"><span>13</span></div>
+                    <div class="calendar-day" role="gridcell"><span>14</span></div>
+                    <div class="calendar-day" role="gridcell"><span>15</span></div>
+                    <div class="calendar-day" role="gridcell"><span>16</span></div>
+                    <div class="calendar-day" role="gridcell"><span>17</span></div>
+                    <div class="calendar-day" role="gridcell"><span>18</span></div>
+                    <div class="calendar-day" role="gridcell"><span>19</span></div>
+                    <div class="calendar-day" role="gridcell"><span>20</span></div>
+                    <div class="calendar-day" role="gridcell"><span>21</span></div>
+                    <div class="calendar-day" role="gridcell"><span>22</span></div>
+                    <div class="calendar-day" role="gridcell"><span>23</span></div>
+                    <div class="calendar-day" role="gridcell"><span>24</span></div>
+                    <div class="calendar-day" role="gridcell"><span>25</span></div>
+                    <div class="calendar-day" role="gridcell"><span>26</span></div>
+                    <div class="calendar-day" role="gridcell"><span>27</span></div>
+                    <div class="calendar-day" role="gridcell"><span>28</span></div>
+                    <div class="calendar-day" role="gridcell"><span>29</span></div>
+                    <div class="calendar-day" role="gridcell"><span>30</span></div>
+                    <div class="calendar-day" role="gridcell" aria-label=""></div>
+                    <div class="calendar-day" role="gridcell" aria-label=""></div>
+                    <div class="calendar-day" role="gridcell" aria-label=""></div>
+                    <div class="calendar-day" role="gridcell" aria-label=""></div>
+                    <div class="calendar-day" role="gridcell" aria-label=""></div>
                 </div>
 
                 <div class="calendar-actions" aria-label="Calendar actions">
