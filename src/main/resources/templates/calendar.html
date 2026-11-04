@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragments/layout :: head('Calendar')}"></head>
+    <body>
+        <header th:replace="~{fragments/layout :: site-header}"></header>
+
+        <main class="calendar-page">
+            <section class="calendar-panel panel" aria-labelledby="calendar-title">
+                <div class="calendar-heading">
+                    <p>Your recipe calendar</p>
+                    <div class="calendar-month-navigation">
+                        <a th:if="${canGoPrevious}" class="calendar-nav-btn"
+                           th:href="@{/calendar(year=${previousMonth.year}, month=${previousMonth.monthValue})}"
+                           aria-label="Previous month">&#8592;</a>
+                        <span th:unless="${canGoPrevious}" class="calendar-nav-btn is-disabled" aria-hidden="true">&#8592;</span>
+
+                        <h1 id="calendar-title" th:text="${monthName} + ' ' + ${year}">October 2026</h1>
+
+                        <a th:if="${canGoNext}" class="calendar-nav-btn"
+                           th:href="@{/calendar(year=${nextMonth.year}, month=${nextMonth.monthValue})}"
+                           aria-label="Next month">&#8594;</a>
+                        <span th:unless="${canGoNext}" class="calendar-nav-btn is-disabled" aria-hidden="true">&#8594;</span>
+                    </div>
+                </div>
+
+                <div class="calendar-grid" role="grid" th:attr="aria-label=${monthName} + ' ' + ${year} + ' calendar'">
+                    <div class="calendar-weekday" role="columnheader">Sun</div>
+                    <div class="calendar-weekday" role="columnheader">Mon</div>
+                    <div class="calendar-weekday" role="columnheader">Tue</div>
+                    <div class="calendar-weekday" role="columnheader">Wed</div>
+                    <div class="calendar-weekday" role="columnheader">Thu</div>
+                    <div class="calendar-weekday" role="columnheader">Fri</div>
+                    <div class="calendar-weekday" role="columnheader">Sat</div>
+
+                    <div th:each="day : ${days}" class="calendar-day"
+                         th:classappend="${day == null} ? ' empty'" role="gridcell"
+                         th:attr="aria-label=${day != null ? day : null}">
+                        <span th:if="${day != null}" th:text="${day.dayOfMonth}">1</span>
+                    </div>
+                </div>
+
+                <div class="calendar-actions" aria-label="Calendar actions">
+                    <button class="btn" type="button">Download</button>
+                    <button class="btn" type="button">Sync Google</button>
+                    <button class="btn" type="button">Add Recipe</button>
+                    <button class="btn" type="button">Remove Recipe</button>
+                </div>
+            </section>
+        </main>
+    </body>
+</html>

@@ -27,6 +27,8 @@ public class SecurityConfig {
 						"/css/**",
 						"/images/**",
 						"/search",
+						"/404",
+						"/calendar",
 						"/edit/recipe",
 						"/view-recipe",
 						// TODO - delete account endpoints below.
