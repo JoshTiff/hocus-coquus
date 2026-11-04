@@ -50,4 +50,16 @@ public class PageController {
 	public String login() {
 		return "login";
 	}
+
+	@GetMapping("/404")
+	public String notFound() {
+		return "error/404";
+	}
+
+
+	@GetMapping("/Calendar")
+	public String calendar() {
+		return "calendar";
+	}
+
 }
