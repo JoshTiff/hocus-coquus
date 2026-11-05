@@ -1,0 +1,53 @@
+.error-page {
+    display: grid;
+    min-height: 100vh;
+    place-items: center;
+    margin: 0;
+    padding: 2rem;
+}
+
+.error-content {
+    width: min(42rem, 100%);
+    text-align: center;
+}
+
+.error-code {
+    margin: 0;
+    font-family: "Italianno", "Tangerine", cursive;
+    font-size: clamp(7rem, 23vw, 14rem);
+    line-height: 0.72;
+    color: var(--primary);
+    text-shadow: 0 0 1rem rgba(255, 140, 140, 0.35);
+}
+
+.error-content h1 {
+    margin: 1.5rem 0 0.5rem;
+    font-size: clamp(3.5rem, 9vw, 6.25rem);
+}
+
+.error-image-placeholder {
+    display: grid;
+    width: min(16rem, 70vw);
+    aspect-ratio: 1;
+    place-items: center;
+    margin: 1.5rem auto 2rem;
+    padding: 1rem;
+    border: 1px solid var(--white);
+    color: var(--white);
+    font-size: 1.1rem;
+    line-height: 1.4;
+}
+
+.error-home-link {
+    min-width: 11rem;
+}
+
+@media (max-width: 32rem) {
+    .error-page {
+        padding: 1.25rem;
+    }
+
+    .error-content h1 {
+        margin-top: 1rem;
+    }
+}

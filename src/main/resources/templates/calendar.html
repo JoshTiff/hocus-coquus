@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragments/layout :: head('Calendar')}"></head>
+    <body>
+        <header th:replace="~{fragments/layout :: site-header}"></header>
+
+        <main class="calendar-page">
+            <section class="calendar-panel panel" aria-labelledby="calendar-title">
+                <div class="calendar-heading">
+                    <p>Your recipe calendar</p>
+                    <div class="calendar-month-navigation">
+                        <button class="btn calendar-month-button prev-month-button" type="button" title="prev-month-button">Prev month</button>
+                        <h1 id="calendar-title">November</h1>
+                        <button class="btn calendar-month-button next-month-button" type="button" title="next-month-button">Next month</button>
+                    </div>
+                </div>
+
+                <div class="calendar-grid" role="grid" aria-label="November calendar">
+                    <div class="calendar-weekday" role="columnheader">Sun</div>
+                    <div class="calendar-weekday" role="columnheader">Mon</div>
+                    <div class="calendar-weekday" role="columnheader">Tue</div>
+                    <div class="calendar-weekday" role="columnheader">Wed</div>
+                    <div class="calendar-weekday" role="columnheader">Thu</div>
+                    <div class="calendar-weekday" role="columnheader">Fri</div>
+                    <div class="calendar-weekday" role="columnheader">Sat</div>
+
+                    <div class="calendar-day" role="gridcell"><span>1</span></div>
+                    <div class="calendar-day" role="gridcell"><span>2</span></div>
+                    <div class="calendar-day" role="gridcell"><span>3</span></div>
+                    <div class="calendar-day" role="gridcell"><span>4</span></div>
+                    <div class="calendar-day" role="gridcell"><span>5</span></div>
+                    <div class="calendar-day" role="gridcell"><span>6</span></div>
+                    <div class="calendar-day" role="gridcell"><span>7</span></div>
+                    <div class="calendar-day" role="gridcell"><span>8</span></div>
+                    <div class="calendar-day" role="gridcell"><span>9</span></div>
+                    <div class="calendar-day" role="gridcell"><span>10</span></div>
+                    <div class="calendar-day" role="gridcell"><span>11</span></div>
+                    <div class="calendar-day" role="gridcell"><span>12</span></div>
+                    <div class="calendar-day" role="gridcell"><span>13</span></div>
+                    <div class="calendar-day" role="gridcell"><span>14</span></div>
+                    <div class="calendar-day" role="gridcell"><span>15</span></div>
+                    <div class="calendar-day" role="gridcell"><span>16</span></div>
+                    <div class="calendar-day" role="gridcell"><span>17</span></div>
+                    <div class="calendar-day" role="gridcell"><span>18</span></div>
+                    <div class="calendar-day" role="gridcell"><span>19</span></div>
+                    <div class="calendar-day" role="gridcell"><span>20</span></div>
+                    <div class="calendar-day" role="gridcell"><span>21</span></div>
+                    <div class="calendar-day" role="gridcell"><span>22</span></div>
+                    <div class="calendar-day" role="gridcell"><span>23</span></div>
+                    <div class="calendar-day" role="gridcell"><span>24</span></div>
+                    <div class="calendar-day" role="gridcell"><span>25</span></div>
+                    <div class="calendar-day" role="gridcell"><span>26</span></div>
+                    <div class="calendar-day" role="gridcell"><span>27</span></div>
+                    <div class="calendar-day" role="gridcell"><span>28</span></div>
+                    <div class="calendar-day" role="gridcell"><span>29</span></div>
+                    <div class="calendar-day" role="gridcell"><span>30</span></div>
+                    <div class="calendar-day" role="gridcell" aria-label=""></div>
+                    <div class="calendar-day" role="gridcell" aria-label=""></div>
+                    <div class="calendar-day" role="gridcell" aria-label=""></div>
+                    <div class="calendar-day" role="gridcell" aria-label=""></div>
+                    <div class="calendar-day" role="gridcell" aria-label=""></div>
+                </div>
+
+                <div class="calendar-actions" aria-label="Calendar actions">
+                    <button class="btn" type="button">Download</button>
+                    <button class="btn" type="button">Sync Google</button>
+                    <button class="btn" type="button">Add Recipe</button>
+                    <button class="btn" type="button">Remove Recipe</button>
+                </div>
+            </section>
+        </main>
+    </body>
+</html>

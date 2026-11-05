@@ -27,6 +27,8 @@ public class SecurityConfig {
 						"/css/**",
 						"/images/**",
 						"/search",
+						"/404",
+						"/calendar",
 						"/edit/recipe",
 						"/view-recipe",
 						// TODO - delete account endpoints below.
@@ -35,7 +37,8 @@ public class SecurityConfig {
 						"/account",
 						"/account/liked",
 						"/account/tagged").permitAll()
-						.anyRequest().authenticated())
+						.requestMatchers("/api/**").authenticated()
+						.anyRequest().permitAll())
 				.formLogin(form -> form
 						.loginPage("/login")
 						.usernameParameter("email")

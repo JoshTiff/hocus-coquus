@@ -1,7 +1,16 @@
 package com.hocuscoquus.hocuscoquus.controller;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Controller
 public class PageController {
@@ -49,5 +58,16 @@ public class PageController {
 	@GetMapping("/login")
 	public String login() {
 		return "login";
+	}
+
+	@GetMapping("/404")
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	public String notFound() {
+		return "error/404";
+	}
+
+	@GetMapping("/calendar")
+	public String calendar(){
+		return "calendar";
 	}
 }
