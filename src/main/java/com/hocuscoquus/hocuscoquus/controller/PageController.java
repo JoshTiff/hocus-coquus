@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.hocuscoquus.hocuscoquus.model.IngredientCreateDto;
+
 @Controller
 public class PageController {
 
@@ -69,5 +71,11 @@ public class PageController {
 	@GetMapping("/calendar")
 	public String calendar(){
 		return "calendar";
+	}
+	
+	@GetMapping("/ingredient-create")
+	public String createIngredient(Model model) {
+		model.addAttribute("ingredientCreateDto", new IngredientCreateDto());
+		return "ingredient-create";
 	}
 }

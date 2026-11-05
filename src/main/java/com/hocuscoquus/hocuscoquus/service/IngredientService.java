@@ -2,20 +2,32 @@ package com.hocuscoquus.hocuscoquus.service;
 
 import java.util.Objects;
 
+import org.springframework.stereotype.Service;
+
+import com.hocuscoquus.hocuscoquus.entity.Ingredient;
+import com.hocuscoquus.hocuscoquus.model.IngredientCreateDto;
 import com.hocuscoquus.hocuscoquus.model.IngredientModel;
 import com.hocuscoquus.hocuscoquus.repository.IngredientRepository;
 
-// @Service
+@Service
 public class IngredientService {
-    private final IngredientRepository repository;
+    private final IngredientRepository ingredientRepository;
 
-    public IngredientService(IngredientRepository repository) {
-        this.repository = Objects.requireNonNull(repository);
+    public IngredientService(IngredientRepository ingredientRepository) {
+        this.ingredientRepository = Objects.requireNonNull(ingredientRepository);
     }
 
-    public IngredientModel createIngredient(IngredientModel ingredient) {
+    public IngredientCreateDto createIngredient(IngredientCreateDto ingredientCreateDto) {
         // TODO: add implementation for this method
-        return new IngredientModel();
+    	
+    	Ingredient ingredient = new Ingredient();
+    	ingredient.setIngredientName(ingredientCreateDto.getIngredientName());
+    	ingredient.setQuantity(ingredientCreateDto.getQuantity());
+    	ingredient.setMeasurement(ingredientCreateDto.getMeasurement());
+    	
+    	ingredientRepository.save(ingredient);
+    	
+        return ingredientCreateDto;
     }
 
     public void deleteIngredient(long ingredientId) {
