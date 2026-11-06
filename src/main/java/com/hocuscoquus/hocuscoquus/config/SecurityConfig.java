@@ -25,17 +25,13 @@ public class SecurityConfig {
 				auth -> auth.requestMatchers("/",
 						"/404",
 						"/account/signup",
-						"/calendar",
 						"/css/**",
-						"/edit/recipe",
 						"/error",
 						"/images/**",
 						"/index",
 						"/search",
-						"/signup",
-						"/view-recipe").permitAll()
-						.requestMatchers("/api/**", "/account/delete").authenticated()
-						.anyRequest().permitAll())
+						"/signup").permitAll()
+						.anyRequest().authenticated())
 				.formLogin(form -> form
 						.loginPage("/login")
 						.usernameParameter("email")
