@@ -34,7 +34,7 @@ public class SecurityConfig {
 						"/search",
 						"/signup",
 						"/view-recipe").permitAll()
-						.requestMatchers("/api/**").authenticated()
+						.requestMatchers("/api/**", "/account/delete").authenticated()
 						.anyRequest().permitAll())
 				.formLogin(form -> form
 						.loginPage("/login")

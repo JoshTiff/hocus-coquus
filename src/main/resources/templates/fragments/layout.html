@@ -43,6 +43,13 @@
                 </li>
                 <li>
                     <a
+                        th:href="@{/account/delete}"
+                        th:classappend="${active == 'delete'} ? 'active'"
+                        >Delete Account</a
+                    >
+                </li>
+                <li>
+                    <a
                         th:href="@{/account/liked}"
                         th:classappend="${active == 'liked'} ? 'active'"
                         >Liked Recipes</a

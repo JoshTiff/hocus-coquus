@@ -30,6 +30,10 @@ public class AccountDetails implements UserDetails {
         return account.getEmail();
     }
 
+    public long getAccountId() {
+        return account.getAccountId();
+    }
+
     public String getFirstName() {
         return account.getFirstName();
     }

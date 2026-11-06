@@ -35,6 +35,11 @@ public class PageController {
 		return "account";
 	}
 
+	@GetMapping("/account/delete")
+	public String deleteAccount() {
+		return "account-delete";
+	}
+
 	@GetMapping("/account/liked")
 	public String likedRecipes() {
 		return "account-liked";
