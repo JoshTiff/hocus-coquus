@@ -1,6 +1,7 @@
 package com.hocuscoquus.hocuscoquus.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -42,8 +43,11 @@ public class AccountController {
 
     @DeleteMapping("/{accountId}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteAccount(@PathVariable long accountId, @RequestBody Account account) {
-        accountService.deleteAccount(accountId, account.getEmail(), account.getPassword());
+    public void deleteAccount(
+            @PathVariable long accountId,
+            @RequestParam String password,
+            Authentication auth) {
+        accountService.deleteAccount(accountId, auth.getName(), password);
     }
 
     @PutMapping

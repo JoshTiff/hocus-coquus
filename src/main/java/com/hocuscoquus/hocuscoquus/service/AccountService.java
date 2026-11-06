@@ -43,15 +43,19 @@ public class AccountService implements UserDetailsService {
         // Confirm account exists
         Account acc = accountRepository.findById(accountId);
         if (acc == null) {
-            throw new IllegalArgumentException("Account not found: " + accountId);
+            throw new IllegalArgumentException("Account not found for ID: " + accountId);
         }
 
-        // TODO - Confirm requesting account is the same as account to delete
+        // Confirm requesting account is the same as account to delete
+        if (!email.equals(acc.getEmail())) {
+            throw new IllegalArgumentException(
+                    "Account " + email + " attempting to delete account with email: " + acc.getEmail());
+        }
 
         // Confirm password match
-        String pwd = accountRepository.findById(accountId).getPassword();
-        if (!pwd.equals(password)) {
-            throw new IllegalArgumentException("Invalid password: " + accountId);
+        String stored_password = accountRepository.findById(accountId).getPassword();
+        if (!this.passwordEncoder.matches(password, stored_password)) {
+            throw new IllegalArgumentException("Invalid password for ID: " + accountId);
         }
 
         // Delete the account
