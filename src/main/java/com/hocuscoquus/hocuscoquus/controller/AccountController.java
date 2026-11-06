@@ -61,7 +61,7 @@ public class AccountController {
             return "account-delete";
         }
         new SecurityContextLogoutHandler().logout(request, response, auth);
-        return "login";
+        return "redirect:/";
     }
 
     @PutMapping
