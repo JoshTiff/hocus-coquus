@@ -27,19 +27,22 @@
         <header>
             <a href="/" class="logo">Hocus Coquus</a>
             <nav>
-                <a href="/" class="link">Home</a>
-                <a href="#" class="link">Browse Recipes</a>
                 <!-- Show the following buttons to only authenticated users. -->
                 <div sec:authorize="!isAuthenticated()">
+                    <a href="/" class="link">Home</a>
+                    <a href="#" class="link">Browse Recipes</a>
                     <a th:href="@{/login}" class="btn">Log In</a>
                     <a th:href="@{/signup}" class="btn">Sign Up</a>
                 </div>
                 <div sec:authorize="isAuthenticated()">
+                    <a href="/" class="link">Home</a>
+                    <a href="#" class="link">Browse Recipes</a>
+                    <a href="#" class="link">My Recipes</a>
+                    <a th:href="@{/calendar}" class="link">Calendar</a>
                     <form action="#" th:action="@{/logout}" method="post">
                         <input type="submit" class="btn" value="Logout"/>
                     </form>
                 </div>
-
             </nav>
         </header>
 
