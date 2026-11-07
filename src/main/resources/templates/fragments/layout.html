@@ -27,7 +27,7 @@
                 <a href="#" class="link">Browse Recipes</a>
                 <a href="#" class="link">My Recipes</a>
                 <a th:href="@{/calendar}" class="link">Calendar</a>
-                <a th:href="@{/account}" class="btn">Account</a>
+                <a th:href="@{/account}" class="link">Account</a>
             </nav>
         </header>
 
@@ -39,6 +39,13 @@
                         th:href="@{/account}"
                         th:classappend="${active == 'account'} ? 'active'"
                         >My Account</a
+                    >
+                </li>
+                <li>
+                    <a
+                        th:href="@{/account/delete}"
+                        th:classappend="${active == 'delete'} ? 'active'"
+                        >Delete Account</a
                     >
                 </li>
                 <li>

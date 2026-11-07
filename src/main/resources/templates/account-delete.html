@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragments/layout :: head('Delete Account')}"></head>
+    <body>
+        <header th:replace="~{fragments/layout :: site-header}"></header>
+
+        <div class="account-layout">
+            <aside
+                th:replace="~{fragments/layout :: sidebar('delete')}"
+            ></aside>
+
+            <main class="panel">
+                <h2 class="panel-title">Delete Account</h2>
+
+                <p class="delete-warning">
+                    This permanently deletes your account and cannot be undone.
+                    Enter your password to confirm.
+                </p>
+
+                <p class="form-error" th:if="${deleteError}" th:text="${deleteError}"></p>
+
+                <form
+                    class="account-form"
+                    th:action="@{/account/delete}"
+                    method="post"
+                    onsubmit="return confirm('Are you sure you want to delete your account?');"
+                >
+                    <label for="password">Password</label>
+                    <input
+                        id="password"
+                        name="password"
+                        type="password"
+                        required
+                        autocomplete="current-password"
+                    />
+
+                    <button class="btn" type="submit">Delete Account</button>
+                </form>
+            </main>
+        </div>
+    </body>
+</html>

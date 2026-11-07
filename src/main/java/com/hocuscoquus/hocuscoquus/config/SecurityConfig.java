@@ -19,35 +19,26 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		http.csrf(csrf -> csrf.disable());
+
 		http.authorizeHttpRequests(
 				auth -> auth.requestMatchers("/",
-						"/index",
-						"/signup",
+						"/404",
 						"/account/signup",
 						"/css/**",
+						"/error",
 						"/images/**",
+						"/index",
 						"/search",
-						"/404",
-						"/calendar",
-						"/edit/recipe",
-						"/view-recipe",
-						// TODO - delete account endpoints below.
-						// This is for the sake of seeing account
-						// pages before login is implemented.
-						"/account",
-						"/account/liked",
-						"/account/tagged").permitAll()
-						.requestMatchers("/api/**").authenticated()
-						.anyRequest().permitAll())
+						"/signup").permitAll()
+						.anyRequest().authenticated())
 				.formLogin(form -> form
 						.loginPage("/login")
 						.usernameParameter("email")
 						.defaultSuccessUrl("/index")
-						.permitAll()
-				)
+						.permitAll())
 				.logout((logout) -> logout
-						.logoutSuccessUrl("/index")
-				);
+						.logoutSuccessUrl("/index"));
 		return http.build();
 	}
 }
