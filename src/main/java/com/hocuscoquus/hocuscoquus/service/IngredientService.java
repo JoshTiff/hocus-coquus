@@ -20,10 +20,18 @@ public class IngredientService {
     public IngredientCreateDto createIngredient(IngredientCreateDto ingredientCreateDto) {
         // TODO: add implementation for this method
     	
+    	String name = ingredientCreateDto.getIngredientName().trim().toLowerCase();
+    	
+    	if ( name == null || name.isEmpty() ) {
+    		throw new IllegalArgumentException("Invalid Ingredient Name");
+    	}
+    	if ( ingredientRepository.existsByIngredientName(name) ) {
+    		String msg = "The Ingredient '" + name + "' already exists.";
+            throw new IllegalArgumentException(msg);
+        }
+    	
     	Ingredient ingredient = new Ingredient();
-    	ingredient.setIngredientName(ingredientCreateDto.getIngredientName());
-    	ingredient.setQuantity(ingredientCreateDto.getQuantity());
-    	ingredient.setMeasurement(ingredientCreateDto.getMeasurement());
+    	ingredient.setIngredientName(name);
     	
     	ingredientRepository.save(ingredient);
     	

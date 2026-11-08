@@ -1,6 +1,7 @@
 package com.hocuscoquus.hocuscoquus.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,9 +20,16 @@ public class IngredientController {
 	
 	
 	@PostMapping("/create")
-	public String createIngredient(@ModelAttribute("ingredientCreateDto") IngredientCreateDto ingredientCreateDto) {
+	public String createIngredient(Model model, @ModelAttribute("ingredientCreateDto") IngredientCreateDto ingredientCreateDto) {
 		
-		ingredientService.createIngredient(ingredientCreateDto);
+		try {
+			ingredientService.createIngredient(ingredientCreateDto);
+		} catch (IllegalArgumentException ex) {
+			model.addAttribute("ingredientCreateError", ex.getMessage());
+			model.addAttribute(ingredientCreateDto);
+			return "ingredient-create";
+		}
+		
 		
 		return "index";
 	}

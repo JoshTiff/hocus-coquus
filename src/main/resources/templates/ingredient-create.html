@@ -1,19 +1,16 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-    <head th:replace="~{fragments/layout :: head('Create Recipe')}"></head>
+    <head th:replace="~{fragments/layout :: head('Create Ingredient')}"></head>
     <body>
-		<form th:action="@{/api/ingredient/create}" th:object="${ingredientCreateDto}" method="post">
-			<label for="ingredientName">Ingredient Name</label>
-			<input type="text" name="ingredientName" th:value="*{ingredientName}">
-			<label for="quantity">quantity</label>
-			<input type="number" name="quantity" th:value="*{quantity}">
-			<label for="instructions">measurement</label>
-			<input type="text" name="measurement" th:value="*{measurement}">
-
-			
-			<button type="submit">Create Ingredient</button>
-		</form>
-	
+    	<div>
+	    	<p th:if="${ingredientCreateError}" th:text="${ingredientCreateError}" role="alert"></p>
+			<form th:action="@{/api/ingredient/create}" th:object="${ingredientCreateDto}" method="post">
+				<label for="ingredientName">Ingredient Name</label>
+				<input type="text" name="ingredientName" th:value="*{ingredientName}">
+				<br>
+				<button type="submit">Create Ingredient</button>
+			</form>
+    	</div>
 	</body>
 </html>
 
