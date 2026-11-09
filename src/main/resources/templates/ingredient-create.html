@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragments/layout :: head('Create Ingredient')}"></head>
+    <body>
+    	<div>
+	    	<p th:if="${ingredientCreateError}" th:text="${ingredientCreateError}" role="alert"></p>
+			<form th:action="@{/api/ingredient/create}" th:object="${ingredientCreateDto}" method="post">
+				<label for="ingredientName">Ingredient Name</label>
+				<input type="text" name="ingredientName" th:value="*{ingredientName}">
+				<br>
+				<button type="submit">Create Ingredient</button>
+			</form>
+    	</div>
+	</body>
+</html>
+
+

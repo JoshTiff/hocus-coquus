@@ -21,14 +21,9 @@ public class Ingredient {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long ingredientId;
 	
-	@Column(nullable = false)
+	@Column(nullable = false, unique = true)
 	private String ingredientName;
 	
-	@Column(nullable = false)
-	private int quantity;
-	
-	@Column
-	private String measurement;
 	
 	
 	@ManyToMany
@@ -70,22 +65,6 @@ public class Ingredient {
 
 	public void setIngredientName(String ingredientName) {
 		this.ingredientName = ingredientName;
-	}
-
-	public int getQuantity() {
-		return quantity;
-	}
-
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
-	}
-
-	public String getMeasurement() {
-		return measurement;
-	}
-
-	public void setMeasurement(String measurement) {
-		this.measurement = measurement;
 	}
 
 	public List<Recipe> getRecipes() {
