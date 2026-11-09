@@ -39,8 +39,27 @@ public class AccountService implements UserDetailsService {
         return accountRepository.save(account);
     }
 
-    public void deleteAccount(long accountId) {
-        // TODO: add implementation for this method
+    public void deleteAccount(long accountId, String email, String password) {
+        // Confirm account exists
+        Account acc = accountRepository.findById(accountId);
+        if (acc == null) {
+            throw new IllegalArgumentException("Account not found for ID: " + accountId);
+        }
+
+        // Confirm requesting account is the same as account to delete
+        if (!email.equals(acc.getEmail())) {
+            throw new IllegalArgumentException(
+                    "Account " + email + " attempting to delete account with email: " + acc.getEmail());
+        }
+
+        // Confirm password match
+        String stored_password = accountRepository.findById(accountId).getPassword();
+        if (!this.passwordEncoder.matches(password, stored_password)) {
+            throw new IllegalArgumentException("Invalid password for ID: " + accountId);
+        }
+
+        // Delete the account
+        this.accountRepository.deleteById(accountId);
     }
 
     public Account updateAccount(Account account) {

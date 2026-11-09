@@ -1,5 +1,11 @@
 package com.hocuscoquus.hocuscoquus.controller;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -9,8 +15,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
+import org.springframework.web.bind.annotation.ResponseStatus;
 import com.hocuscoquus.hocuscoquus.entity.Account;
+import com.hocuscoquus.hocuscoquus.entity.AccountDetails;
 import com.hocuscoquus.hocuscoquus.service.AccountService;
 
 @Controller
@@ -39,9 +46,22 @@ public class AccountController {
         return "login";
     }
 
-    @DeleteMapping("/{accountId}")
-    public void deleteAccount(@PathVariable long accountId) {
-        accountService.deleteAccount(accountId);
+    @PostMapping("/delete")
+    public String deleteAccount(
+            @AuthenticationPrincipal AccountDetails details,
+            @RequestParam String password,
+            Authentication auth,
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model) {
+        try {
+            accountService.deleteAccount(details.getAccountId(), details.getUsername(), password);
+        } catch (IllegalArgumentException ex) {
+            model.addAttribute("deleteError", "Invalid password.");
+            return "account-delete";
+        }
+        new SecurityContextLogoutHandler().logout(request, response, auth);
+        return "redirect:/";
     }
 
     @PutMapping

@@ -55,6 +55,12 @@ nav {
     gap: 1rem;
 }
 
+nav > div {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
 nav a.link {
     color: var(--white);
     text-decoration: none;

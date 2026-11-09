@@ -216,3 +216,22 @@
     font-weight: bold;
     text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
 }
+
+/* ---------- Delete Account ---------- */
+.delete-warning {
+    max-width: 22rem;
+    margin: 0 auto 1rem;
+    text-align: center;
+}
+
+.form-error {
+    max-width: 22rem;
+    margin: 0 auto 1rem;
+    text-align: center;
+    color: #ff8a8a;
+    font-weight: bold;
+}
+
+.account-form .btn {
+    align-self: center;
+}
