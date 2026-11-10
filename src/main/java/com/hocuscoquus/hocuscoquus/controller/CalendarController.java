@@ -1,22 +1,18 @@
 package com.hocuscoquus.hocuscoquus.controller;
 
-import org.springframework.context.annotation.Profile;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
-import com.hocuscoquus.hocuscoquus.model.Calendar;
-import com.hocuscoquus.hocuscoquus.model.CalendarEntry;
+import com.hocuscoquus.hocuscoquus.entity.AccountDetails;
+import com.hocuscoquus.hocuscoquus.model.CalendarCreateDto;
 import com.hocuscoquus.hocuscoquus.service.CalendarService;
 
-@Profile("calendar") // TODO: remove once activate controller
-@RestController
-@RequestMapping("/api/calendars")
+@Controller
 public class CalendarController {
     private final CalendarService calendarService;
 
@@ -24,33 +20,50 @@ public class CalendarController {
         this.calendarService = calendarService;
     }
 
-    @PostMapping
-    public Calendar createCalendar(@RequestParam String name) {
-        return calendarService.createCalendar(name);
+    @GetMapping("/calendar")
+    public String calendar(
+            @AuthenticationPrincipal AccountDetails details,
+            @RequestParam(required = false) Long calendarId,
+            Model model) {
+        if (calendarId != null) {
+            model.addAttribute("currentCalendar", calendarService.getCalendarForAccount(calendarId, details.getAccountId()));
+        }
+        return "calendar";
     }
 
-    @DeleteMapping("/{calendarId}")
-    public void deleteCalendar(@PathVariable long calendarId) {
-        calendarService.deleteCalendar(calendarId);
+    @GetMapping("/calendar/switch")
+    public String switchCalendarPage(
+            @AuthenticationPrincipal AccountDetails details,
+            Model model) {
+        model.addAttribute("calendars", calendarService.getCalendarsForAccount(details.getAccountId()));
+        return "calendar-switch";
     }
 
-    @PostMapping("/{calendarId}/entries")
-    public CalendarEntry addEntry(@PathVariable long calendarId, @RequestBody CalendarEntry entry) {
-        return calendarService.addEntry(calendarId, entry);
+    @PostMapping("/api/calendar/create")
+    public String createCalendar(
+            @AuthenticationPrincipal AccountDetails details,
+            @ModelAttribute("calendarCreateDto") CalendarCreateDto calendarCreateDto,
+            Model model) {
+        try {
+            long calendarId = calendarService.createCalendar(calendarCreateDto, details.getAccountId()).getCalendarId();
+            return "redirect:/calendar?calendarId=" + calendarId;
+        } catch (IllegalArgumentException ex) {
+            model.addAttribute("calendarCreateError", ex.getMessage());
+            return "calendar-create";
+        }
     }
 
-    @DeleteMapping("/entries/{calendarEntryId}")
-    public void deleteEntry(@PathVariable long calendarEntryId) {
-        calendarService.deleteEntry(calendarEntryId);
+    @PostMapping("/api/calendar/switch")
+    public String switchCalendar(
+            @AuthenticationPrincipal AccountDetails details,
+            @RequestParam long calendarId,
+            Model model) {
+        if (calendarService.getCalendarForAccount(calendarId, details.getAccountId()) == null) {
+            model.addAttribute("calendarSwitchError", "Calendar not found.");
+            model.addAttribute("calendars", calendarService.getCalendarsForAccount(details.getAccountId()));
+            return "calendar-switch";
+        }
+        return "redirect:/calendar?calendarId=" + calendarId;
     }
-
-    @PutMapping("/entries")
-    public CalendarEntry updateEntry(@RequestBody CalendarEntry entry) {
-        return calendarService.updateEntry(entry);
-    }
-
-    // need printRecipe, downloadCalendar, syncGoogleAccount?
-    
-    // add way to go cycle months (Aidan can do this later)
 
 }

@@ -1,5 +1,6 @@
 package com.hocuscoquus.hocuscoquus.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.Column;
@@ -27,7 +28,7 @@ public class Calendar {
     private String description;
 	
 	@OneToMany(mappedBy="calendar")
-    private List<CalendarEntry> entries;
+    private List<CalendarEntry> entries = new ArrayList<>();
 	
 	@ManyToOne
 	@JoinColumn(name="account_id")
@@ -74,6 +75,14 @@ public class Calendar {
 
 	public void setEntries(List<CalendarEntry> entries) {
 		this.entries = entries;
+	}
+
+	public Account getAccount() {
+		return account;
+	}
+
+	public void setAccount(Account account) {
+		this.account = account;
 	}
     
     

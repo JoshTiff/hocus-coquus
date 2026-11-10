@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragments/layout :: head('Switch Calendar')}"></head>
+    <body>
+        <div>
+            <p th:if="${calendarSwitchError}" th:text="${calendarSwitchError}" role="alert"></p>
+            <form th:if="${not #lists.isEmpty(calendars)}" th:action="@{/api/calendar/switch}" method="post">
+                <label for="calendarId">Calendar</label>
+                <select id="calendarId" name="calendarId">
+                    <option th:each="calendar : ${calendars}"
+                            th:value="${calendar.calendarId}"
+                            th:text="${calendar.calendarName}">Calendar</option>
+                </select>
+                <br>
+                <button type="submit">Switch Calendar</button>
+            </form>
+            <p th:if="${#lists.isEmpty(calendars)}">You have not created any calendars yet.</p>
+        </div>
+    </body>
+</html>

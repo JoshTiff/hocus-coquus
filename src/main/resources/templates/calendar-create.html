@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragments/layout :: head('Create Calendar')}"></head>
+    <body>
+        <div>
+            <p th:if="${calendarCreateError}" th:text="${calendarCreateError}" role="alert"></p>
+            <form th:action="@{/api/calendar/create}" th:object="${calendarCreateDto}" method="post">
+                <label for="calendarName">Calendar Name</label>
+                <input id="calendarName" type="text" th:field="*{calendarName}">
+                <br>
+                <label for="description">Description</label>
+                <textarea id="description" th:field="*{description}"></textarea>
+                <br>
+                <button type="submit">Create Calendar</button>
+            </form>
+        </div>
+    </body>
+</html>

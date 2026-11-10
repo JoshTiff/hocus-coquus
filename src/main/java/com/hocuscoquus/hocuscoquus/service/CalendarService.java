@@ -1,23 +1,63 @@
 package com.hocuscoquus.hocuscoquus.service;
 
 import java.util.Objects;
+import java.util.List;
 
+import org.springframework.stereotype.Service;
+
+import com.hocuscoquus.hocuscoquus.entity.Account;
+import com.hocuscoquus.hocuscoquus.model.CalendarCreateDto;
 import com.hocuscoquus.hocuscoquus.model.Calendar;
 import com.hocuscoquus.hocuscoquus.model.CalendarEntry;
+import com.hocuscoquus.hocuscoquus.repository.AccountRepository;
 import com.hocuscoquus.hocuscoquus.repository.CalendarEntryRepository;
 import com.hocuscoquus.hocuscoquus.repository.CalendarRepository;
 
-// @Service
+@Service
 public class CalendarService {
     private final CalendarRepository calendarRepository;
     private final CalendarEntryRepository calendarEntryRepository;
+    private final AccountRepository accountRepository;
 
 
     // TODO: review/add constructor(s)
 
-    public CalendarService(CalendarRepository calendarRepository, CalendarEntryRepository calendarEntryRepository) {
+    public CalendarService(
+            CalendarRepository calendarRepository,
+            CalendarEntryRepository calendarEntryRepository,
+            AccountRepository accountRepository) {
         this.calendarRepository = Objects.requireNonNull(calendarRepository);
         this.calendarEntryRepository = Objects.requireNonNull(calendarEntryRepository);
+        this.accountRepository = Objects.requireNonNull(accountRepository);
+    }
+
+    public com.hocuscoquus.hocuscoquus.entity.Calendar createCalendar(
+            CalendarCreateDto calendarCreateDto,
+            long accountId) {
+        String name = calendarCreateDto.getCalendarName();
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("A calendar name is required.");
+        }
+
+        Account account = accountRepository.findById(accountId);
+        if (account == null) {
+            throw new IllegalArgumentException("Account not found for ID: " + accountId);
+        }
+
+        com.hocuscoquus.hocuscoquus.entity.Calendar calendar = new com.hocuscoquus.hocuscoquus.entity.Calendar();
+        calendar.setCalendarName(name.trim());
+        String description = calendarCreateDto.getDescription();
+        calendar.setDescription(description == null || description.isBlank() ? null : description.trim());
+        calendar.setAccount(account);
+        return calendarRepository.save(calendar);
+    }
+
+    public com.hocuscoquus.hocuscoquus.entity.Calendar getCalendarForAccount(long calendarId, long accountId) {
+        return calendarRepository.findByCalendarIdAndAccount_AccountId(calendarId, accountId);
+    }
+
+    public List<com.hocuscoquus.hocuscoquus.entity.Calendar> getCalendarsForAccount(long accountId) {
+        return calendarRepository.findByAccount_AccountId(accountId);
     }
 
     public Calendar createCalendar(String name) {
