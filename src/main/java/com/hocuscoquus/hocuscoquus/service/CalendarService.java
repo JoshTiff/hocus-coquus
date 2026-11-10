@@ -2,16 +2,18 @@ package com.hocuscoquus.hocuscoquus.service;
 
 import java.util.Objects;
 
-import com.hocuscoquus.hocuscoquus.model.Calendar;
-import com.hocuscoquus.hocuscoquus.model.CalendarEntry;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.hocuscoquus.hocuscoquus.entity.Calendar;
+import com.hocuscoquus.hocuscoquus.entity.CalendarEntry;
 import com.hocuscoquus.hocuscoquus.repository.CalendarEntryRepository;
 import com.hocuscoquus.hocuscoquus.repository.CalendarRepository;
 
-// @Service
+@Service
 public class CalendarService {
     private final CalendarRepository calendarRepository;
     private final CalendarEntryRepository calendarEntryRepository;
-
 
     // TODO: review/add constructor(s)
 
@@ -25,8 +27,24 @@ public class CalendarService {
         return new Calendar();
     }
 
-    public void deleteCalendar(long calendarId) {
-        // TODO: add implementation for this method
+    @Transactional
+    public void deleteCalendar(long requesterId, long calendarId) {
+        // Confirm calendar exists
+        Calendar cal = calendarRepository.findById(calendarId);
+        if (cal == null) {
+            throw new IllegalArgumentException("Calendar not found for ID: " + calendarId);
+        }
+
+        // Confirm requesting account owns calendar to delete
+        long ownerId = cal.getAccountId();
+        if (requesterId != ownerId) {
+            throw new IllegalArgumentException("Account with ID " + requesterId
+                    + " attempting to delete calendar from account with ID " + ownerId);
+        }
+
+        // Delete calendar
+        this.calendarEntryRepository.deleteByCalendar_CalendarId(calendarId);
+        this.calendarRepository.deleteById(calendarId);
     }
 
     /**
@@ -76,7 +94,7 @@ public class CalendarService {
      * @return true when calendar download is successful, false otherwise
      */
     public boolean downloadCalendar(long calendarId) {
-        
+
         // TODO: add implementation for this method
 
         return false;
@@ -90,9 +108,9 @@ public class CalendarService {
      * @return true when sync with Google Account is successful, false otherwise
      */
     public boolean syncGoogleAccount(long calendarId, String email) {
-        
+
         // TODO: add implementation for this method
-        
+
         return false;
     }
 }

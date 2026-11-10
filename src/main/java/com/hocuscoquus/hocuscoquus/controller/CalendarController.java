@@ -1,6 +1,6 @@
 package com.hocuscoquus.hocuscoquus.controller;
 
-import org.springframework.context.annotation.Profile;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hocuscoquus.hocuscoquus.model.Calendar;
-import com.hocuscoquus.hocuscoquus.model.CalendarEntry;
+import com.hocuscoquus.hocuscoquus.entity.AccountDetails;
+import com.hocuscoquus.hocuscoquus.entity.Calendar;
+import com.hocuscoquus.hocuscoquus.entity.CalendarEntry;
 import com.hocuscoquus.hocuscoquus.service.CalendarService;
 
-@Profile("calendar") // TODO: remove once activate controller
 @RestController
 @RequestMapping("/api/calendars")
 public class CalendarController {
@@ -30,8 +30,10 @@ public class CalendarController {
     }
 
     @DeleteMapping("/{calendarId}")
-    public void deleteCalendar(@PathVariable long calendarId) {
-        calendarService.deleteCalendar(calendarId);
+    public void deleteCalendar(
+            @AuthenticationPrincipal AccountDetails details,
+            @PathVariable long calendarId) {
+        calendarService.deleteCalendar(details.getAccountId(), calendarId);
     }
 
     @PostMapping("/{calendarId}/entries")
@@ -50,7 +52,7 @@ public class CalendarController {
     }
 
     // need printRecipe, downloadCalendar, syncGoogleAccount?
-    
+
     // add way to go cycle months (Aidan can do this later)
 
 }
