@@ -6,10 +6,10 @@
             <p th:if="${calendarCreateError}" th:text="${calendarCreateError}" role="alert"></p>
             <form th:action="@{/api/calendar/create}" th:object="${calendarCreateDto}" method="post">
                 <label for="calendarName">Calendar Name</label>
-                <input id="calendarName" type="text" th:field="*{calendarName}">
+                <input id="calendarName" type="text" th:field="*{calendarName}" maxlength="255">
                 <br>
                 <label for="description">Description</label>
-                <textarea id="description" th:field="*{description}"></textarea>
+                <textarea id="description" th:field="*{description}" maxlength="255"></textarea>
                 <br>
                 <button type="submit">Create Calendar</button>
             </form>

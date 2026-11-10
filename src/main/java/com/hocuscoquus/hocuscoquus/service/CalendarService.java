@@ -15,6 +15,8 @@ import com.hocuscoquus.hocuscoquus.repository.CalendarRepository;
 
 @Service
 public class CalendarService {
+    private static final int MAX_CALENDAR_TEXT_LENGTH = 255;
+
     private final CalendarRepository calendarRepository;
     private final CalendarEntryRepository calendarEntryRepository;
     private final AccountRepository accountRepository;
@@ -38,6 +40,18 @@ public class CalendarService {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("A calendar name is required.");
         }
+        name = name.trim();
+        if (name.length() > MAX_CALENDAR_TEXT_LENGTH) {
+            throw new IllegalArgumentException("A calendar name cannot exceed 255 characters.");
+        }
+
+        String description = calendarCreateDto.getDescription();
+        if (description != null) {
+            description = description.trim();
+            if (description.length() > MAX_CALENDAR_TEXT_LENGTH) {
+                throw new IllegalArgumentException("A calendar description cannot exceed 255 characters.");
+            }
+        }
 
         Account account = accountRepository.findById(accountId);
         if (account == null) {
@@ -45,9 +59,8 @@ public class CalendarService {
         }
 
         com.hocuscoquus.hocuscoquus.entity.Calendar calendar = new com.hocuscoquus.hocuscoquus.entity.Calendar();
-        calendar.setCalendarName(name.trim());
-        String description = calendarCreateDto.getDescription();
-        calendar.setDescription(description == null || description.isBlank() ? null : description.trim());
+        calendar.setCalendarName(name);
+        calendar.setDescription(description == null || description.isBlank() ? null : description);
         calendar.setAccount(account);
         return calendarRepository.save(calendar);
     }
