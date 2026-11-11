@@ -4,28 +4,81 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.hocuscoquus.hocuscoquus.entity.Account;
+import com.hocuscoquus.hocuscoquus.entity.AccountDetails;
+import com.hocuscoquus.hocuscoquus.entity.Ingredient;
+import com.hocuscoquus.hocuscoquus.entity.Recipe;
+import com.hocuscoquus.hocuscoquus.entity.RecipeIngredient;
+import com.hocuscoquus.hocuscoquus.model.IngredientCreateDto;
 import com.hocuscoquus.hocuscoquus.model.IngredientModel;
 import com.hocuscoquus.hocuscoquus.model.ReactionType;
-import com.hocuscoquus.hocuscoquus.model.Recipe;
+import com.hocuscoquus.hocuscoquus.model.RecipeCreateRequest;
+import com.hocuscoquus.hocuscoquus.model.RecipeIngredientCreateRequest;
+import com.hocuscoquus.hocuscoquus.repository.IngredientRepository;
+import com.hocuscoquus.hocuscoquus.repository.RecipeIngredientRepository;
 import com.hocuscoquus.hocuscoquus.repository.RecipeRepository;
-import com.hocuscoquus.hocuscoquus.repository.RecipeTagRepository;
 
-// @Service 
+@Service
 public class RecipeService {
+	
+	private final IngredientService ingredientService;
     private final RecipeRepository recipeRepository;
-    private final RecipeTagRepository recipeTagRepository;
+    private final IngredientRepository ingredientRepository;
 
     // TODO: review/add constructor(s)
-    public RecipeService(RecipeRepository recipeRepository, RecipeTagRepository recipeTagRepository) {
-        this.recipeRepository = Objects.requireNonNull(recipeRepository);
-        this.recipeTagRepository = Objects.requireNonNull(recipeTagRepository);
+    public RecipeService(IngredientService ingredientService, RecipeRepository recipeRepository, RecipeIngredientRepository recipeIngredientRepository, IngredientRepository ingredientRepository) {
+    	this.ingredientService = Objects.requireNonNull(ingredientService);
+    	this.recipeRepository = Objects.requireNonNull(recipeRepository);
+    	this.ingredientRepository = Objects.requireNonNull(ingredientRepository);
     }
 
-    public Recipe createRecipe(Recipe recipe) {
-        // TODO: add implementation for this method
+    
+    @Transactional
+    public Recipe createRecipe(RecipeCreateRequest request) {
 
-        return new Recipe(0, null, null, null);
+    	Account account = ((AccountDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getAccount();
+    	
+    	List<RecipeIngredient> recipeIngredientList = new ArrayList<>();
+    	
+    	Recipe r = Recipe.builder()
+    			.setRecipeName(request.recipeName())
+    			.setRecipeDescription(request.recipeDescription())
+    			.setInstructions(request.instructions())
+    			.setImage(request.image())
+    			.setRecipeIngredients(recipeIngredientList)
+    			.setAccount(account)
+    			.build();
+    	 
+    	for (RecipeIngredientCreateRequest i : request.ingredients()) {
+    		
+    		//check if ingredient exists
+    		Ingredient ingredient = ingredientRepository.findByIngredientName(i.ingredient().trim().toLowerCase());
+    		
+    		//if it doesn't, create it
+    		if (ingredient == null) {
+    			IngredientCreateDto ic = new IngredientCreateDto();
+    			ic.setIngredientName(i.ingredient().trim().toLowerCase());
+    			ingredient = ingredientService.createIngredient(ic);
+    		}
+    		
+    		//create a new RecipeIngredient
+    		RecipeIngredient ri = new RecipeIngredient();
+    		ri.setIngredient(ingredient);
+    		ri.setMeasurement(i.measurement());
+    		ri.setQuantity(i.quantity());
+    		ri.setRecipe(r);
+    		//add it to our Recipe's Ingredient List
+    		r.getRecipeIngredients().add(ri);
+    	}
+    	
+    	
+    	return recipeRepository.save(r);
     }
+
 
     public List<Recipe> searchRecipes() {
         // TODO: add implementation for this method
@@ -36,7 +89,7 @@ public class RecipeService {
 
     public Recipe updateRecipe(Recipe recipe) {
         // TODO: add implementation for this method
-        return new Recipe(0, null, null, null);
+        return null;
     }
 
     public void deleteRecipe(long recipeId) {
@@ -45,17 +98,17 @@ public class RecipeService {
 
     public Recipe getRandomRecipe() {
         // TODO: add implementation for this method
-        return new Recipe(0, null, null, null);
+        return null;
     }
 
     public Recipe likeRecipe(long recipeId, long accountId) {
         // TODO: add implementation for this method
-        return new Recipe(0, null, null, null);
+        return null;
     }
 
     public Recipe dislikeRecipe(long recipeId, long accountId) {
         // TODO: add implementation for this method
-        return new Recipe(0, null, null, null);
+        return null;
     }
 
     /**

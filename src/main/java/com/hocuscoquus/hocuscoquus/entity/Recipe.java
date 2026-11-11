@@ -3,6 +3,8 @@ package com.hocuscoquus.hocuscoquus.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -34,8 +36,8 @@ public class Recipe {
 	@Column
     private String image;
 	
-	@ManyToMany(mappedBy="recipes")
-    private List<Ingredient> ingredients = new ArrayList<>();
+	@OneToMany(mappedBy="recipe", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RecipeIngredient> recipeIngredients = new ArrayList<>();
     
 	@OneToMany(mappedBy="recipe")
 	private final List<RecipeTag> recipeTags = new ArrayList<>();
@@ -53,9 +55,19 @@ public class Recipe {
     @JoinColumn(name="account_id")
     private Account account;
 
-    public Recipe() {
+    private Recipe() {
     	
     }
+    
+    private Recipe(String recipeName, String recipeDescription, String instructions, String image, List<RecipeIngredient> ingredients, Account account) {
+		this.recipeName = recipeName;
+		this.recipeDescription = recipeDescription;
+		this.instructions = instructions;
+		this.image = image;
+		this.recipeIngredients = ingredients;
+		this.account = account;
+	}
+    
     
 	public long getRecipeId() {
 		return recipeId;
@@ -105,10 +117,6 @@ public class Recipe {
 		this.calendarEntries = calendarEntries;
 	}
 
-	public List<Ingredient> getIngredients() {
-		return ingredients;
-	}
-
 	public List<RecipeTag> getRecipeTags() {
 		return recipeTags;
 	}
@@ -132,12 +140,65 @@ public class Recipe {
 	public void setRecipeId(long recipeId) {
 		this.recipeId = recipeId;
 	}
-
-	public void setIngredients(List<Ingredient> ingredients) {
-		this.ingredients = ingredients;
-	}
-    
 	
+	public List<RecipeIngredient> getRecipeIngredients() {
+		return recipeIngredients;
+	}
+
+	public void setRecipeIngredients(List<RecipeIngredient> recipeIngredients) {
+		this.recipeIngredients = recipeIngredients;
+	}
+
+	//Builder class
+    public static RecipeBuilder builder() {
+    	return new RecipeBuilder();
+    }
     
+	public static class RecipeBuilder {
+
+	    private String recipeName;
+	    private String recipeDescription;
+	    private String instructions;
+	    private String image;
+	    private List<RecipeIngredient> recipeIngredients = new ArrayList<>();
+	    private Account account;
+	    
+
+		public RecipeBuilder setRecipeName(String recipeName) {
+			this.recipeName = recipeName;
+			return this;
+		}
+
+		public RecipeBuilder setRecipeDescription(String recipeDescription) {
+			this.recipeDescription = recipeDescription;
+			return this;
+		}
+
+		public RecipeBuilder setInstructions(String instructions) {
+			this.instructions = instructions;
+			return this;
+		}
+
+		public RecipeBuilder setImage(String image) {
+			this.image = image;
+			return this;
+		}
+
+		public RecipeBuilder setRecipeIngredients(List<RecipeIngredient> recipeIngredients) {
+			this.recipeIngredients = recipeIngredients;
+			return this;
+		}
+
+		public RecipeBuilder setAccount(Account account) {
+			this.account = account;
+			return this;
+		}
+		
+		public Recipe build() {
+			return new Recipe(recipeName, recipeDescription, instructions, image, recipeIngredients, account);
+		}
+	    
+	}
+	
     
 }

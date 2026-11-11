@@ -17,7 +17,7 @@ public class IngredientService {
         this.ingredientRepository = Objects.requireNonNull(ingredientRepository);
     }
 
-    public IngredientCreateDto createIngredient(IngredientCreateDto ingredientCreateDto) {
+    public Ingredient createIngredient(IngredientCreateDto ingredientCreateDto) {
         // TODO: add implementation for this method
     	
     	String name = ingredientCreateDto.getIngredientName().trim().toLowerCase();
@@ -33,9 +33,7 @@ public class IngredientService {
     	Ingredient ingredient = new Ingredient();
     	ingredient.setIngredientName(name);
     	
-    	ingredientRepository.save(ingredient);
-    	
-        return ingredientCreateDto;
+    	return ingredientRepository.save(ingredient);
     }
 
     public void deleteIngredient(long ingredientId) {
