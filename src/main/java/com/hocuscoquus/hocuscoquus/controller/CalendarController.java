@@ -42,8 +42,10 @@ public class CalendarController {
     }
 
     @DeleteMapping("/entries/{calendarEntryId}")
-    public void deleteEntry(@PathVariable long calendarEntryId) {
-        calendarService.deleteEntry(calendarEntryId);
+    public void deleteEntry(
+        @AuthenticationPrincipal AccountDetails details,
+        @PathVariable long calendarEntryId) {
+        calendarService.deleteEntry(details.getAccountId(), calendarEntryId);
     }
 
     @PutMapping("/entries")
