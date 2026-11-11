@@ -3,7 +3,7 @@ package com.hocuscoquus.hocuscoquus.service;
 import java.util.Objects;
 
 import com.hocuscoquus.hocuscoquus.model.CalendarEntry;
-import com.hocuscoquus.hocuscoquus.model.Recipe;
+import com.hocuscoquus.hocuscoquus.entity.Recipe;
 import com.hocuscoquus.hocuscoquus.repository.CalendarEntryRepository;
 
 // @Service

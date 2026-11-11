@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.hocuscoquus.hocuscoquus.entity.Recipe;
+
 /**
  * Represents an entry in a calendar.
  */

@@ -6,8 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.hocuscoquus.hocuscoquus.entity.Ingredient;
 import com.hocuscoquus.hocuscoquus.entity.Recipe;
+import com.hocuscoquus.hocuscoquus.entity.RecipeIngredient;
 
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     Recipe findById(long recipeId);
-    List<Recipe> findByIngredients(List<Ingredient> ingredients);
+    //List<Recipe> findByRecipeIngredients_Ingredient(List<RecipeIngredient> recipeIngredients);
+
 }

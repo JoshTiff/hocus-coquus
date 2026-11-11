@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -24,14 +25,6 @@ public class Ingredient {
 	@Column(nullable = false, unique = true)
 	private String ingredientName;
 	
-	
-	
-	@ManyToMany
-	@JoinTable(
-			name = "ingredient_recipe", 
-			joinColumns = @JoinColumn(name = "ingredient_id"), 
-			inverseJoinColumns = @JoinColumn(name = "recipe_id"))
-	private List<Recipe> recipes = new ArrayList<>();
 	
 	@ManyToMany
 	@JoinTable(
@@ -67,14 +60,6 @@ public class Ingredient {
 		this.ingredientName = ingredientName;
 	}
 
-	public List<Recipe> getRecipes() {
-		return recipes;
-	}
-
-	public void setRecipes(List<Recipe> recipes) {
-		this.recipes = recipes;
-	}
-
 	public List<DietaryRestriction> getDietaryRestriction() {
 		return dietaryRestriction;
 	}
@@ -89,9 +74,7 @@ public class Ingredient {
 
 	public void setAccounts(List<Account> accounts) {
 		this.accounts = accounts;
-	}
-	
-	
+	}	
 	
 	
 }
