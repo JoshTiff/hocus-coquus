@@ -6,8 +6,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.hocuscoquus.hocuscoquus.entity.Account;
+import com.hocuscoquus.hocuscoquus.entity.Calendar;
 import com.hocuscoquus.hocuscoquus.model.CalendarCreateDto;
-import com.hocuscoquus.hocuscoquus.model.Calendar;
 import com.hocuscoquus.hocuscoquus.model.CalendarEntry;
 import com.hocuscoquus.hocuscoquus.repository.AccountRepository;
 import com.hocuscoquus.hocuscoquus.repository.CalendarEntryRepository;
@@ -33,7 +33,7 @@ public class CalendarService {
         this.accountRepository = Objects.requireNonNull(accountRepository);
     }
 
-    public com.hocuscoquus.hocuscoquus.entity.Calendar createCalendar(
+    public Calendar createCalendar(
             CalendarCreateDto calendarCreateDto,
             long accountId) {
         String name = calendarCreateDto.getCalendarName();
@@ -58,18 +58,18 @@ public class CalendarService {
             throw new IllegalArgumentException("Account not found for ID: " + accountId);
         }
 
-        com.hocuscoquus.hocuscoquus.entity.Calendar calendar = new com.hocuscoquus.hocuscoquus.entity.Calendar();
+        Calendar calendar = new Calendar();
         calendar.setCalendarName(name);
         calendar.setDescription(description == null || description.isBlank() ? null : description);
         calendar.setAccount(account);
         return calendarRepository.save(calendar);
     }
 
-    public com.hocuscoquus.hocuscoquus.entity.Calendar getCalendarForAccount(long calendarId, long accountId) {
+    public Calendar getCalendarForAccount(long calendarId, long accountId) {
         return calendarRepository.findByCalendarIdAndAccount_AccountId(calendarId, accountId);
     }
 
-    public List<com.hocuscoquus.hocuscoquus.entity.Calendar> getCalendarsForAccount(long accountId) {
+    public List<Calendar> getCalendarsForAccount(long accountId) {
         return calendarRepository.findByAccount_AccountId(accountId);
     }
 
