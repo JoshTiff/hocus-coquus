@@ -9,7 +9,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 public class AccountDetails implements UserDetails {
 
-    private final Account account;
+	
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private final Account account;
 
     public AccountDetails(Account account) {
         this.account = account;
@@ -36,5 +41,9 @@ public class AccountDetails implements UserDetails {
 
     public String getFirstName() {
         return account.getFirstName();
+    }
+    
+    public Account getAccount() {
+    	return account;
     }
 }
