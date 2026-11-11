@@ -28,7 +28,7 @@ public class CalendarService {
     }
 
     @Transactional
-    public void deleteCalendar(long requesterId, long calendarId) {
+    public boolean deleteCalendar(long requesterId, long calendarId) {
         // Confirm calendar exists
         Calendar cal = calendarRepository.findById(calendarId);
         if (cal == null) {
@@ -45,6 +45,7 @@ public class CalendarService {
         // Delete calendar
         this.calendarEntryRepository.deleteByCalendar_CalendarId(calendarId);
         this.calendarRepository.deleteById(calendarId);
+        return true;
     }
 
     /**
@@ -72,7 +73,7 @@ public class CalendarService {
      *
      * @param calendarEntryId the ID of the calendar entry to remove
      */
-    public void deleteEntry(long requesterId, long calendarEntryId) {
+    public boolean deleteEntry(long requesterId, long calendarEntryId) {
         // Confirm calendar entry exists
         CalendarEntry entry = calendarEntryRepository.findById(calendarEntryId);
         if (entry == null) {
@@ -88,6 +89,7 @@ public class CalendarService {
 
         // Delete calendar entry
         this.calendarEntryRepository.deleteById(calendarEntryId);
+        return true;
     }
 
     public CalendarEntry updateEntry(CalendarEntry entry) {
