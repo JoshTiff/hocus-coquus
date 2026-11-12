@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class RecipeHandler {
@@ -100,6 +101,15 @@ public class RecipeHandler {
 		);
 
 		return ResponseEntity.ok(response);
+	}
+
+	public ResponseEntity<Map<ReactionType, Integer>> processReactionCreateRequest(
+			long recipeId, ReactionCreateRequest request) {
+		return ResponseEntity.ok(recipeService.addReactionToRecipe(recipeId, request.reactionType()));
+	}
+
+	public ResponseEntity<Map<ReactionType, Integer>> processReactionDeleteRequest(long recipeId) {
+		return ResponseEntity.ok(recipeService.removeReactionFromRecipe(recipeId));
 	}
     
 }
