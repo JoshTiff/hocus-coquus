@@ -46,10 +46,6 @@ public class RecipeNoteService {
         Recipe recipe = recipeRepository.findById(request.recipeId())
         .orElseThrow(() -> new NoSuchElementException("Recipe not found"));
 
-        if (recipe == null) {
-            throw new NoSuchElementException("Recipe not found");
-        }
-
         Account account = accountRepository.findById(accountId);
 
         if (account == null) {
