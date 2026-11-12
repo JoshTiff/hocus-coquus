@@ -1,34 +1,39 @@
 package com.hocuscoquus.hocuscoquus.controller;
 
-import org.springframework.context.annotation.Profile;
+import java.util.Map;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hocuscoquus.hocuscoquus.model.Reaction;
+import com.hocuscoquus.hocuscoquus.handler.ReactionHandler;
+import com.hocuscoquus.hocuscoquus.model.ReactionCreateRequest;
 import com.hocuscoquus.hocuscoquus.model.ReactionType;
-import com.hocuscoquus.hocuscoquus.service.ReactionService;
 
-@Profile("reaction") // TODO: remove once activate controller
+import jakarta.validation.Valid;
+
 @RestController
-@RequestMapping("/api/reactions")
+@RequestMapping("/api/recipe")
 public class ReactionController {
-    private final ReactionService reactionService;
+    private final ReactionHandler reactionHandler;
 
-    public ReactionController(ReactionService reactionService) {
-        this.reactionService = reactionService;
+    public ReactionController(ReactionHandler reactionHandler) {
+        this.reactionHandler = reactionHandler;
     }
     
     @PostMapping("/{recipeId}/reactions")
-    public Reaction addReactionToRecipe(@PathVariable long recipeId, @RequestParam long accountId, @RequestParam ReactionType type) {
-        return reactionService.addReactionToRecipe(recipeId, accountId, type);
+    public ResponseEntity<Map<ReactionType, Integer>> addReactionToRecipe(
+            @PathVariable long recipeId,
+            @Valid @RequestBody ReactionCreateRequest request) {
+        return reactionHandler.processReactionCreateRequest(recipeId, request);
     }
 
     @DeleteMapping("/{recipeId}/reactions")
-    public void removeReactionFromRecipe(@PathVariable long recipeId, @RequestParam long accountId) {
-        reactionService.removeReactionFromRecipe(recipeId, accountId);
+    public ResponseEntity<Map<ReactionType, Integer>> removeReactionFromRecipe(@PathVariable long recipeId) {
+        return reactionHandler.processReactionDeleteRequest(recipeId);
     }
 }

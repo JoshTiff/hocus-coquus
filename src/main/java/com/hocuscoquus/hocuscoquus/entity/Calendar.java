@@ -84,6 +84,9 @@ public class Calendar {
 	public void setAccount(Account account) {
 		this.account = account;
 	}
-    
+
+	public long getAccountId() {
+		return this.account.getAccountId();
+	}
     
 }

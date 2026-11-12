@@ -117,17 +117,11 @@ public class RecipeService {
      * @return The number of reactions in {@code reactions} of the specified type.
      */
     public int computeNumReactions(long recipeId, ReactionType reactionType) {
-        // TODO: add implementation for this method
-
-        //     int reactionCount = 0;
-        //     for (Reaction reaction : reactions) {
-        //         if (reaction.getReactionType() == reactionType) {
-        //             reactionCount++;
-        //         }
-        //     }
-        //     return reactionCount;
-
-        return 0;
+        Recipe recipe = recipeRepository.findByRecipeId(recipeId);
+        if (recipe == null) {
+            throw new IllegalArgumentException("Recipe not found: " + recipeId);
+        }
+        return recipe.computeNumReactions().get(reactionType);
     }
 
     public List<Recipe> searchRecipesByIngredients(List<IngredientModel> ingredients) {
@@ -151,5 +145,9 @@ public class RecipeService {
 
     public void shareRecipeBySMS() {
         // TODO: add implementation for this method
+    }
+
+    public Recipe getRecipeByID(long recipeID) {
+        return recipeRepository.getRecipeByRecipeId(recipeID);
     }
 }

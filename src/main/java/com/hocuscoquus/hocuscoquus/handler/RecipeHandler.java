@@ -1,28 +1,27 @@
 package com.hocuscoquus.hocuscoquus.handler;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
+import com.hocuscoquus.hocuscoquus.entity.Recipe;
+import com.hocuscoquus.hocuscoquus.entity.RecipeIngredient;
+import com.hocuscoquus.hocuscoquus.model.*;
+import com.hocuscoquus.hocuscoquus.service.RecipeService;
+import org.springframework.boot.http.converter.autoconfigure.ServerHttpMessageConvertersCustomizer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.hocuscoquus.hocuscoquus.entity.Recipe;
-import com.hocuscoquus.hocuscoquus.entity.RecipeIngredient;
-import com.hocuscoquus.hocuscoquus.model.ReactionTypeRecord;
-import com.hocuscoquus.hocuscoquus.model.RecipeCreateRequest;
-import com.hocuscoquus.hocuscoquus.model.RecipeIngredientRecord;
-import com.hocuscoquus.hocuscoquus.model.RecipeRecord;
-import com.hocuscoquus.hocuscoquus.service.RecipeService;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 @Service
 public class RecipeHandler {
 
 	private final RecipeService recipeService;
+    private final ServerHttpMessageConvertersCustomizer serverConvertersCustomizer;
 
-    public RecipeHandler(RecipeService recipeService) {
+    public RecipeHandler(RecipeService recipeService, ServerHttpMessageConvertersCustomizer serverConvertersCustomizer) {
         this.recipeService = recipeService;
+	    this.serverConvertersCustomizer = serverConvertersCustomizer;
     }
     
     /*
@@ -40,8 +39,6 @@ public class RecipeHandler {
     		
     		 
     		List<RecipeIngredientRecord> ingredients = new ArrayList<>();
-    		HashMap<ReactionTypeRecord, Integer> reactions = new HashMap<>();
-    		
     		for (RecipeIngredient ri : newRecipe.getRecipeIngredients()) {
     			RecipeIngredientRecord temp = new RecipeIngredientRecord(ri.getMeasurement(), ri.getQuantity(), ri.getIngredient().getIngredientName(), ri.getIngredient().getIngredientId());
     			ingredients.add(temp);
@@ -54,8 +51,8 @@ public class RecipeHandler {
     				newRecipe.getInstructions(),
     				ingredients,
     				newRecipe.getImage(),
-    				reactions,
-    				newRecipe.getAccount().getAccountId()
+                newRecipe.computeNumReactions(),
+				newRecipe.getAccount().getAccountId()
         			);
     		
     		return ResponseEntity.ok(response);
@@ -65,5 +62,44 @@ public class RecipeHandler {
     	}
     	
     }
+
+	/**
+	 * Used to create a {@link RecipeRecord} from a given {@link Recipe} entity within the {@link com.hocuscoquus.hocuscoquus.repository.RecipeRepository}.
+	 * @param recipeID ID of the recipe for which we want to retrieve the record.
+	 * @return {@link RecipeRecord} as a ResponseEntity.
+	 */
+	public ResponseEntity<?> getRecipeByID(long recipeID) {
+		Recipe recipe = recipeService.getRecipeByID(recipeID);
+
+		List<RecipeIngredientRecord> ingredients = new ArrayList<>(recipe.getRecipeIngredients().size());
+		HashMap<ReactionType, Integer> reactions = new HashMap<>(2);
+
+		for (RecipeIngredient ingredient : recipe.getRecipeIngredients()) {
+			ingredients.add(
+					new RecipeIngredientRecord(
+							ingredient.getMeasurement(),
+							ingredient.getQuantity(),
+							ingredient.getIngredient().getIngredientName(),
+							ingredient.getIngredient().getIngredientId()
+					)
+			);
+		}
+
+		reactions.put(ReactionType.POSITIVE, recipeService.computeNumReactions(recipeID, ReactionType.POSITIVE));
+		reactions.put(ReactionType.NEGATIVE, recipeService.computeNumReactions(recipeID, ReactionType.NEGATIVE));
+
+		RecipeRecord response = new RecipeRecord(
+				recipe.getRecipeId(),
+				recipe.getRecipeName(),
+				recipe.getRecipeDescription(),
+				recipe.getInstructions(),
+				ingredients,
+				recipe.getImage(),
+				reactions,
+				recipe.getAccount().getAccountId()
+		);
+
+		return ResponseEntity.ok(response);
+	}
     
 }
