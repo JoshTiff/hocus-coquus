@@ -4,10 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import com.hocuscoquus.hocuscoquus.entity.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.hocuscoquus.hocuscoquus.entity.Account;
+import com.hocuscoquus.hocuscoquus.entity.AccountDetails;
+import com.hocuscoquus.hocuscoquus.entity.Ingredient;
+import com.hocuscoquus.hocuscoquus.entity.Recipe;
+import com.hocuscoquus.hocuscoquus.entity.RecipeIngredient;
 import com.hocuscoquus.hocuscoquus.model.IngredientCreateDto;
 import com.hocuscoquus.hocuscoquus.model.IngredientModel;
 import com.hocuscoquus.hocuscoquus.model.ReactionType;
@@ -112,12 +117,11 @@ public class RecipeService {
      * @return The number of reactions in {@code reactions} of the specified type.
      */
     public int computeNumReactions(long recipeId, ReactionType reactionType) {
-        Recipe recipe = recipeRepository.getRecipeByRecipeId(recipeId);
-        int reactionCount = 0;
-        for (Reaction reaction : recipe.getReactions())
-            if (reaction.getReactionType() == reactionType)
-                reactionCount++;
-        return reactionCount;
+        Recipe recipe = recipeRepository.findByRecipeId(recipeId);
+        if (recipe == null) {
+            throw new IllegalArgumentException("Recipe not found: " + recipeId);
+        }
+        return recipe.computeNumReactions().get(reactionType);
     }
 
     public List<Recipe> searchRecipesByIngredients(List<IngredientModel> ingredients) {

@@ -7,8 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.hocuscoquus.hocuscoquus.entity.Reaction;
 
 public interface ReactionRepository extends JpaRepository<Reaction, Long> {
-    Reaction findById(long reactionId);
-    
-    List<Reaction> findByRecipe(long recipeId);
-    List<Reaction> findByAccount(long accountId);
+    List<Reaction> findByRecipe_RecipeId(long recipeId);
+    List<Reaction> findByAccount_AccountId(long accountId);
+    Reaction findByRecipe_RecipeIdAndAccount_AccountId(long recipeId, long accountId);
 }
