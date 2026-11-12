@@ -5,7 +5,6 @@ import java.util.Objects;
 import org.springframework.stereotype.Service;
 
 import com.hocuscoquus.hocuscoquus.entity.Ingredient;
-import com.hocuscoquus.hocuscoquus.model.IngredientCreateDto;
 import com.hocuscoquus.hocuscoquus.model.IngredientModel;
 import com.hocuscoquus.hocuscoquus.repository.IngredientRepository;
 
@@ -17,11 +16,10 @@ public class IngredientService {
         this.ingredientRepository = Objects.requireNonNull(ingredientRepository);
     }
 
-    public Ingredient createIngredient(IngredientCreateDto ingredientCreateDto) {
+    public Ingredient createIngredient(Ingredient ingredient) {
         // TODO: add implementation for this method
     	
-    	String name = ingredientCreateDto.getIngredientName().trim().toLowerCase();
-    	
+    	String name = ingredient.getIngredientName().trim().toLowerCase();
     	if ( name == null || name.isEmpty() ) {
     		throw new IllegalArgumentException("Invalid Ingredient Name");
     	}
@@ -29,9 +27,6 @@ public class IngredientService {
     		String msg = "The Ingredient '" + name + "' already exists.";
             throw new IllegalArgumentException(msg);
         }
-    	
-    	Ingredient ingredient = new Ingredient();
-    	ingredient.setIngredientName(name);
     	
     	return ingredientRepository.save(ingredient);
     }
