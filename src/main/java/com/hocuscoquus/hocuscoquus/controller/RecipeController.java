@@ -1,10 +1,15 @@
 package com.hocuscoquus.hocuscoquus.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -12,6 +17,7 @@ import com.hocuscoquus.hocuscoquus.entity.AccountDetails;
 import com.hocuscoquus.hocuscoquus.handler.RecipeHandler;
 import com.hocuscoquus.hocuscoquus.model.RecipeCreateRequest;
 import com.hocuscoquus.hocuscoquus.model.RecipeEditRequest;
+import com.hocuscoquus.hocuscoquus.model.RecipeEditRequest.IngredientRow;
 import com.hocuscoquus.hocuscoquus.service.RecipeService;
 
 import jakarta.validation.Valid;
@@ -42,15 +48,37 @@ public class RecipeController {
         if (id == null) {
             model.addAttribute("recipes", recipeService.listOwnedRecipes(account.getAccountId()));
         } else {
-            model.addAttribute("recipe", recipeService.getOwnedRecipe(id, account.getAccountId()));
+            model.addAttribute("recipeId", id);
+            model.addAttribute("recipe", recipeService.loadRecipeForEdit(id, account.getAccountId()));
         }
         return new ModelAndView("edit-recipe", model.asMap());
     }
 
-    @PostMapping("/edit/recipe")
+    @PostMapping(value = "/edit/recipe", params = "ingredientAction")
+    public ModelAndView changeIngredientRows(@RequestParam long id, @RequestParam int ingredientAction,
+            @ModelAttribute RecipeEditRequest request, @AuthenticationPrincipal AccountDetails account) {
+        recipeService.getOwnedRecipe(id, account.getAccountId());
+        List<IngredientRow> rows = new ArrayList<>(request.ingredients() == null ? List.of() : request.ingredients());
+        if (ingredientAction == -1) {
+            rows.add(new IngredientRow("", null, ""));
+        } else if (ingredientAction >= 0 && ingredientAction < rows.size()) {
+            rows.remove(ingredientAction);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid ingredient row");
+        }
+        return new ModelAndView("edit-recipe")
+                .addObject("recipeId", id)
+                .addObject("recipe", request.withIngredients(rows));
+    }
+
+    @PostMapping(value = "/edit/recipe", params = "!ingredientAction")
     public ModelAndView saveRecipeEdits(@RequestParam long id,
+            @RequestParam(defaultValue = "false") boolean editIngredients,
             @Valid @ModelAttribute RecipeEditRequest request,
             @AuthenticationPrincipal AccountDetails account, RedirectAttributes redirect) {
+        if (editIngredients && request.ingredients() == null) {
+            request = request.withIngredients(List.of());
+        }
         recipeService.updateRecipe(id, account.getAccountId(), request);
         redirect.addAttribute("id", id);
         redirect.addFlashAttribute("saved", true);

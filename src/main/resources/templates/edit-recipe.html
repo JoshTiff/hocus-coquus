@@ -27,7 +27,8 @@
                      alt="" style="width: 20%; margin: auto" />
 
                 <form class="mb-5" method="post" th:action="@{/edit/recipe}">
-                    <input type="hidden" name="id" th:value="${recipe.recipeId}">
+                    <input type="hidden" name="id" th:value="${recipeId}">
+                    <input type="hidden" name="editIngredients" value="true">
                     <label for="recipeName" class="form-label">Recipe Name</label>
                     <input type="text" class="form-control mb-3" id="recipeName" name="recipeName" th:value="${recipe.recipeName}" required maxlength="255">
 
@@ -51,6 +52,44 @@
                     <button class="btn" type="submit" style="width: 15rem; margin: auto; display: flex">
                         Update Recipe
                     </button>
+
+                    <fieldset class="form-field my-1">
+                        <legend>Ingredients</legend>
+                        <div class="input-group mb-2" th:each="row, status : ${recipe.ingredients}">
+                            <input type="text" aria-label="Ingredient" class="form-control form-control-caret"
+                                   th:name="|ingredients[${status.index}].ingredient|"
+                                   th:value="${row.ingredient}" list="ingredientSuggestions"
+                                   placeholder="Search ingredients..." required maxlength="255">
+                            <input type="number" aria-label="Quantity" class="form-control"
+                                   th:name="|ingredients[${status.index}].quantity|"
+                                   th:value="${row.quantity}" placeholder="Quantity" min="0" step="any" required>
+                            <input type="text" aria-label="Unit" class="form-control form-control-caret"
+                                   th:name="|ingredients[${status.index}].measurement|"
+                                   th:value="${row.measurement}" list="ingredientUnitSuggestions"
+                                   placeholder="Select a unit..." maxlength="255">
+                            <button class="btn-outline theme-danger theme-contrast input-group-btn w-25" type="submit"
+                                    name="ingredientAction" th:value="${status.index}" formnovalidate>Remove</button>
+                        </div>
+                        <datalist id="ingredientSuggestions">
+                            <option value="Parsley">
+                            <option value="Sage">
+                            <option value="Rosemary">
+                            <option value="Thyme">
+                        </datalist>
+                        <datalist id="ingredientUnitSuggestions">
+                            <option value="grams">
+                            <option value="millilitres">
+                            <option value="litres">
+                            <option value="fluid ounces (U.S.)">
+                            <option value="cups (U.S.)">
+                            <option value="teaspoon (U.S.)">
+                            <option value="tablespoon (U.S.)">
+                        </datalist>
+                        <div class="input-group mb-5">
+                            <button class="btn-outline theme-success theme-contrast input-group-btn w-25" type="submit"
+                                    name="ingredientAction" value="-1" formnovalidate>Add Ingredient</button>
+                        </div>
+                    </fieldset>
                 </form>
             </div>
         </main>
