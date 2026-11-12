@@ -10,6 +10,8 @@ import com.hocuscoquus.hocuscoquus.entity.Recipe;
 import jakarta.persistence.LockModeType;
 
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
+    Recipe findById(long recipeId);
+    Recipe findByRecipeId(long recipeId);
     Recipe getRecipeByRecipeId(long recipeId);
 
     List<Recipe> findByAccount_AccountIdOrderByRecipeNameAsc(long accountId);

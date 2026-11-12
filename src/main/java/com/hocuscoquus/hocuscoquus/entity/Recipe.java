@@ -1,8 +1,11 @@
 package com.hocuscoquus.hocuscoquus.entity;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
+import com.hocuscoquus.hocuscoquus.model.ReactionType;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -127,6 +130,17 @@ public class Recipe {
 
 	public List<Reaction> getReactions() {
 		return reactions;
+	}
+
+	public Map<ReactionType, Integer> computeNumReactions() {
+		Map<ReactionType, Integer> counts = new EnumMap<>(ReactionType.class);
+		for (ReactionType reactionType : ReactionType.values()) {
+			counts.put(reactionType, 0);
+		}
+		for (Reaction reaction : reactions) {
+			counts.merge(reaction.getReactionType(), 1, Integer::sum);
+		}
+		return counts;
 	}
 
 	public Account getAccount() {

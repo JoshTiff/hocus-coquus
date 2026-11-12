@@ -1,9 +1,7 @@
 package com.hocuscoquus.hocuscoquus.model;
 
-import java.util.HashMap;
 import java.util.List;
-
-import com.hocuscoquus.hocuscoquus.entity.Recipe;
+import java.util.Map;
 
 public record RecipeRecord(
 		
@@ -13,8 +11,6 @@ public record RecipeRecord(
 		String instructions,
 		List<RecipeIngredientRecord> ingredients,
 		String image,
-		HashMap<ReactionTypeRecord, Integer> reactions,
+		Map<ReactionType, Integer> reactions,
 		long accountId
-		
-
 		) {}

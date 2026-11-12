@@ -38,9 +38,7 @@ public class RecipeHandler {
     		Recipe newRecipe = recipeService.createRecipe(request);
     		
     		 
-    		List<RecipeIngredientRecord> ingredients = new ArrayList<>(newRecipe.getRecipeIngredients().size());
-    		HashMap<ReactionTypeRecord, Integer> reactions = new HashMap<>(2);
-    		
+    		List<RecipeIngredientRecord> ingredients = new ArrayList<>();
     		for (RecipeIngredient ri : newRecipe.getRecipeIngredients()) {
     			RecipeIngredientRecord temp = new RecipeIngredientRecord(ri.getMeasurement(), ri.getQuantity(), ri.getIngredient().getIngredientName(), ri.getIngredient().getIngredientId());
     			ingredients.add(temp);
@@ -53,8 +51,8 @@ public class RecipeHandler {
     				newRecipe.getInstructions(),
     				ingredients,
     				newRecipe.getImage(),
-    				reactions,
-    				newRecipe.getAccount().getAccountId()
+                newRecipe.computeNumReactions(),
+				newRecipe.getAccount().getAccountId()
         			);
     		
     		return ResponseEntity.ok(response);
@@ -74,7 +72,7 @@ public class RecipeHandler {
 		Recipe recipe = recipeService.getRecipeByID(recipeID);
 
 		List<RecipeIngredientRecord> ingredients = new ArrayList<>(recipe.getRecipeIngredients().size());
-		HashMap<ReactionTypeRecord, Integer> reactions = new HashMap<>(2);
+		HashMap<ReactionType, Integer> reactions = new HashMap<>(2);
 
 		for (RecipeIngredient ingredient : recipe.getRecipeIngredients()) {
 			ingredients.add(
@@ -87,8 +85,8 @@ public class RecipeHandler {
 			);
 		}
 
-		reactions.put(new ReactionTypeRecord(ReactionType.POSITIVE), recipeService.computeNumReactions(recipeID, ReactionType.POSITIVE));
-		reactions.put(new ReactionTypeRecord(ReactionType.NEGATIVE), recipeService.computeNumReactions(recipeID, ReactionType.NEGATIVE));
+		reactions.put(ReactionType.POSITIVE, recipeService.computeNumReactions(recipeID, ReactionType.POSITIVE));
+		reactions.put(ReactionType.NEGATIVE, recipeService.computeNumReactions(recipeID, ReactionType.NEGATIVE));
 
 		RecipeRecord response = new RecipeRecord(
 				recipe.getRecipeId(),

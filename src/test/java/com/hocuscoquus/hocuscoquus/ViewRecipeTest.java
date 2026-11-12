@@ -1,13 +1,12 @@
 package com.hocuscoquus.hocuscoquus;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.hocuscoquus.hocuscoquus.controller.RecipeController;
 import com.hocuscoquus.hocuscoquus.entity.*;
 import com.hocuscoquus.hocuscoquus.model.ReactionType;
-import com.hocuscoquus.hocuscoquus.model.ReactionTypeRecord;
 import com.hocuscoquus.hocuscoquus.model.RecipeIngredientRecord;
 import com.hocuscoquus.hocuscoquus.model.RecipeRecord;
 import com.hocuscoquus.hocuscoquus.service.RecipeService;
@@ -60,8 +59,8 @@ public class ViewRecipeTest {
         // Test reactions match.
         int positiveReactions = recipeService.computeNumReactions(recipeID, ReactionType.POSITIVE);
         int negativeReactions = recipeService.computeNumReactions(recipeID, ReactionType.NEGATIVE);
-        HashMap<ReactionTypeRecord, Integer> recipeRecordReactions = recipeRecord.reactions();
-        assertEquals(positiveReactions, recipeRecordReactions.get(new ReactionTypeRecord(ReactionType.POSITIVE)));
-        assertEquals(negativeReactions, recipeRecordReactions.get(new ReactionTypeRecord(ReactionType.NEGATIVE)));
+        Map<ReactionType, Integer> recipeRecordReactions = recipeRecord.reactions();
+        assertEquals(positiveReactions, recipeRecordReactions.get(ReactionType.POSITIVE));
+        assertEquals(negativeReactions, recipeRecordReactions.get(ReactionType.NEGATIVE));
     }
 }
