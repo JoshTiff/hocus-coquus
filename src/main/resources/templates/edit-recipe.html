@@ -56,10 +56,10 @@
                     <fieldset class="form-field my-1">
                         <legend>Ingredients</legend>
                         <div class="input-group mb-2" th:each="row, status : ${recipe.ingredients}">
-                            <input type="text" aria-label="Ingredient" class="form-control form-control-caret"
+                            <input type="text" aria-label="Ingredient" class="form-control"
                                    th:name="|ingredients[${status.index}].ingredient|"
-                                   th:value="${row.ingredient}" list="ingredientSuggestions"
-                                   placeholder="Search ingredients..." required maxlength="255">
+                                   th:value="${row.ingredient}" placeholder="Ingredient name"
+                                   autocomplete="off" required maxlength="255">
                             <input type="number" aria-label="Quantity" class="form-control"
                                    th:name="|ingredients[${status.index}].quantity|"
                                    th:value="${row.quantity}" placeholder="Quantity" min="0" step="any" required>
@@ -70,12 +70,6 @@
                             <button class="btn-outline theme-danger theme-contrast input-group-btn w-25" type="submit"
                                     name="ingredientAction" th:value="${status.index}" formnovalidate>Remove</button>
                         </div>
-                        <datalist id="ingredientSuggestions">
-                            <option value="Parsley">
-                            <option value="Sage">
-                            <option value="Rosemary">
-                            <option value="Thyme">
-                        </datalist>
                         <datalist id="ingredientUnitSuggestions">
                             <option value="grams">
                             <option value="millilitres">
