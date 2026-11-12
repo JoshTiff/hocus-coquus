@@ -5,14 +5,17 @@ import java.util.List;
 import java.util.Objects;
 
 import com.hocuscoquus.hocuscoquus.entity.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 import com.hocuscoquus.hocuscoquus.model.IngredientCreateDto;
 import com.hocuscoquus.hocuscoquus.model.IngredientModel;
 import com.hocuscoquus.hocuscoquus.model.ReactionType;
 import com.hocuscoquus.hocuscoquus.model.RecipeCreateRequest;
 import com.hocuscoquus.hocuscoquus.model.RecipeIngredientCreateRequest;
+import com.hocuscoquus.hocuscoquus.model.RecipeEditRequest;
 import com.hocuscoquus.hocuscoquus.repository.IngredientRepository;
 import com.hocuscoquus.hocuscoquus.repository.RecipeIngredientRepository;
 import com.hocuscoquus.hocuscoquus.repository.RecipeRepository;
@@ -82,9 +85,24 @@ public class RecipeService {
         return recipes;
     }
 
-    public Recipe updateRecipe(Recipe recipe) {
-        // TODO: add implementation for this method
-        return null;
+    public List<Recipe> listOwnedRecipes(long accountId) {
+        return recipeRepository.findByAccount_AccountIdOrderByRecipeNameAsc(accountId);
+    }
+
+    public Recipe getOwnedRecipe(long recipeId, long accountId) {
+        return recipeRepository.findByRecipeIdAndAccount_AccountId(recipeId, accountId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Recipe not found"));
+    }
+
+    @Transactional
+    public void updateRecipe(long recipeId, long accountId, RecipeEditRequest request) {
+        Recipe recipe = getOwnedRecipe(recipeId, accountId);
+        recipe.setRecipeName(request.recipeName());
+        recipe.setRecipeDescription(request.recipeDescription());
+        recipe.setInstructions(request.instructions());
+        if (request.image() != null) {
+            recipe.setImage(request.image().isBlank() ? null : request.image().strip());
+        }
     }
 
     public void deleteRecipe(long recipeId) {
