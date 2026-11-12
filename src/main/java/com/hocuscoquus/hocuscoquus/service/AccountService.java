@@ -254,4 +254,13 @@ public class AccountService implements UserDetailsService {
 
         return new AccountDetails(account);
     }
+
+    public Account getAccountById(long accountId) {
+        Account account = accountRepository.getAccountByAccountId(accountId);
+        if (account == null) {
+            throw new UsernameNotFoundException("Account not found for id: " + accountId);
+        }
+
+        return account;
+    }
 }

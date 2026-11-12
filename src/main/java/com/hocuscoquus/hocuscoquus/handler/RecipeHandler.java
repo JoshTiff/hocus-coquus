@@ -2,6 +2,7 @@ package com.hocuscoquus.hocuscoquus.handler;
 
 import com.hocuscoquus.hocuscoquus.entity.Recipe;
 import com.hocuscoquus.hocuscoquus.entity.RecipeIngredient;
+import com.hocuscoquus.hocuscoquus.entity.RecipeTag;
 import com.hocuscoquus.hocuscoquus.model.*;
 import com.hocuscoquus.hocuscoquus.service.RecipeService;
 import org.springframework.boot.http.converter.autoconfigure.ServerHttpMessageConvertersCustomizer;
@@ -99,6 +100,28 @@ public class RecipeHandler {
 				recipe.getAccount().getAccountId()
 		);
 
+		return ResponseEntity.ok(response);
+	}
+
+	public ResponseEntity<?> addRecipeTag(long accountID, long recipeID, String tagName) {
+		RecipeTag addedTag = recipeService.addRecipeTag(accountID, recipeID, tagName);
+		RecipeTagRecord response = new RecipeTagRecord(
+				addedTag.getRecipeTagId(),
+				addedTag.getRecipe().getRecipeId(),
+				addedTag.getAccount().getAccountId(),
+				addedTag.getTag()
+		);
+		return ResponseEntity.ok(response);
+	}
+
+	public ResponseEntity<?> deleteRecipeTag(long accountID, long recipeTagID) {
+		RecipeTag deletedTag = recipeService.removeRecipeTag(accountID, recipeTagID);
+		RecipeTagRecord response = new RecipeTagRecord(
+				deletedTag.getRecipeTagId(),
+				deletedTag.getRecipe().getRecipeId(),
+				deletedTag.getAccount().getAccountId(),
+				deletedTag.getTag()
+		);
 		return ResponseEntity.ok(response);
 	}
     

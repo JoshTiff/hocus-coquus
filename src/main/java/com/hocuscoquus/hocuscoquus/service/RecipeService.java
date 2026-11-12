@@ -4,15 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.hocuscoquus.hocuscoquus.entity.*;
+import com.hocuscoquus.hocuscoquus.repository.RecipeTagRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.hocuscoquus.hocuscoquus.entity.Account;
-import com.hocuscoquus.hocuscoquus.entity.AccountDetails;
-import com.hocuscoquus.hocuscoquus.entity.Ingredient;
-import com.hocuscoquus.hocuscoquus.entity.Recipe;
-import com.hocuscoquus.hocuscoquus.entity.RecipeIngredient;
 import com.hocuscoquus.hocuscoquus.model.IngredientCreateDto;
 import com.hocuscoquus.hocuscoquus.model.IngredientModel;
 import com.hocuscoquus.hocuscoquus.model.ReactionType;
@@ -28,6 +25,10 @@ public class RecipeService {
 	private final IngredientService ingredientService;
     private final RecipeRepository recipeRepository;
     private final IngredientRepository ingredientRepository;
+    @Autowired
+    private RecipeTagRepository tagRepository;
+    @Autowired
+    private AccountService accountService;
 
     // TODO: review/add constructor(s)
     public RecipeService(IngredientService ingredientService, RecipeRepository recipeRepository, RecipeIngredientRepository recipeIngredientRepository, IngredientRepository ingredientRepository) {
@@ -150,4 +151,31 @@ public class RecipeService {
     public Recipe getRecipeByID(long recipeID) {
         return recipeRepository.getRecipeByRecipeId(recipeID);
     }
+
+    @Transactional
+    public RecipeTag addRecipeTag(long accountID, long recipeID, String tagName) {
+        if (tagName != null && !tagName.isBlank()) {
+             Recipe recipe = getRecipeByID(recipeID);
+             RecipeTag recipeTag = new RecipeTag();
+             recipeTag.setTag(tagName);
+             recipeTag.setAccount(accountService.getAccountById(accountID));
+             recipeTag.setRecipe(recipe);
+             tagRepository.save(recipeTag);
+             return recipeTag;
+         } else {
+            throw new IllegalArgumentException("Tag name cannot be empty!");
+        }
+    }
+
+    @Transactional
+    public RecipeTag removeRecipeTag(long accountID, long recipeTagID) {
+        RecipeTag recipeTag = tagRepository.getByRecipeTagId(recipeTagID);
+        if (recipeTag.getAccount().getAccountId() == accountID) {
+            tagRepository.deleteByRecipeTagId(recipeTagID);
+            return recipeTag;
+        } else {
+            throw new IllegalArgumentException("Cannot delete another user's recipe tag.");
+        }
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.hocuscoquus.hocuscoquus.repository;
 
 import java.util.List;
+import java.util.SequencedCollection;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -12,4 +13,6 @@ public interface RecipeTagRepository extends JpaRepository<RecipeTag, Long> {
     List<RecipeTag> findByAccount(long accountId);
     List<RecipeTag> findByRecipe(long recipeId);
     List<RecipeTag> findByAccountAndRecipe(long accountId, long recipeId);
+    RecipeTag getByRecipeTagId(long recipeTagId);
+    void deleteByRecipeTagId(long recipeTagId);
 }
