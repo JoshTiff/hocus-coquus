@@ -18,7 +18,7 @@ import com.hocuscoquus.hocuscoquus.service.RecipeNoteService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/recipe-notes")
+@RequestMapping("/api/recipe-note")
 public class RecipeNoteController {
 
     private final RecipeNoteService recipeNoteService;
@@ -27,7 +27,7 @@ public class RecipeNoteController {
         this.recipeNoteService = recipeNoteService;
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<?> addRecipeNote(
             @AuthenticationPrincipal AccountDetails details,
             @Valid @RequestBody RecipeNoteCreateRequest request) {

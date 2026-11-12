@@ -37,7 +37,7 @@ import com.hocuscoquus.hocuscoquus.service.RecipeNoteService;
 @Import(SecurityConfig.class)
 class AddRecipeNoteControllerTest {
 
-    private static final String URL = "/api/recipe-notes";
+    private static final String URL = "/api/recipe-note/create";
 
     @Autowired
     private MockMvc mockMvc;
