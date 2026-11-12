@@ -126,7 +126,9 @@ public class Account {
 		this.ingredients = ingredients;
 	}
 	
-	
+	public List<DietaryRestriction> getDietaryRestrictions() {
+		return dietaryRestrictions;
+	}
 	
 	
 }
