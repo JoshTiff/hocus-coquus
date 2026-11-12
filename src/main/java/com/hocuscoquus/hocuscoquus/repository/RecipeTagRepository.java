@@ -10,6 +10,4 @@ public interface RecipeTagRepository extends JpaRepository<RecipeTag, Long> {
 	
     RecipeTag findById(long recipeTagId);
     List<RecipeTag> findByAccount(long accountId);
-    List<RecipeTag> findByRecipe(long recipeId);
-    List<RecipeTag> findByAccountAndRecipe(long accountId, long recipeId);
 }

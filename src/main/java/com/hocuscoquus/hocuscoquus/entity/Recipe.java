@@ -42,7 +42,7 @@ public class Recipe {
 	@OneToMany(mappedBy="recipe", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RecipeIngredient> recipeIngredients = new ArrayList<>();
     
-	@OneToMany(mappedBy="recipe")
+	@ManyToMany(mappedBy="recipes")
 	private final List<RecipeTag> recipeTags = new ArrayList<>();
     
 	@OneToMany(mappedBy="recipe")
