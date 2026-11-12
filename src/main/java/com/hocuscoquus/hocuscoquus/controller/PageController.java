@@ -27,11 +27,6 @@ public class PageController {
 		return "signup";
 	}
 
-	@GetMapping("/view-recipe")
-	public String viewRecipe() {
-		return "view-recipe";
-	}
-
 	@GetMapping("/account")
 	public String account() {
 		return "account";

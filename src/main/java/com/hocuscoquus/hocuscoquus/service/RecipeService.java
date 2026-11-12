@@ -4,15 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.hocuscoquus.hocuscoquus.entity.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.hocuscoquus.hocuscoquus.entity.Account;
-import com.hocuscoquus.hocuscoquus.entity.AccountDetails;
-import com.hocuscoquus.hocuscoquus.entity.Ingredient;
-import com.hocuscoquus.hocuscoquus.entity.Recipe;
-import com.hocuscoquus.hocuscoquus.entity.RecipeIngredient;
 import com.hocuscoquus.hocuscoquus.model.IngredientCreateDto;
 import com.hocuscoquus.hocuscoquus.model.IngredientModel;
 import com.hocuscoquus.hocuscoquus.model.ReactionType;
@@ -117,17 +112,12 @@ public class RecipeService {
      * @return The number of reactions in {@code reactions} of the specified type.
      */
     public int computeNumReactions(long recipeId, ReactionType reactionType) {
-        // TODO: add implementation for this method
-
-        //     int reactionCount = 0;
-        //     for (Reaction reaction : reactions) {
-        //         if (reaction.getReactionType() == reactionType) {
-        //             reactionCount++;
-        //         }
-        //     }
-        //     return reactionCount;
-
-        return 0;
+        Recipe recipe = recipeRepository.getRecipeByRecipeId(recipeId);
+        int reactionCount = 0;
+        for (Reaction reaction : recipe.getReactions())
+            if (reaction.getReactionType() == reactionType)
+                reactionCount++;
+        return reactionCount;
     }
 
     public List<Recipe> searchRecipesByIngredients(List<IngredientModel> ingredients) {
@@ -151,5 +141,9 @@ public class RecipeService {
 
     public void shareRecipeBySMS() {
         // TODO: add implementation for this method
+    }
+
+    public Recipe getRecipeByID(long recipeID) {
+        return recipeRepository.getRecipeByRecipeId(recipeID);
     }
 }
