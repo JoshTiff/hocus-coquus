@@ -3,16 +3,64 @@
     <head th:replace="~{fragments/layout :: head('Create Calendar')}"></head>
     <body>
         <div>
-            <p th:if="${calendarCreateError}" th:text="${calendarCreateError}" role="alert"></p>
-            <form th:action="@{/api/calendar/create}" th:object="${calendarCreateDto}" method="post">
+            <p id="calendar-create-error" role="alert" hidden></p>
+            <form id="calendar-create-form" method="post" th:action="@{/api/calendar/create}"
+                  th:data-calendar-url="@{/calendar}">
                 <label for="calendarName">Calendar Name</label>
-                <input id="calendarName" type="text" th:field="*{calendarName}" maxlength="255">
+                <input id="calendarName" name="calendarName" type="text" maxlength="255" required>
                 <br>
                 <label for="description">Description</label>
-                <textarea id="description" th:field="*{description}" maxlength="255"></textarea>
+                <textarea id="description" name="description" maxlength="255"></textarea>
                 <br>
                 <button type="submit">Create Calendar</button>
             </form>
         </div>
+        <script>
+            const form = document.getElementById('calendar-create-form');
+            const errorMessage = document.getElementById('calendar-create-error');
+            const submitButton = form.querySelector('button[type="submit"]');
+
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                if (submitButton.disabled) {
+                    return;
+                }
+                submitButton.disabled = true;
+                errorMessage.hidden = true;
+
+                try {
+                    const fields = new FormData(form);
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            calendarName: fields.get('calendarName'),
+                            description: fields.get('description')
+                        })
+                    });
+
+                    if (response.status === 201) {
+                        const { calendarId } = await response.json();
+                        const calendarUrl = new URL(form.dataset.calendarUrl, window.location.href);
+                        calendarUrl.searchParams.set('calendarId', calendarId);
+                        window.location.assign(calendarUrl.href);
+                        return;
+                    }
+
+                    if (response.status === 400) {
+                        const { message } = await response.json();
+                        throw new Error(message || 'Check your calendar details and try again.');
+                    }
+                    throw new Error('Could not create the calendar. Please try again.');
+                } catch (error) {
+                    errorMessage.textContent = error.message;
+                    errorMessage.hidden = false;
+                    submitButton.disabled = false;
+                }
+            });
+        </script>
     </body>
 </html>

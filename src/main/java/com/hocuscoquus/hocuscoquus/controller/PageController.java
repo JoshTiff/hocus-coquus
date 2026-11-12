@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.hocuscoquus.hocuscoquus.model.IngredientCreateDto;
-import com.hocuscoquus.hocuscoquus.model.CalendarCreateDto;
 
 @Controller
 public class PageController {
@@ -75,8 +74,7 @@ public class PageController {
 	}
 
 	@GetMapping("/calendar-create")
-	public String createCalendar(Model model) {
-		model.addAttribute("calendarCreateDto", new CalendarCreateDto());
+	public String createCalendar() {
 		return "calendar-create";
 	}
 	

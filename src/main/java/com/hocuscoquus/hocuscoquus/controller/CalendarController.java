@@ -4,12 +4,10 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.hocuscoquus.hocuscoquus.entity.AccountDetails;
-import com.hocuscoquus.hocuscoquus.model.CalendarCreateDto;
 import com.hocuscoquus.hocuscoquus.service.CalendarService;
 
 @Controller
@@ -37,20 +35,6 @@ public class CalendarController {
             Model model) {
         model.addAttribute("calendars", calendarService.getCalendarsForAccount(details.getAccountId()));
         return "calendar-switch";
-    }
-
-    @PostMapping("/api/calendar/create")
-    public String createCalendar(
-            @AuthenticationPrincipal AccountDetails details,
-            @ModelAttribute("calendarCreateDto") CalendarCreateDto calendarCreateDto,
-            Model model) {
-        try {
-            long calendarId = calendarService.createCalendar(calendarCreateDto, details.getAccountId()).getCalendarId();
-            return "redirect:/calendar?calendarId=" + calendarId;
-        } catch (IllegalArgumentException ex) {
-            model.addAttribute("calendarCreateError", ex.getMessage());
-            return "calendar-create";
-        }
     }
 
     @PostMapping("/api/calendar/switch")
