@@ -146,4 +146,8 @@ public class RecipeService {
     public void shareRecipeBySMS() {
         // TODO: add implementation for this method
     }
+
+    public Recipe getRecipeByID(long recipeID) {
+        return recipeRepository.getRecipeByRecipeId(recipeID);
+    }
 }
