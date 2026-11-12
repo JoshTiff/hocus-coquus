@@ -12,6 +12,7 @@ import com.hocuscoquus.hocuscoquus.entity.Recipe;
 import com.hocuscoquus.hocuscoquus.entity.RecipeIngredient;
 import com.hocuscoquus.hocuscoquus.model.ReactionTypeRecord;
 import com.hocuscoquus.hocuscoquus.model.RecipeCreateRequest;
+import com.hocuscoquus.hocuscoquus.model.RecipeEditRequest;
 import com.hocuscoquus.hocuscoquus.model.RecipeIngredientRecord;
 import com.hocuscoquus.hocuscoquus.model.RecipeRecord;
 import com.hocuscoquus.hocuscoquus.service.RecipeService;
@@ -25,6 +26,15 @@ public class RecipeHandler {
         this.recipeService = recipeService;
     }
     
+    public ResponseEntity<RecipeEditRequest> processRecipeEditLoad(long recipeId) {
+        return ResponseEntity.ok(recipeService.getRecipeForEdit(recipeId));
+    }
+
+    public ResponseEntity<Void> processRecipeEditRequest(long recipeId, RecipeEditRequest request) {
+        recipeService.updateRecipe(recipeId, request);
+        return ResponseEntity.noContent().build();
+    }
+
     /*
      * @param request -- the RecipeCreateRequest object holding the information necessary to create a Recipe
      * 

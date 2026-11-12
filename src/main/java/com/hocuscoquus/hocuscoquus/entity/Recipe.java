@@ -35,6 +35,9 @@ public class Recipe {
 	
 	@Column
     private String image;
+
+    @Column
+    private Integer numberServings;
 	
 	@OneToMany(mappedBy="recipe", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RecipeIngredient> recipeIngredients = new ArrayList<>();
@@ -100,6 +103,14 @@ public class Recipe {
 	public void setInstructions(String instructions) {
 		this.instructions = instructions;
 	}
+
+    public Integer getNumberServings() {
+        return numberServings;
+    }
+
+    public void setNumberServings(Integer numberServings) {
+        this.numberServings = numberServings;
+    }
 
 	public String getImage() {
 		return image;

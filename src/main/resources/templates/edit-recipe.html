@@ -1,90 +1,67 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <th:block th:replace="~{fragments/layout :: head('Edit Recipe')}"/>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@6.0.0-alpha.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-B/GM4XqrwHnWXNOWMbloTmrYXZg10cakYGmpfsR/bbzQ6JAJI4ihuyADKLnBgrCe" crossorigin="anonymous">
-        <script type="module" src="https://cdn.jsdelivr.net/npm/bootstrap@6.0.0-alpha.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-1a/pXj49ZQ1aHEmrJ+gMw1otqoVsYwlEnlD8mIfY2TV03r20Y0CN7uqx1tQogjPL" crossorigin="anonymous"></script>
-    </head>
+    <head th:replace="~{fragments/layout :: head(${recipeId == null ? 'My Recipes' : 'Edit Recipe'})}"></head>
     <body>
         <header th:replace="~{fragments/layout :: site-header}"></header>
 
         <main class="panel">
-            <h4 class="panel-title">Edit Recipe</h4>
-            <img th:src="@{/images/recipes/recipe-1.png}" alt="" width="20%vh" style="margin:auto" />
+            <section th:if="${recipeId == null}">
+                <h1 class="panel-title">My Recipes</h1>
+                <p th:if="${#lists.isEmpty(recipes)}">You have no uploaded recipes to edit.</p>
+                <ul th:unless="${#lists.isEmpty(recipes)}">
+                    <li th:each="recipe : ${recipes}">
+                        <span th:text="${recipe.recipeName}"></span>
+                        <a class="link" th:href="@{/edit/recipe(id=${recipe.recipeId})}"
+                           th:aria-label="|Edit ${recipe.recipeName}|">Edit</a>
+                    </li>
+                </ul>
+            </section>
 
-            <div class="container" id="editRecipeContainer">
-                <form class="mb-5">
-                    <label for="recipeName" class="form-label">Recipe Name</label>
-                    <input type="text" class="form-control mb-3" id="recipeName" value="Name of Recipe One">
-
-                    <div class="form-field">
-                        <label for="recipeDescription" class="form-label">Recipe Description</label>
-                        <textarea class="form-control mb-3" id="recipeDescription" rows="4">Description for Recipe One</textarea>
-                    </div>
-
-                    <div class="form-field">
-                        <label for="numberServings" class="form-label">Number of Servings</label>
-                        <input type="number" id="numberServings" class="form-control mb-3" min="0" max="100" value="1" />
-                    </div>
-
-                    <div class="form-field">
-                        <label for="recipeImage" class="form-label">Upload Recipe Image</label>
-                        <input type="file" class="form-control mb-3" id="recipeImage">
-                    </div>
-
-                    <br>Ingredients<br>
-
-                    <div class="input-group">
-                        <input type="text" aria-label="Ingredient" class="form-control" value="Ingredient" disabled>
-                        <input type="text" aria-label="Quantity" class="form-control" value="Quantity" disabled>
-                        <input type="text" aria-label="Unit" class="form-control" value="Unit" disabled>
-                        <button class="btn-outline theme-danger theme-contrast input-group-btn w-25" type="button">Remove</button>
-                    </div>
-
-                    <div class="input-group">
-                        <input type="text" aria-label="Ingredient" class="form-control" value="Ingredient" disabled>
-                        <input type="text" aria-label="Quantity" class="form-control" value="Quantity" disabled>
-                        <input type="text" aria-label="Unit" class="form-control" value="Unit" disabled>
-                        <button class="btn-outline theme-danger theme-contrast input-group-btn w-25" type="button">Remove</button>
-                    </div>
-
-                    <div class="input-group">
-                        <input type="text" aria-label="Ingredient" class="form-control" value="Ingredient" disabled>
-                        <input type="text" aria-label="Quantity" class="form-control" value="Quantity" disabled>
-                        <input type="text" aria-label="Unit" class="form-control" value="Unit" disabled>
-                        <button class="btn-outline theme-danger theme-contrast input-group-btn w-25" type="button">Remove</button>
-                    </div>
-
-                    <div class="input-group mb-5">
-                        <input class="form-control form-control-caret w-25" list="addIngredientCaret" id="addIngredientCaretInput" placeholder="Search ingredients...">
-                        <datalist id="addIngredientCaret">
-                            <option value="Parsley">
-                            <option value="Sage">
-                            <option value="Rosemary">
-                            <option value="Thyme">
-                        </datalist>
-                        <input type="number" aria-label="Quantity" class="form-control w-25" min="1" placeholder="Quantity">
-                        <input class="form-control form-control-caret w-25" list="addIngredientUnitCaret" id="addIngredientUnitCaretInput" placeholder="Select a unit...">
-                        <datalist id="addIngredientUnitCaret">
-                            <option value="grams">
-                            <option value="millilitres">
-                            <option value="litres">
-                            <option value="fluid ounces (U.S.)">
-                            <option value="cups (U.S.)">
-                            <option value="teaspoon (U.S.)">
-                            <option value="tablespoon (U.S.)">
-                        </datalist>
-                        <button class="btn-outline theme-success theme-contrast input-group-btn w-25" type="button">Add</button>
-                    </div>
-
-                    <div class="form-field my-1">
-                        <label for="recipeInstructions" class="form-label">Recipe Instructions</label>
-                        <textarea class="form-control" id="recipeInstructions" rows="4">Instructions for Recipe One</textarea>
-                    </div>
+            <section th:if="${recipeId != null}">
+                <h1 class="panel-title">Edit Recipe</h1>
+                <a class="link" th:href="@{/edit/recipe}">Back to My Recipes</a>
+                <p id="recipe-status" role="status">Loading recipe…</p>
+                <form id="recipe-form" hidden
+                      th:data-recipe-url="@{/api/recipe/{id}(id=${recipeId})}">
+                    <fieldset id="recipe-fields">
+                        <div class="form-field">
+                            <label for="recipeName">Recipe Name</label>
+                            <input id="recipeName" name="recipeName" required maxlength="255">
+                        </div>
+                        <div class="form-field">
+                            <label for="recipeDescription">Description</label>
+                            <textarea id="recipeDescription" name="recipeDescription" rows="4" maxlength="255"></textarea>
+                        </div>
+                        <div class="form-field">
+                            <label for="numberServings">Number of Servings</label>
+                            <input id="numberServings" name="numberServings" type="number" min="1" max="2147483647">
+                        </div>
+                        <div class="form-field">
+                            <label for="image">Image URL or Path</label>
+                            <input id="image" name="image" maxlength="255">
+                        </div>
+                        <div class="form-field">
+                            <label for="instructions">Instructions</label>
+                            <textarea id="instructions" name="instructions" rows="4" maxlength="255"></textarea>
+                        </div>
+                        <fieldset>
+                            <legend>Ingredients</legend>
+                            <div id="recipe-ingredients"></div>
+                            <button class="btn" id="add-ingredient" type="button">Add Ingredient</button>
+                        </fieldset>
+                        <button class="btn" type="submit">Save Changes</button>
+                    </fieldset>
                 </form>
-                <button class="btn" style="width: 15rem; margin: auto; display: flex">Update Recipe</button>
-            </div>
+                <template id="ingredient-row">
+                    <div class="form-field">
+                        <label>Ingredient <input name="ingredient" required maxlength="255"></label>
+                        <label>Quantity <input name="quantity" type="number" min="0" step="any" required></label>
+                        <label>Unit <input name="measurement" maxlength="255"></label>
+                        <button class="btn" type="button">Remove Ingredient</button>
+                    </div>
+                </template>
+                <script defer th:src="@{/js/edit-recipe.js}"></script>
+            </section>
         </main>
-
     </body>
 </html>

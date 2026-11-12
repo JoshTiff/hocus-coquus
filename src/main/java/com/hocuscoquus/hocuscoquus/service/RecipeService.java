@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.hocuscoquus.hocuscoquus.entity.Account;
 import com.hocuscoquus.hocuscoquus.entity.AccountDetails;
@@ -17,10 +19,12 @@ import com.hocuscoquus.hocuscoquus.model.IngredientCreateDto;
 import com.hocuscoquus.hocuscoquus.model.IngredientModel;
 import com.hocuscoquus.hocuscoquus.model.ReactionType;
 import com.hocuscoquus.hocuscoquus.model.RecipeCreateRequest;
+import com.hocuscoquus.hocuscoquus.model.RecipeEditRequest;
 import com.hocuscoquus.hocuscoquus.model.RecipeIngredientCreateRequest;
 import com.hocuscoquus.hocuscoquus.repository.IngredientRepository;
 import com.hocuscoquus.hocuscoquus.repository.RecipeIngredientRepository;
 import com.hocuscoquus.hocuscoquus.repository.RecipeRepository;
+import com.hocuscoquus.hocuscoquus.repository.RecipeRepository.RecipeSummary;
 
 @Service
 public class RecipeService {
@@ -39,46 +43,36 @@ public class RecipeService {
     
     @Transactional
     public Recipe createRecipe(RecipeCreateRequest request) {
+        Recipe recipe = Recipe.builder()
+                .setRecipeName(request.recipeName())
+                .setRecipeDescription(request.recipeDescription())
+                .setInstructions(request.instructions())
+                .setImage(request.image())
+                .setAccount(currentAccount())
+                .build();
 
-    	Account account = ((AccountDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getAccount();
-    	
-    	List<RecipeIngredient> recipeIngredientList = new ArrayList<>();
-    	
-    	Recipe r = Recipe.builder()
-    			.setRecipeName(request.recipeName())
-    			.setRecipeDescription(request.recipeDescription())
-    			.setInstructions(request.instructions())
-    			.setImage(request.image())
-    			.setRecipeIngredients(recipeIngredientList)
-    			.setAccount(account)
-    			.build();
-    	 
-    	for (RecipeIngredientCreateRequest i : request.ingredients()) {
-    		
-    		//check if ingredient exists
-    		Ingredient ingredient = ingredientRepository.findByIngredientName(i.ingredient().trim().toLowerCase());
-    		
-    		//if it doesn't, create it
-    		if (ingredient == null) {
-    			IngredientCreateDto ic = new IngredientCreateDto();
-    			ic.setIngredientName(i.ingredient().trim().toLowerCase());
-    			ingredient = ingredientService.createIngredient(ic);
-    		}
-    		
-    		//create a new RecipeIngredient
-    		RecipeIngredient ri = new RecipeIngredient();
-    		ri.setIngredient(ingredient);
-    		ri.setMeasurement(i.measurement());
-    		ri.setQuantity(i.quantity());
-    		ri.setRecipe(r);
-    		//add it to our Recipe's Ingredient List
-    		r.getRecipeIngredients().add(ri);
-    	}
-    	
-    	
-    	return recipeRepository.save(r);
+        addIngredients(recipe, request.ingredients());
+        return recipeRepository.save(recipe);
     }
 
+    private void addIngredients(Recipe recipe, List<RecipeIngredientCreateRequest> ingredients) {
+        for (RecipeIngredientCreateRequest input : ingredients) {
+            String name = input.ingredient().trim().toLowerCase();
+            Ingredient ingredient = ingredientRepository.findByIngredientName(name);
+            if (ingredient == null) {
+                IngredientCreateDto dto = new IngredientCreateDto();
+                dto.setIngredientName(name);
+                ingredient = ingredientService.createIngredient(dto);
+            }
+
+            RecipeIngredient recipeIngredient = new RecipeIngredient();
+            recipeIngredient.setIngredient(ingredient);
+            recipeIngredient.setMeasurement(input.measurement());
+            recipeIngredient.setQuantity(input.quantity());
+            recipeIngredient.setRecipe(recipe);
+            recipe.getRecipeIngredients().add(recipeIngredient);
+        }
+    }
 
     public List<Recipe> searchRecipes() {
         // TODO: add implementation for this method
@@ -87,9 +81,47 @@ public class RecipeService {
         return recipes;
     }
 
-    public Recipe updateRecipe(Recipe recipe) {
-        // TODO: add implementation for this method
-        return null;
+    @Transactional(readOnly = true)
+    public List<RecipeSummary> listOwnedRecipes() {
+        return recipeRepository.findByAccount_AccountIdOrderByRecipeNameAscRecipeIdAsc(
+                currentAccount().getAccountId());
+    }
+
+    @Transactional(readOnly = true)
+    public RecipeEditRequest getRecipeForEdit(long recipeId) {
+        Recipe recipe = recipeRepository.findByRecipeIdAndAccount_AccountId(
+                recipeId, currentAccount().getAccountId()).orElseThrow(RecipeService::recipeNotFound);
+        List<RecipeIngredientCreateRequest> ingredients = recipe.getRecipeIngredients().stream()
+                .map(item -> new RecipeIngredientCreateRequest(
+                        item.getIngredient().getIngredientName(), item.getQuantity(), item.getMeasurement()))
+                .toList();
+
+        return new RecipeEditRequest(recipe.getRecipeName(), recipe.getRecipeDescription(),
+                recipe.getInstructions(), recipe.getImage(), recipe.getNumberServings(), ingredients);
+    }
+
+    @Transactional
+    public void updateRecipe(long recipeId, RecipeEditRequest request) {
+        Recipe recipe = recipeRepository.findForUpdateByRecipeIdAndAccount_AccountId(
+                recipeId, currentAccount().getAccountId()).orElseThrow(RecipeService::recipeNotFound);
+
+        recipe.setRecipeName(request.recipeName());
+        recipe.setRecipeDescription(request.recipeDescription());
+        recipe.setInstructions(request.instructions());
+        recipe.setImage(request.image());
+        recipe.setNumberServings(request.numberServings());
+        recipe.getRecipeIngredients().clear();
+        addIngredients(recipe, request.ingredients());
+        recipeRepository.save(recipe);
+    }
+
+    private Account currentAccount() {
+        return ((AccountDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+                .getAccount();
+    }
+
+    private static ResponseStatusException recipeNotFound() {
+        return new ResponseStatusException(HttpStatus.NOT_FOUND, "Recipe not found");
     }
 
     public void deleteRecipe(long recipeId) {

@@ -13,9 +13,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.hocuscoquus.hocuscoquus.model.IngredientCreateDto;
+import com.hocuscoquus.hocuscoquus.service.RecipeService;
 
 @Controller
 public class PageController {
+
+    private final RecipeService recipeService;
+
+    public PageController(RecipeService recipeService) {
+        this.recipeService = recipeService;
+    }
 
 	@GetMapping({ "/", "/index" })
 	public String index() {
@@ -58,7 +65,11 @@ public class PageController {
 	}
 
 	@GetMapping("/edit/recipe")
-	public String editRecipe() {
+	public String editRecipe(@RequestParam(required = false) Long id, Model model) {
+        model.addAttribute("recipeId", id);
+        if (id == null) {
+            model.addAttribute("recipes", recipeService.listOwnedRecipes());
+        }
 		return "edit-recipe";
 	}
 
