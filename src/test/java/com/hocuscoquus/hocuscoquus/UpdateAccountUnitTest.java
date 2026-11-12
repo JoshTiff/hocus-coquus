@@ -23,7 +23,7 @@ import com.hocuscoquus.hocuscoquus.repository.IngredientRepository;
 import com.hocuscoquus.hocuscoquus.service.AccountService;
 
 @ExtendWith(MockitoExtension.class)
-class AccountUpdateServiceTest {
+class UpdateAccountUnitTest {
 
     @Mock
     private AccountRepository accountRepository;
