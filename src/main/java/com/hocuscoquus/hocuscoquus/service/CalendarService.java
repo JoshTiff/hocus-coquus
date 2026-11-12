@@ -2,16 +2,18 @@ package com.hocuscoquus.hocuscoquus.service;
 
 import java.util.Objects;
 
-import com.hocuscoquus.hocuscoquus.model.Calendar;
-import com.hocuscoquus.hocuscoquus.model.CalendarEntry;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.hocuscoquus.hocuscoquus.entity.Calendar;
+import com.hocuscoquus.hocuscoquus.entity.CalendarEntry;
 import com.hocuscoquus.hocuscoquus.repository.CalendarEntryRepository;
 import com.hocuscoquus.hocuscoquus.repository.CalendarRepository;
 
-// @Service
+@Service
 public class CalendarService {
     private final CalendarRepository calendarRepository;
     private final CalendarEntryRepository calendarEntryRepository;
-
 
     // TODO: review/add constructor(s)
 
@@ -25,8 +27,25 @@ public class CalendarService {
         return new Calendar();
     }
 
-    public void deleteCalendar(long calendarId) {
-        // TODO: add implementation for this method
+    @Transactional
+    public boolean deleteCalendar(long requesterId, long calendarId) {
+        // Confirm calendar exists
+        Calendar cal = calendarRepository.findById(calendarId);
+        if (cal == null) {
+            throw new IllegalArgumentException("Calendar not found for ID: " + calendarId);
+        }
+
+        // Confirm requesting account owns calendar to delete
+        long ownerId = cal.getAccountId();
+        if (requesterId != ownerId) {
+            throw new IllegalArgumentException("Account with ID " + requesterId
+                    + " attempting to delete calendar from account with ID " + ownerId);
+        }
+
+        // Delete calendar
+        this.calendarEntryRepository.deleteByCalendar_CalendarId(calendarId);
+        this.calendarRepository.deleteById(calendarId);
+        return true;
     }
 
     /**
@@ -54,13 +73,23 @@ public class CalendarService {
      *
      * @param calendarEntryId the ID of the calendar entry to remove
      */
-    public void deleteEntry(long calendarEntryId) {
-        // for (int i = 0; i < entries.size(); i++) {
-        //     if (entries.get(i).getCalendarEntryId() == calendarEntryId) {
-        //         entries.remove(i);
-        //         return;
-        //     }
-        // }
+    public boolean deleteEntry(long requesterId, long calendarEntryId) {
+        // Confirm calendar entry exists
+        CalendarEntry entry = calendarEntryRepository.findById(calendarEntryId);
+        if (entry == null) {
+            throw new IllegalArgumentException("Calendar entry not found for ID: " + calendarEntryId);
+        }
+
+        // Confirm requesting account owns calendar entry to delete
+        long ownerId = entry.getCalendar().getAccountId();
+        if (requesterId != ownerId) {
+            throw new IllegalArgumentException("Account with ID " + requesterId
+                    + " attempting to delete calendar from account with ID " + ownerId);
+        }
+
+        // Delete calendar entry
+        this.calendarEntryRepository.deleteById(calendarEntryId);
+        return true;
     }
 
     public CalendarEntry updateEntry(CalendarEntry entry) {
@@ -76,7 +105,7 @@ public class CalendarService {
      * @return true when calendar download is successful, false otherwise
      */
     public boolean downloadCalendar(long calendarId) {
-        
+
         // TODO: add implementation for this method
 
         return false;
@@ -90,9 +119,9 @@ public class CalendarService {
      * @return true when sync with Google Account is successful, false otherwise
      */
     public boolean syncGoogleAccount(long calendarId, String email) {
-        
+
         // TODO: add implementation for this method
-        
+
         return false;
     }
 }

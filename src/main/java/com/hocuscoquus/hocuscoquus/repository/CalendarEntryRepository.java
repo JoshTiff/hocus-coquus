@@ -9,4 +9,5 @@ import com.hocuscoquus.hocuscoquus.entity.CalendarEntry;
 public interface CalendarEntryRepository extends JpaRepository<CalendarEntry, Long> {
     CalendarEntry findById(long calendarEntryId);
     List<CalendarEntry> findByCalendar(long calendarId);
+    void deleteByCalendar_CalendarId(long calendarId);
 }
