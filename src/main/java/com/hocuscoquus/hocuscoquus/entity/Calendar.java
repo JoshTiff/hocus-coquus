@@ -75,6 +75,9 @@ public class Calendar {
 	public void setEntries(List<CalendarEntry> entries) {
 		this.entries = entries;
 	}
-    
+
+	public long getAccountId() {
+		return this.account.getAccountId();
+	}  
     
 }
