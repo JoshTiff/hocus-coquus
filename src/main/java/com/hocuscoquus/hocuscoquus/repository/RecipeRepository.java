@@ -10,6 +10,7 @@ import com.hocuscoquus.hocuscoquus.entity.RecipeIngredient;
 
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     Recipe findById(long recipeId);
+    Recipe findByRecipeId(long recipeId);
     //List<Recipe> findByRecipeIngredients_Ingredient(List<RecipeIngredient> recipeIngredients);
 
 }

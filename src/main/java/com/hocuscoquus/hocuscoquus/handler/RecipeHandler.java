@@ -1,7 +1,6 @@
 package com.hocuscoquus.hocuscoquus.handler;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import com.hocuscoquus.hocuscoquus.entity.Recipe;
 import com.hocuscoquus.hocuscoquus.entity.RecipeIngredient;
-import com.hocuscoquus.hocuscoquus.model.ReactionTypeRecord;
 import com.hocuscoquus.hocuscoquus.model.RecipeCreateRequest;
 import com.hocuscoquus.hocuscoquus.model.RecipeIngredientRecord;
 import com.hocuscoquus.hocuscoquus.model.RecipeRecord;
@@ -40,7 +38,6 @@ public class RecipeHandler {
     		
     		 
     		List<RecipeIngredientRecord> ingredients = new ArrayList<>();
-    		HashMap<ReactionTypeRecord, Integer> reactions = new HashMap<>();
     		
     		for (RecipeIngredient ri : newRecipe.getRecipeIngredients()) {
     			RecipeIngredientRecord temp = new RecipeIngredientRecord(ri.getMeasurement(), ri.getQuantity(), ri.getIngredient().getIngredientName(), ri.getIngredient().getIngredientId());
@@ -54,8 +51,8 @@ public class RecipeHandler {
     				newRecipe.getInstructions(),
     				ingredients,
     				newRecipe.getImage(),
-    				reactions,
-    				newRecipe.getAccount().getAccountId()
+                newRecipe.computeNumReactions(),
+				newRecipe.getAccount().getAccountId()
         			);
     		
     		return ResponseEntity.ok(response);
