@@ -15,10 +15,9 @@ import com.hocuscoquus.hocuscoquus.entity.Account;
 import com.hocuscoquus.hocuscoquus.entity.Recipe;
 import com.hocuscoquus.hocuscoquus.entity.RecipeNote;
 import com.hocuscoquus.hocuscoquus.model.RecipeNoteCreateRequest;
-import com.hocuscoquus.hocuscoquus.repository.RecipeNoteRepository;
 import com.hocuscoquus.hocuscoquus.repository.RecipeRepository;
 import com.hocuscoquus.hocuscoquus.service.AccountService;
-import com.hocuscoquus.hocuscoquus.service.RecipeNoteService;
+import com.hocuscoquus.hocuscoquus.service.RecipeService;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -28,10 +27,7 @@ import jakarta.persistence.PersistenceContext;
 class AddRecipeNoteIntegrationTest {
 
     @Autowired
-    private RecipeNoteService recipeNoteService;
-
-    @Autowired
-    private RecipeNoteRepository recipeNoteRepository;
+    private RecipeService recipeService;
 
     @Autowired
     private RecipeRepository recipeRepository;
@@ -65,6 +61,37 @@ class AddRecipeNoteIntegrationTest {
         entityManager.clear();
     }
 
+    private List<RecipeNote> findNotesForAccountAndRecipe(
+            long accountId, long recipeId) {
+
+        return entityManager.createQuery(
+                "SELECT n FROM RecipeNote n " +
+                "WHERE n.account.accountId = :accountId " +
+                "AND n.recipe.recipeId = :recipeId",
+                RecipeNote.class)
+                .setParameter("accountId", accountId)
+                .setParameter("recipeId", recipeId)
+                .getResultList();
+    }
+
+    private long countNotesForAccount(long accountId) {
+        return entityManager.createQuery(
+                "SELECT COUNT(n) FROM RecipeNote n " +
+                "WHERE n.account.accountId = :accountId",
+                Long.class)
+                .setParameter("accountId", accountId)
+                .getSingleResult();
+    }
+
+    private long countNotesForRecipe(long recipeId) {
+        return entityManager.createQuery(
+                "SELECT COUNT(n) FROM RecipeNote n " +
+                "WHERE n.recipe.recipeId = :recipeId",
+                Long.class)
+                .setParameter("recipeId", recipeId)
+                .getSingleResult();
+    }
+
     @Test
     void addRecipeNote_validRequest_persistsNote() {
         Account account = createAccount();
@@ -78,7 +105,7 @@ class AddRecipeNoteIntegrationTest {
                         recipeId, "  Add more garlic  ");
 
         RecipeNote created =
-                recipeNoteService.addRecipeNote(accountId, request);
+                recipeService.addRecipeNote(accountId, request);
 
         assertNotNull(created);
         assertTrue(created.getRecipeNoteId() > 0);
@@ -107,12 +134,12 @@ class AddRecipeNoteIntegrationTest {
         long secondAccountId = secondAccount.getAccountId();
         long recipeId = recipe.getRecipeId();
 
-        RecipeNote firstNote = recipeNoteService.addRecipeNote(
+        RecipeNote firstNote = recipeService.addRecipeNote(
                 firstAccountId,
                 new RecipeNoteCreateRequest(
                         recipeId, "First user's note"));
 
-        RecipeNote secondNote = recipeNoteService.addRecipeNote(
+        RecipeNote secondNote = recipeService.addRecipeNote(
                 secondAccountId,
                 new RecipeNoteCreateRequest(
                         recipeId, "Second user's note"));
@@ -123,14 +150,12 @@ class AddRecipeNoteIntegrationTest {
         flushAndClear();
 
         List<RecipeNote> firstUserNotes =
-                recipeNoteRepository
-                        .findByAccount_AccountIdAndRecipe_RecipeId(
-                                firstAccountId, recipeId);
+                findNotesForAccountAndRecipe(
+                        firstAccountId, recipeId);
 
         List<RecipeNote> secondUserNotes =
-                recipeNoteRepository
-                        .findByAccount_AccountIdAndRecipe_RecipeId(
-                                secondAccountId, recipeId);
+                findNotesForAccountAndRecipe(
+                        secondAccountId, recipeId);
 
         assertEquals(1, firstUserNotes.size());
         assertEquals(1, secondUserNotes.size());
@@ -157,14 +182,13 @@ class AddRecipeNoteIntegrationTest {
                         Long.MAX_VALUE, "Test note");
 
         assertThrows(NoSuchElementException.class,
-                () -> recipeNoteService.addRecipeNote(
+                () -> recipeService.addRecipeNote(
                         account.getAccountId(), request));
 
         flushAndClear();
 
-        assertTrue(recipeNoteRepository
-                .findByAccount_AccountId(account.getAccountId())
-                .isEmpty());
+        assertEquals(0L,
+                countNotesForAccount(account.getAccountId()));
     }
 
     @Test
@@ -178,14 +202,12 @@ class AddRecipeNoteIntegrationTest {
                 new RecipeNoteCreateRequest(recipeId, "Test note");
 
         assertThrows(NoSuchElementException.class,
-                () -> recipeNoteService.addRecipeNote(
+                () -> recipeService.addRecipeNote(
                         Long.MAX_VALUE, request));
 
         flushAndClear();
 
-        assertTrue(recipeNoteRepository
-                .findByRecipe_RecipeId(recipeId)
-                .isEmpty());
+        assertEquals(0L, countNotesForRecipe(recipeId));
     }
 
     @Test
@@ -199,13 +221,11 @@ class AddRecipeNoteIntegrationTest {
                 new RecipeNoteCreateRequest(recipeId, "   ");
 
         assertThrows(IllegalArgumentException.class,
-                () -> recipeNoteService.addRecipeNote(
+                () -> recipeService.addRecipeNote(
                         account.getAccountId(), request));
 
         flushAndClear();
 
-        assertTrue(recipeNoteRepository
-                .findByRecipe_RecipeId(recipeId)
-                .isEmpty());
+        assertEquals(0L, countNotesForRecipe(recipeId));
     }
 }

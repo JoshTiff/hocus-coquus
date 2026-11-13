@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @Service
 public class RecipeHandler {
@@ -111,5 +112,28 @@ public class RecipeHandler {
 	public ResponseEntity<Map<ReactionType, Integer>> processReactionDeleteRequest(long recipeId) {
 		return ResponseEntity.ok(recipeService.removeReactionFromRecipe(recipeId));
 	}
-    
+
+	public ResponseEntity<?> processRecipeNoteCreateRequest(
+        long accountId, RecipeNoteCreateRequest request) {
+
+		try {
+			com.hocuscoquus.hocuscoquus.entity.RecipeNote note =
+					recipeService.addRecipeNote(accountId, request);
+
+			com.hocuscoquus.hocuscoquus.model.RecipeNote response =
+					new com.hocuscoquus.hocuscoquus.model.RecipeNote(
+							note.getRecipeNoteId(),
+							note.getRecipe().getRecipeId(),
+							note.getAccount().getAccountId(),
+							note.getMessage());
+
+			return ResponseEntity.status(HttpStatus.CREATED).body(response);
+
+		} catch (NoSuchElementException e) {
+			return ResponseEntity.notFound().build();
+
+		} catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().build();
+		}
+	}
 }

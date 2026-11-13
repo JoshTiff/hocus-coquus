@@ -13,14 +13,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.NoSuchElementException;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -28,10 +28,8 @@ import com.hocuscoquus.hocuscoquus.config.SecurityConfig;
 import com.hocuscoquus.hocuscoquus.controller.RecipeNoteController;
 import com.hocuscoquus.hocuscoquus.entity.Account;
 import com.hocuscoquus.hocuscoquus.entity.AccountDetails;
-import com.hocuscoquus.hocuscoquus.entity.Recipe;
-import com.hocuscoquus.hocuscoquus.entity.RecipeNote;
+import com.hocuscoquus.hocuscoquus.handler.RecipeHandler;
 import com.hocuscoquus.hocuscoquus.model.RecipeNoteCreateRequest;
-import com.hocuscoquus.hocuscoquus.service.RecipeNoteService;
 
 @WebMvcTest(RecipeNoteController.class)
 @Import(SecurityConfig.class)
@@ -43,7 +41,7 @@ class AddRecipeNoteControllerTest {
     private MockMvc mockMvc;
 
     @MockitoBean
-    private RecipeNoteService recipeNoteService;
+    private RecipeHandler recipeHandler;
 
     private AccountDetails testUser() {
         Account account = new Account();
@@ -55,29 +53,14 @@ class AddRecipeNoteControllerTest {
         return new AccountDetails(account);
     }
 
-    private RecipeNote testNote() {
-        Account account = new Account();
-        account.setAccountId(1L);
-
-        Recipe recipe = Recipe.builder()
-                .setRecipeName("Test Recipe")
-                .build();
-        recipe.setRecipeId(10L);
-
-        RecipeNote note = new RecipeNote();
-        note.setRecipeNoteId(5L);
-        note.setRecipe(recipe);
-        note.setAccount(account);
-        note.setMessage("Add more garlic");
-
-        return note;
-    }
-
     @Test
     void addRecipeNote_validRequest_returnsCreated() throws Exception {
-        when(recipeNoteService.addRecipeNote(
-                eq(1L), any(RecipeNoteCreateRequest.class)))
-                .thenReturn(testNote());
+        when(recipeHandler.processRecipeNoteCreateRequest(
+        eq(1L), any(RecipeNoteCreateRequest.class)))
+        .thenAnswer(invocation ->
+                ResponseEntity.status(HttpStatus.CREATED)
+                        .body(new com.hocuscoquus.hocuscoquus.model.RecipeNote(
+                                5L, 10L, 1L, "Add more garlic")));
 
         mockMvc.perform(post(URL)
                 .with(user(testUser()))
@@ -95,10 +78,12 @@ class AddRecipeNoteControllerTest {
                 .andExpect(jsonPath("$.accountId").value(1))
                 .andExpect(jsonPath("$.message").value("Add more garlic"));
 
-        ArgumentCaptor<RecipeNoteCreateRequest> captor =
-                ArgumentCaptor.forClass(RecipeNoteCreateRequest.class);
 
-        verify(recipeNoteService).addRecipeNote(eq(1L), captor.capture());
+        ArgumentCaptor<RecipeNoteCreateRequest> captor =
+            ArgumentCaptor.forClass(RecipeNoteCreateRequest.class);
+
+        verify(recipeHandler).processRecipeNoteCreateRequest(
+                eq(1L), captor.capture());
 
         assertEquals(10L, captor.getValue().recipeId());
         assertEquals("Add more garlic", captor.getValue().message());
@@ -106,9 +91,9 @@ class AddRecipeNoteControllerTest {
 
     @Test
     void addRecipeNote_recipeNotFound_returnsNotFound() throws Exception {
-        when(recipeNoteService.addRecipeNote(
+        when(recipeHandler.processRecipeNoteCreateRequest(
                 eq(1L), any(RecipeNoteCreateRequest.class)))
-                .thenThrow(new NoSuchElementException("Recipe not found"));
+                .thenReturn(ResponseEntity.notFound().build());
 
         mockMvc.perform(post(URL)
                 .with(user(testUser()))
@@ -127,9 +112,9 @@ class AddRecipeNoteControllerTest {
     void addRecipeNote_serviceRejectsRequest_returnsBadRequest()
             throws Exception {
 
-        when(recipeNoteService.addRecipeNote(
+        when(recipeHandler.processRecipeNoteCreateRequest(
                 eq(1L), any(RecipeNoteCreateRequest.class)))
-                .thenThrow(new IllegalArgumentException("Invalid recipe note"));
+                .thenReturn(ResponseEntity.badRequest().build());
 
         mockMvc.perform(post(URL)
                 .with(user(testUser()))
@@ -158,7 +143,7 @@ class AddRecipeNoteControllerTest {
                     """))
                 .andExpect(status().isBadRequest());
 
-        verify(recipeNoteService, never()).addRecipeNote(
+        verify(recipeHandler, never()).processRecipeNoteCreateRequest(
                 eq(1L), any(RecipeNoteCreateRequest.class));
     }
 
@@ -175,7 +160,7 @@ class AddRecipeNoteControllerTest {
                     """))
                 .andExpect(status().isBadRequest());
 
-        verify(recipeNoteService, never()).addRecipeNote(
+        verify(recipeHandler, never()).processRecipeNoteCreateRequest(
                 eq(1L), any(RecipeNoteCreateRequest.class));
     }
 
@@ -193,7 +178,7 @@ class AddRecipeNoteControllerTest {
                     """))
                 .andExpect(status().isBadRequest());
 
-        verify(recipeNoteService, never()).addRecipeNote(
+        verify(recipeHandler, never()).processRecipeNoteCreateRequest(
                 eq(1L), any(RecipeNoteCreateRequest.class));
     }
 
@@ -213,7 +198,7 @@ class AddRecipeNoteControllerTest {
                 .content(body))
                 .andExpect(status().isBadRequest());
 
-        verify(recipeNoteService, never()).addRecipeNote(
+        verify(recipeHandler, never()).processRecipeNoteCreateRequest(
                 eq(1L), any(RecipeNoteCreateRequest.class));
     }
 
@@ -233,7 +218,7 @@ class AddRecipeNoteControllerTest {
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl("/login"));
 
-        verify(recipeNoteService, never()).addRecipeNote(
+        verify(recipeHandler, never()).processRecipeNoteCreateRequest(
                 eq(1L), any(RecipeNoteCreateRequest.class));
     }
 }
