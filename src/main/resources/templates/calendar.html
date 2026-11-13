@@ -7,7 +7,7 @@
         <main class="calendar-page">
             <section class="calendar-panel panel" aria-labelledby="calendar-title">
                 <div class="calendar-heading">
-                    <p>Your recipe calendar</p>
+                    <p th:text="${currentCalendar != null ? currentCalendar.calendarName : 'Your recipe calendar'}">Your recipe calendar</p>
                     <div class="calendar-month-navigation">
                         <button class="btn calendar-month-button prev-month-button" type="button" title="prev-month-button">Prev month</button>
                         <h1 id="calendar-title">November</h1>
@@ -59,6 +59,12 @@
                     <div class="calendar-day" role="gridcell" aria-label=""></div>
                     <div class="calendar-day" role="gridcell" aria-label=""></div>
                     <div class="calendar-day" role="gridcell" aria-label=""></div>
+                </div>
+
+                <div class="calendar-actions calendar-management-actions" aria-label="Calendar management actions">
+                    <a class="btn" th:href="@{/calendar-create}">Create Calendar</a>
+                    <button class="btn" type="button">Delete Calendar</button>
+                    <a class="btn" th:href="@{/calendar/switch}">Switch Calendar</a>
                 </div>
 
                 <div class="calendar-actions" aria-label="Calendar actions">

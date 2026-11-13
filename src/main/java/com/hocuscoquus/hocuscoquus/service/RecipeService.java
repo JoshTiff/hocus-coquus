@@ -27,6 +27,8 @@ import com.hocuscoquus.hocuscoquus.model.ReactionType;
 import com.hocuscoquus.hocuscoquus.model.RecipeCreateRequest;
 import com.hocuscoquus.hocuscoquus.model.RecipeIngredientCreateRequest;
 import com.hocuscoquus.hocuscoquus.model.RecipeNoteCreateRequest;
+import com.hocuscoquus.hocuscoquus.model.RecipeEditRequest;
+import com.hocuscoquus.hocuscoquus.model.RecipeEditRequest.IngredientRow;
 import com.hocuscoquus.hocuscoquus.repository.IngredientRepository;
 import com.hocuscoquus.hocuscoquus.repository.RecipeIngredientRepository;
 import com.hocuscoquus.hocuscoquus.repository.RecipeRepository;
@@ -98,9 +100,64 @@ public class RecipeService {
         return recipes;
     }
 
-    public Recipe updateRecipe(Recipe recipe) {
-        // TODO: add implementation for this method
-        return null;
+    public List<Recipe> listOwnedRecipes(long accountId) {
+        return recipeRepository.findByAccount_AccountIdOrderByRecipeNameAsc(accountId);
+    }
+
+    public Recipe getOwnedRecipe(long recipeId, long accountId) {
+        return recipeRepository.findByRecipeIdAndAccount_AccountId(recipeId, accountId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Recipe not found"));
+    }
+
+    @Transactional(readOnly = true)
+    public RecipeEditRequest loadRecipeForEdit(long recipeId, long accountId) {
+        Recipe recipe = getOwnedRecipe(recipeId, accountId);
+        List<IngredientRow> ingredients = recipe.getRecipeIngredients().stream()
+                .map(row -> new IngredientRow(row.getIngredient().getIngredientName(),
+                        row.getQuantity(), row.getMeasurement()))
+                .toList();
+        return new RecipeEditRequest(recipe.getRecipeName(), recipe.getRecipeDescription(),
+                recipe.getInstructions(), recipe.getImage(), ingredients);
+    }
+
+    @Transactional
+    public void updateRecipe(long recipeId, long accountId, RecipeEditRequest request) {
+        Recipe recipe = recipeRepository.findForUpdateByRecipeIdAndAccount_AccountId(recipeId, accountId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Recipe not found"));
+        recipe.setRecipeName(request.recipeName());
+        recipe.setRecipeDescription(request.recipeDescription());
+        recipe.setInstructions(request.instructions());
+        if (request.image() != null) {
+            recipe.setImage(request.image().isBlank() ? null : request.image().strip());
+        }
+        if (request.ingredients() != null) {
+            replaceRecipeIngredients(recipe, request.ingredients());
+        }
+    }
+
+    private void replaceRecipeIngredients(Recipe recipe, List<IngredientRow> inputs) {
+        List<RecipeIngredient> rows = new ArrayList<>();
+        for (IngredientRow input : inputs) {
+            if (!Double.isFinite(input.quantity())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid ingredient quantity");
+            }
+            String name = input.ingredient().strip().toLowerCase();
+            Ingredient ingredient = ingredientRepository.findByIngredientName(name);
+            if (ingredient == null) {
+                IngredientCreateDto dto = new IngredientCreateDto();
+                dto.setIngredientName(name);
+                ingredient = ingredientService.createIngredient(dto);
+            }
+
+            RecipeIngredient row = new RecipeIngredient();
+            row.setRecipe(recipe);
+            row.setIngredient(ingredient);
+            row.setQuantity(input.quantity());
+            row.setMeasurement(input.measurement());
+            rows.add(row);
+        }
+        recipe.getRecipeIngredients().clear();
+        recipe.getRecipeIngredients().addAll(rows);
     }
 
     public void deleteRecipe(long recipeId) {

@@ -25,17 +25,12 @@
     font-size: clamp(3.5rem, 9vw, 6.25rem);
 }
 
-.error-image-placeholder {
-    display: grid;
+.error-image {
+    display: block;
     width: min(16rem, 70vw);
     aspect-ratio: 1;
-    place-items: center;
     margin: 1.5rem auto 2rem;
-    padding: 1rem;
-    border: 1px solid var(--white);
-    color: var(--white);
-    font-size: 1.1rem;
-    line-height: 1.4;
+    object-fit: contain;
 }
 
 .error-home-link {

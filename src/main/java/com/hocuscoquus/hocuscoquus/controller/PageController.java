@@ -52,11 +52,6 @@ public class PageController {
 		return "search";
 	}
 
-	@GetMapping("/edit/recipe")
-	public String editRecipe() {
-		return "edit-recipe";
-	}
-
 	@GetMapping("/login")
 	public String login() {
 		return "login";
@@ -68,9 +63,9 @@ public class PageController {
 		return "error/404";
 	}
 
-	@GetMapping("/calendar")
-	public String calendar(){
-		return "calendar";
+	@GetMapping("/calendar-create")
+	public String createCalendar() {
+		return "calendar-create";
 	}
 	
 	@GetMapping("/ingredient-create")
