@@ -22,6 +22,7 @@ import com.hocuscoquus.hocuscoquus.entity.Recipe;
 import com.hocuscoquus.hocuscoquus.entity.RecipeIngredient;
 import com.hocuscoquus.hocuscoquus.entity.RecipeNote;
 import com.hocuscoquus.hocuscoquus.model.IngredientCreateDto;
+import com.hocuscoquus.hocuscoquus.model.IngredientCreateRequest;
 import com.hocuscoquus.hocuscoquus.model.IngredientModel;
 import com.hocuscoquus.hocuscoquus.model.ReactionType;
 import com.hocuscoquus.hocuscoquus.model.RecipeCreateRequest;
@@ -73,9 +74,9 @@ public class RecipeService {
     		
     		//if it doesn't, create it
     		if (ingredient == null) {
-    			IngredientCreateDto ic = new IngredientCreateDto();
-    			ic.setIngredientName(i.ingredient().trim().toLowerCase());
-    			ingredient = ingredientService.createIngredient(ic);
+    			ingredient = new Ingredient();
+    			ingredient.setIngredientName(i.ingredient().trim().toLowerCase());
+    			ingredient = ingredientService.createIngredient(ingredient);
     		}
     		
     		//create a new RecipeIngredient
