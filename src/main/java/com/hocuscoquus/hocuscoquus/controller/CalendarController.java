@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hocuscoquus.hocuscoquus.entity.AccountDetails;
-import com.hocuscoquus.hocuscoquus.entity.Calendar;
 import com.hocuscoquus.hocuscoquus.entity.CalendarEntry;
 import com.hocuscoquus.hocuscoquus.service.CalendarService;
 
@@ -55,12 +54,6 @@ public class CalendarController {
             return "calendar-switch";
         }
         return "redirect:/calendar?calendarId=" + calendarId;
-    }
-
-    @PostMapping("/api/calendars")
-    @ResponseBody
-    public Calendar createCalendar(@RequestParam String name) {
-        return calendarService.createCalendar(name);
     }
 
     @DeleteMapping("/api/calendars/{calendarId}")

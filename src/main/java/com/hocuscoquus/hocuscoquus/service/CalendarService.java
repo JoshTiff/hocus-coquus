@@ -73,11 +73,6 @@ public class CalendarService {
         return calendarRepository.findByAccount_AccountId(accountId);
     }
 
-    public Calendar createCalendar(String name) {
-        // TODO: add implementation for this method
-        return new Calendar();
-    }
-
     @Transactional
     public boolean deleteCalendar(long requesterId, long calendarId) {
         // Confirm calendar exists
