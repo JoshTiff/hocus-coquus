@@ -28,7 +28,7 @@ public class IngredientHandler {
 			
 			return ResponseEntity.ok(response);
 		} catch(IllegalArgumentException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e);
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 		}
 		
 	}
