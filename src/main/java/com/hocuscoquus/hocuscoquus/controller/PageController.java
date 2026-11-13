@@ -52,11 +52,6 @@ public class PageController {
 		return "search";
 	}
 
-	@GetMapping("/edit/recipe")
-	public String editRecipe() {
-		return "edit-recipe";
-	}
-
 	@GetMapping("/login")
 	public String login() {
 		return "login";
