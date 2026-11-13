@@ -3,6 +3,7 @@ package com.hocuscoquus.hocuscoquus.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import jakarta.persistence.EntityManager;
@@ -19,11 +20,13 @@ import com.hocuscoquus.hocuscoquus.entity.Ingredient;
 import com.hocuscoquus.hocuscoquus.entity.Reaction;
 import com.hocuscoquus.hocuscoquus.entity.Recipe;
 import com.hocuscoquus.hocuscoquus.entity.RecipeIngredient;
+import com.hocuscoquus.hocuscoquus.entity.RecipeNote;
 import com.hocuscoquus.hocuscoquus.model.IngredientCreateDto;
 import com.hocuscoquus.hocuscoquus.model.IngredientModel;
 import com.hocuscoquus.hocuscoquus.model.ReactionType;
 import com.hocuscoquus.hocuscoquus.model.RecipeCreateRequest;
 import com.hocuscoquus.hocuscoquus.model.RecipeIngredientCreateRequest;
+import com.hocuscoquus.hocuscoquus.model.RecipeNoteCreateRequest;
 import com.hocuscoquus.hocuscoquus.repository.IngredientRepository;
 import com.hocuscoquus.hocuscoquus.repository.RecipeIngredientRepository;
 import com.hocuscoquus.hocuscoquus.repository.RecipeRepository;
@@ -161,6 +164,39 @@ public class RecipeService {
             entityManager.remove(reaction);
         }
         return recipe.computeNumReactions();
+    }
+
+    @Transactional
+    public RecipeNote addRecipeNote(
+            long accountId, RecipeNoteCreateRequest request) {
+
+        if (request == null
+                || request.recipeId() == null
+                || request.recipeId() <= 0
+                || request.message() == null
+                || request.message().isBlank()
+                || request.message().length() > 255) {
+            throw new IllegalArgumentException("Invalid recipe note");
+        }
+
+        Recipe recipe = recipeRepository.findById(request.recipeId())
+                .orElseThrow(() ->
+                        new NoSuchElementException("Recipe not found"));
+
+        Account account = entityManager.find(Account.class, accountId);
+
+        if (account == null) {
+            throw new NoSuchElementException("Account not found");
+        }
+
+        RecipeNote note = new RecipeNote();
+        note.setRecipe(recipe);
+        note.setAccount(account);
+        note.setMessage(request.message().trim());
+
+        entityManager.persist(note);
+
+        return note;
     }
 
     private Recipe findRecipe(long recipeId) {

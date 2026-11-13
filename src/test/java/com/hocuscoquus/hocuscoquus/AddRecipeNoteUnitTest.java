@@ -1,4 +1,3 @@
-
 package com.hocuscoquus.hocuscoquus;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -11,42 +10,57 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.hocuscoquus.hocuscoquus.entity.Account;
 import com.hocuscoquus.hocuscoquus.entity.Recipe;
 import com.hocuscoquus.hocuscoquus.entity.RecipeNote;
 import com.hocuscoquus.hocuscoquus.model.RecipeNoteCreateRequest;
-import com.hocuscoquus.hocuscoquus.repository.AccountRepository;
-import com.hocuscoquus.hocuscoquus.repository.RecipeNoteRepository;
+import com.hocuscoquus.hocuscoquus.repository.IngredientRepository;
+import com.hocuscoquus.hocuscoquus.repository.RecipeIngredientRepository;
 import com.hocuscoquus.hocuscoquus.repository.RecipeRepository;
-import com.hocuscoquus.hocuscoquus.service.RecipeNoteService;
+import com.hocuscoquus.hocuscoquus.service.IngredientService;
+import com.hocuscoquus.hocuscoquus.service.RecipeService;
+
+import jakarta.persistence.EntityManager;
 
 @ExtendWith(MockitoExtension.class)
 class AddRecipeNoteUnitTest {
 
     @Mock
-    private RecipeNoteRepository recipeNoteRepository;
-
-    @Mock
     private RecipeRepository recipeRepository;
 
     @Mock
-    private AccountRepository accountRepository;
+    private IngredientRepository ingredientRepository;
+
+    @Mock
+    private RecipeIngredientRepository recipeIngredientRepository;
+
+    @Mock
+    private IngredientService ingredientService;
+
+    @Mock
+    private EntityManager entityManager;
 
     @Mock
     private Recipe recipe;
 
-    private RecipeNoteService recipeNoteService;
+    private RecipeService recipeService;
     private Account account;
 
     @BeforeEach
     void setUp() {
-        recipeNoteService = new RecipeNoteService(
-                recipeNoteRepository,
+        recipeService = new RecipeService(
+                ingredientService,
                 recipeRepository,
-                accountRepository);
+                recipeIngredientRepository,
+                ingredientRepository);
+
+        ReflectionTestUtils.setField(
+                recipeService, "entityManager", entityManager);
 
         account = new Account();
         account.setAccountId(1L);
@@ -54,29 +68,25 @@ class AddRecipeNoteUnitTest {
 
     @Test
     void addRecipeNote_validRequest_savesNote() {
-        // Use Long.valueOf to select the Optional-returning findById
         when(recipeRepository.findById(Long.valueOf(10L)))
                 .thenReturn(Optional.of(recipe));
 
-        when(accountRepository.findById(1L))
+        when(entityManager.find(Account.class, 1L))
                 .thenReturn(account);
-
-        when(recipeNoteRepository.save(any(RecipeNote.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
 
         RecipeNoteCreateRequest request =
                 new RecipeNoteCreateRequest(
                         10L, "Try adding more garlic");
 
         RecipeNote result =
-                recipeNoteService.addRecipeNote(1L, request);
+                recipeService.addRecipeNote(1L, request);
 
         assertNotNull(result);
         assertSame(recipe, result.getRecipe());
         assertSame(account, result.getAccount());
         assertEquals("Try adding more garlic", result.getMessage());
 
-        verify(recipeNoteRepository).save(result);
+        verify(entityManager).persist(result);
     }
 
     @Test
@@ -84,76 +94,59 @@ class AddRecipeNoteUnitTest {
         when(recipeRepository.findById(Long.valueOf(10L)))
                 .thenReturn(Optional.of(recipe));
 
-        when(accountRepository.findById(1L))
+        when(entityManager.find(Account.class, 1L))
                 .thenReturn(account);
-
-        when(recipeNoteRepository.save(any(RecipeNote.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
 
         RecipeNoteCreateRequest request =
                 new RecipeNoteCreateRequest(
                         10L, "  Add more salt  ");
 
         RecipeNote result =
-                recipeNoteService.addRecipeNote(1L, request);
+                recipeService.addRecipeNote(1L, request);
 
         assertEquals("Add more salt", result.getMessage());
+        verify(entityManager).persist(result);
     }
 
     @Test
     void addRecipeNote_nullRequest_throwsException() {
         assertThrows(IllegalArgumentException.class,
-                () -> recipeNoteService.addRecipeNote(1L, null));
+                () -> recipeService.addRecipeNote(1L, null));
 
-        verifyNoInteractions(
-                recipeRepository,
-                accountRepository,
-                recipeNoteRepository);
+        verifyNoInteractions(recipeRepository, entityManager);
     }
 
     @Test
     void addRecipeNote_invalidRecipeId_throwsException() {
         RecipeNoteCreateRequest request =
-                new RecipeNoteCreateRequest(
-                        -1L, "Test note");
+                new RecipeNoteCreateRequest(-1L, "Test note");
 
         assertThrows(IllegalArgumentException.class,
-                () -> recipeNoteService.addRecipeNote(1L, request));
+                () -> recipeService.addRecipeNote(1L, request));
 
-        verifyNoInteractions(
-                recipeRepository,
-                accountRepository,
-                recipeNoteRepository);
+        verifyNoInteractions(recipeRepository, entityManager);
     }
 
     @Test
     void addRecipeNote_blankMessage_throwsException() {
         RecipeNoteCreateRequest request =
-                new RecipeNoteCreateRequest(
-                        10L, "   ");
+                new RecipeNoteCreateRequest(10L, "   ");
 
         assertThrows(IllegalArgumentException.class,
-                () -> recipeNoteService.addRecipeNote(1L, request));
+                () -> recipeService.addRecipeNote(1L, request));
 
-        verifyNoInteractions(
-                recipeRepository,
-                accountRepository,
-                recipeNoteRepository);
+        verifyNoInteractions(recipeRepository, entityManager);
     }
 
     @Test
     void addRecipeNote_messageTooLong_throwsException() {
         RecipeNoteCreateRequest request =
-                new RecipeNoteCreateRequest(
-                        10L, "a".repeat(256));
+                new RecipeNoteCreateRequest(10L, "a".repeat(256));
 
         assertThrows(IllegalArgumentException.class,
-                () -> recipeNoteService.addRecipeNote(1L, request));
+                () -> recipeService.addRecipeNote(1L, request));
 
-        verifyNoInteractions(
-                recipeRepository,
-                accountRepository,
-                recipeNoteRepository);
+        verifyNoInteractions(recipeRepository, entityManager);
     }
 
     @Test
@@ -162,15 +155,12 @@ class AddRecipeNoteUnitTest {
                 .thenReturn(Optional.empty());
 
         RecipeNoteCreateRequest request =
-                new RecipeNoteCreateRequest(
-                        999L, "Test note");
+                new RecipeNoteCreateRequest(999L, "Test note");
 
         assertThrows(NoSuchElementException.class,
-                () -> recipeNoteService.addRecipeNote(1L, request));
+                () -> recipeService.addRecipeNote(1L, request));
 
-        verifyNoInteractions(
-                accountRepository,
-                recipeNoteRepository);
+        verifyNoInteractions(entityManager);
     }
 
     @Test
@@ -178,16 +168,15 @@ class AddRecipeNoteUnitTest {
         when(recipeRepository.findById(Long.valueOf(10L)))
                 .thenReturn(Optional.of(recipe));
 
-        when(accountRepository.findById(999L))
+        when(entityManager.find(Account.class, 999L))
                 .thenReturn(null);
 
         RecipeNoteCreateRequest request =
-                new RecipeNoteCreateRequest(
-                        10L, "Test note");
+                new RecipeNoteCreateRequest(10L, "Test note");
 
         assertThrows(NoSuchElementException.class,
-                () -> recipeNoteService.addRecipeNote(999L, request));
+                () -> recipeService.addRecipeNote(999L, request));
 
-        verify(recipeNoteRepository, never()).save(any());
+        verify(entityManager, never()).persist(any());
     }
 }
