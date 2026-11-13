@@ -1,11 +1,16 @@
 package com.hocuscoquus.hocuscoquus.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
@@ -17,9 +22,12 @@ public class RecipeTag {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long recipeTagId;
 	
-	@ManyToOne
-	@JoinColumn(name="recipe_id")
-    private Recipe recipe;
+	@ManyToMany
+	@JoinTable(
+			name = "recipeTag_recipe", 
+			joinColumns = @JoinColumn(name = "recipeTagId"), 
+			inverseJoinColumns = @JoinColumn(name = "recipe_id"))
+    private List<Recipe> recipes = new ArrayList<>();
 	
 	@ManyToOne
 	@JoinColumn(name="account_id")
@@ -40,12 +48,12 @@ public class RecipeTag {
 		this.recipeTagId = recipeTagId;
 	}
 
-	public Recipe getRecipe() {
-		return recipe;
+	public List<Recipe> getRecipes() {
+		return recipes;
 	}
 
-	public void setRecipe(Recipe recipe) {
-		this.recipe = recipe;
+	public void setRecipes(List<Recipe> recipe) {
+		this.recipes = recipe;
 	}
 
 	public Account getAccount() {

@@ -2,6 +2,7 @@ package com.hocuscoquus.hocuscoquus.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,6 +16,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.hocuscoquus.hocuscoquus.entity.AccountDetails;
 import com.hocuscoquus.hocuscoquus.handler.RecipeHandler;
+import com.hocuscoquus.hocuscoquus.model.ReactionCreateRequest;
+import com.hocuscoquus.hocuscoquus.model.ReactionType;
 import com.hocuscoquus.hocuscoquus.model.RecipeCreateRequest;
 import com.hocuscoquus.hocuscoquus.model.RecipeEditRequest;
 import com.hocuscoquus.hocuscoquus.model.RecipeEditRequest.IngredientRow;
@@ -91,5 +94,18 @@ public class RecipeController {
             @AuthenticationPrincipal AccountDetails account) {
         recipeService.updateRecipe(recipeId, account.getAccountId(), request);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{recipeId}/reactions")
+    public ResponseEntity<Map<ReactionType, Integer>> addReactionToRecipe(
+            @PathVariable long recipeId,
+            @Valid @RequestBody ReactionCreateRequest request) {
+        return recipeHandler.processReactionCreateRequest(recipeId, request);
+    }
+
+    @DeleteMapping("/{recipeId}/reactions")
+    public ResponseEntity<Map<ReactionType, Integer>> removeReactionFromRecipe(
+            @PathVariable long recipeId) {
+        return recipeHandler.processReactionDeleteRequest(recipeId);
     }
 }

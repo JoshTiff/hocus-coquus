@@ -2,8 +2,11 @@ package com.hocuscoquus.hocuscoquus.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -33,6 +36,8 @@ public class RecipeService {
 	private final IngredientService ingredientService;
     private final RecipeRepository recipeRepository;
     private final IngredientRepository ingredientRepository;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     // TODO: review/add constructor(s)
     public RecipeService(IngredientService ingredientService, RecipeRepository recipeRepository, RecipeIngredientRepository recipeIngredientRepository, IngredientRepository ingredientRepository) {
@@ -182,6 +187,49 @@ public class RecipeService {
             throw new IllegalArgumentException("Recipe not found: " + recipeId);
         }
         return recipe.computeNumReactions().get(reactionType);
+    }
+
+    @Transactional
+    public Map<ReactionType, Integer> addReactionToRecipe(long recipeId, ReactionType type) {
+        Recipe recipe = findRecipe(recipeId);
+        Account account = currentAccount();
+        Reaction reaction = recipeRepository.findByRecipe_RecipeIdAndAccount_AccountId(
+                recipeId, account.getAccountId());
+
+        if (reaction == null) {
+            reaction = new Reaction();
+            reaction.setRecipe(recipe);
+            reaction.setAccount(account);
+            recipe.getReactions().add(reaction);
+        }
+        reaction.setReactionType(type);
+        entityManager.persist(reaction);
+        return recipe.computeNumReactions();
+    }
+
+    @Transactional
+    public Map<ReactionType, Integer> removeReactionFromRecipe(long recipeId) {
+        Recipe recipe = findRecipe(recipeId);
+        long authenticatedAccountId = currentAccount().getAccountId();
+        Reaction reaction = recipeRepository.findByRecipe_RecipeIdAndAccount_AccountId(
+                recipeId, authenticatedAccountId);
+        if (reaction != null) {
+            recipe.getReactions().remove(reaction);
+            entityManager.remove(reaction);
+        }
+        return recipe.computeNumReactions();
+    }
+
+    private Recipe findRecipe(long recipeId) {
+        Recipe recipe = recipeRepository.findByRecipeId(recipeId);
+        if (recipe == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Recipe not found: " + recipeId);
+        }
+        return recipe;
+    }
+
+    private Account currentAccount() {
+        return ((AccountDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getAccount();
     }
 
     public List<Recipe> searchRecipesByIngredients(List<IngredientModel> ingredients) {
