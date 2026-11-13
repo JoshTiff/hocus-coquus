@@ -1,5 +1,6 @@
 package com.hocuscoquus.hocuscoquus.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.Column;
@@ -26,7 +27,7 @@ public class RecipeTag {
 			name = "recipeTag_recipe", 
 			joinColumns = @JoinColumn(name = "recipeTagId"), 
 			inverseJoinColumns = @JoinColumn(name = "recipe_id"))
-    private List<Recipe> recipes;
+    private List<Recipe> recipes = new ArrayList<>();
 	
 	@ManyToOne
 	@JoinColumn(name="account_id")
