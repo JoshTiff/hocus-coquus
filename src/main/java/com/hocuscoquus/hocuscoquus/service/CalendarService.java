@@ -1,30 +1,76 @@
 package com.hocuscoquus.hocuscoquus.service;
 
 import java.util.Objects;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.hocuscoquus.hocuscoquus.entity.Account;
 import com.hocuscoquus.hocuscoquus.entity.Calendar;
 import com.hocuscoquus.hocuscoquus.entity.CalendarEntry;
+import com.hocuscoquus.hocuscoquus.model.CalendarCreateDto;
+import com.hocuscoquus.hocuscoquus.repository.AccountRepository;
 import com.hocuscoquus.hocuscoquus.repository.CalendarEntryRepository;
 import com.hocuscoquus.hocuscoquus.repository.CalendarRepository;
 
 @Service
 public class CalendarService {
+    private static final int MAX_CALENDAR_TEXT_LENGTH = 255;
+
     private final CalendarRepository calendarRepository;
     private final CalendarEntryRepository calendarEntryRepository;
+    private final AccountRepository accountRepository;
 
     // TODO: review/add constructor(s)
 
-    public CalendarService(CalendarRepository calendarRepository, CalendarEntryRepository calendarEntryRepository) {
+    public CalendarService(
+            CalendarRepository calendarRepository,
+            CalendarEntryRepository calendarEntryRepository,
+            AccountRepository accountRepository) {
         this.calendarRepository = Objects.requireNonNull(calendarRepository);
         this.calendarEntryRepository = Objects.requireNonNull(calendarEntryRepository);
+        this.accountRepository = Objects.requireNonNull(accountRepository);
     }
 
-    public Calendar createCalendar(String name) {
-        // TODO: add implementation for this method
-        return new Calendar();
+    public Calendar createCalendar(
+            CalendarCreateDto calendarCreateDto,
+            long accountId) {
+        String name = calendarCreateDto.getCalendarName();
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("A calendar name is required.");
+        }
+        name = name.trim();
+        if (name.length() > MAX_CALENDAR_TEXT_LENGTH) {
+            throw new IllegalArgumentException("A calendar name cannot exceed 255 characters.");
+        }
+
+        String description = calendarCreateDto.getDescription();
+        if (description != null) {
+            description = description.trim();
+            if (description.length() > MAX_CALENDAR_TEXT_LENGTH) {
+                throw new IllegalArgumentException("A calendar description cannot exceed 255 characters.");
+            }
+        }
+
+        Account account = accountRepository.findById(accountId);
+        if (account == null) {
+            throw new IllegalArgumentException("Account not found for ID: " + accountId);
+        }
+
+        Calendar calendar = new Calendar();
+        calendar.setCalendarName(name);
+        calendar.setDescription(description == null || description.isBlank() ? null : description);
+        calendar.setAccount(account);
+        return calendarRepository.save(calendar);
+    }
+
+    public Calendar getCalendarForAccount(long calendarId, long accountId) {
+        return calendarRepository.findByCalendarIdAndAccount_AccountId(calendarId, accountId);
+    }
+
+    public List<Calendar> getCalendarsForAccount(long accountId) {
+        return calendarRepository.findByAccount_AccountId(accountId);
     }
 
     @Transactional

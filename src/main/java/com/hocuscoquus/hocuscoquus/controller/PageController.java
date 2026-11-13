@@ -68,9 +68,9 @@ public class PageController {
 		return "error/404";
 	}
 
-	@GetMapping("/calendar")
-	public String calendar(){
-		return "calendar";
+	@GetMapping("/calendar-create")
+	public String createCalendar() {
+		return "calendar-create";
 	}
 	
 	@GetMapping("/ingredient-create")
