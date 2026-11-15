@@ -145,9 +145,9 @@ public class RecipeService {
             String name = input.ingredient().strip().toLowerCase();
             Ingredient ingredient = ingredientRepository.findByIngredientName(name);
             if (ingredient == null) {
-                IngredientCreateDto dto = new IngredientCreateDto();
-                dto.setIngredientName(name);
-//                ingredient = ingredientService.createIngredient(dto);
+                Ingredient newIngredient = new Ingredient();
+                newIngredient.setIngredientName(name);
+                ingredient = ingredientService.createIngredient(newIngredient);
             }
 
             RecipeIngredient row = new RecipeIngredient();
