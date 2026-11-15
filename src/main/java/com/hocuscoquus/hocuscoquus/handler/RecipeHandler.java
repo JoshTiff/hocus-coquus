@@ -2,6 +2,7 @@ package com.hocuscoquus.hocuscoquus.handler;
 
 import com.hocuscoquus.hocuscoquus.entity.Recipe;
 import com.hocuscoquus.hocuscoquus.entity.RecipeIngredient;
+import com.hocuscoquus.hocuscoquus.entity.RecipeTag;
 import com.hocuscoquus.hocuscoquus.model.*;
 import com.hocuscoquus.hocuscoquus.service.RecipeService;
 import org.springframework.boot.http.converter.autoconfigure.ServerHttpMessageConvertersCustomizer;
@@ -135,5 +136,23 @@ public class RecipeHandler {
 		} catch (IllegalArgumentException e) {
 			return ResponseEntity.badRequest().build();
 		}
+	}
+
+	public ResponseEntity<?> addRecipeTag(long accountID, long recipeID, String tagName) {
+		RecipeTag addedTag = recipeService.addRecipeTag(accountID, recipeID, tagName);
+		RecipeTagRecord response = RecipeTagRecord.getRecord(addedTag);
+		return ResponseEntity.ok(response);
+	}
+
+	public ResponseEntity<?> deleteRecipeTag(long accountID, long recipeTagID) {
+		RecipeTag deletedTag = recipeService.removeRecipeTag(accountID, recipeTagID);
+		RecipeTagRecord response = RecipeTagRecord.getRecord(deletedTag);
+		return ResponseEntity.ok(response);
+	}
+
+	public ResponseEntity<?> deleteRecipeTagFromRecipe(long accountID, long recipeTagID, long recipeID) {
+		RecipeTag deletedTag = recipeService.removeRecipeTagFromRecipe(accountID, recipeTagID, recipeID);
+		RecipeTagRecord response = RecipeTagRecord.getRecord(deletedTag);
+		return ResponseEntity.ok(response);
 	}
 }

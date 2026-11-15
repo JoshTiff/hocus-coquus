@@ -6,21 +6,17 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
+import com.hocuscoquus.hocuscoquus.entity.*;
+import com.hocuscoquus.hocuscoquus.repository.RecipeTagRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.hocuscoquus.hocuscoquus.entity.Account;
-import com.hocuscoquus.hocuscoquus.entity.AccountDetails;
-import com.hocuscoquus.hocuscoquus.entity.Ingredient;
-import com.hocuscoquus.hocuscoquus.entity.Reaction;
-import com.hocuscoquus.hocuscoquus.entity.Recipe;
-import com.hocuscoquus.hocuscoquus.entity.RecipeIngredient;
-import com.hocuscoquus.hocuscoquus.entity.RecipeNote;
 import com.hocuscoquus.hocuscoquus.model.IngredientCreateDto;
 import com.hocuscoquus.hocuscoquus.model.IngredientCreateRequest;
 import com.hocuscoquus.hocuscoquus.model.IngredientModel;
@@ -40,6 +36,10 @@ public class RecipeService {
 	private final IngredientService ingredientService;
     private final RecipeRepository recipeRepository;
     private final IngredientRepository ingredientRepository;
+    @Autowired
+    RecipeTagRepository tagRepository;
+    @Autowired
+    AccountService accountService;
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -147,7 +147,7 @@ public class RecipeService {
             if (ingredient == null) {
                 IngredientCreateDto dto = new IngredientCreateDto();
                 dto.setIngredientName(name);
-                ingredient = ingredientService.createIngredient(dto);
+//                ingredient = ingredientService.createIngredient(dto);
             }
 
             RecipeIngredient row = new RecipeIngredient();
@@ -290,6 +290,96 @@ public class RecipeService {
 
     public void shareRecipeBySMS() {
         // TODO: add implementation for this method
+    }
+
+    /**
+     * Tags a given recipe with a recipe tag for a given account.
+     * @param accountID {@link Account} tagging the recipe.
+     * @param recipeID ID of the {@link Recipe} object being tagged.
+     * @param tagName String tag name.
+     * @return {@link RecipeTag} object representation of the added tag.
+     */
+    @Transactional
+    public RecipeTag addRecipeTag(long accountID, long recipeID, String tagName) {
+        if (tagName != null && !tagName.isBlank()) {
+            // Get tag by account and tag name and add it as a new tag if it is not present.
+            Recipe recipe = getRecipeByID(recipeID);
+            Account account = accountService.getAccountByID(accountID);
+            RecipeTag recipeTag = tagRepository.findByAccountAndTag(account, tagName);
+            if (recipeTag == null) {
+                recipeTag = new RecipeTag();
+                recipeTag.setTag(tagName);
+                recipeTag.setAccount(accountService.getAccountByID(accountID));
+                recipeTag.getRecipes().add(recipe);
+            }
+            // Ensure recipe not already associated with tag.
+            if (!recipeTag.getRecipes().contains(recipe)) {
+                recipeTag.getRecipes().add(recipe);
+            }
+            tagRepository.save(recipeTag);
+            return recipeTag;
+        } else {
+            throw new IllegalArgumentException("Tag name cannot be empty!");
+        }
+    }
+
+    /**
+     * Removes an entire recipe tag from a given account.
+     * @param accountID {@link Account} tagging the recipe.
+     * @param recipeTagID ID of the {@link RecipeTag} object to remove from the account.
+     * @return {@link RecipeTag} object representation of the removed tag.
+     */
+    @Transactional
+    public RecipeTag removeRecipeTag(long accountID, long recipeTagID) {
+        RecipeTag recipeTag = tagRepository.findByRecipeTagId(recipeTagID);
+        if (recipeTag != null) {
+            // Get related recipes while we are inside a @Transactional class.
+            // If there are no related recipes, return an empty array list.
+            if (recipeTag.getRecipes().isEmpty())
+                recipeTag.setRecipes(new ArrayList<>(0));
+            if (recipeTag.getAccount().getAccountId() == accountID) {
+                tagRepository.deleteByRecipeTagId(recipeTagID);
+                return recipeTag;
+            } else {
+                throw new IllegalArgumentException("Cannot delete another user's recipe tag.");
+            }
+        } else {
+            throw new IllegalArgumentException("Recipe tag ID not found.");
+        }
+    }
+
+    /**
+     * Removes a recipe tag from a given recipe for a given account.
+     * @param accountID {@link Account} from which to remove the recipe tag for the given recipe.
+     * @param recipeTagID ID of the {@link RecipeTag} object to remove from the recipe.
+     * @param recipeID ID of the {@link Recipe} from which to remove the tag.
+     * @return {@link RecipeTag} object representation of the removed tag.
+     */
+    @Transactional
+    public RecipeTag removeRecipeTagFromRecipe(long accountID, long recipeTagID, long recipeID) {
+        RecipeTag recipeTag = tagRepository.findByRecipeTagId(recipeTagID);
+        Recipe recipe = getRecipeByID(recipeID);
+        if (recipe != null) {
+            if (recipeTag != null) {
+                // Get related recipes while we are inside a @Transactional class.
+                if (recipeTag.getAccount().getAccountId() == accountID) {
+                    // Remove tag from recipe.
+                    recipe.getRecipeTags().remove(recipeTag);
+                    // Remove recipe from tag.
+                    recipeTag.getRecipes().remove(recipe);
+                    // Save both tag and recipe to update.
+                    tagRepository.save(recipeTag);
+                    recipeRepository.save(recipe);
+                    return recipeTag;
+                } else {
+                    throw new IllegalArgumentException("Cannot delete another user's recipe tag.");
+                }
+            } else {
+                throw new IllegalArgumentException("Recipe tag ID not found.");
+            }
+        } else {
+            throw new IllegalArgumentException("Recipe ID not found.");
+        }
     }
 
     public Recipe getRecipeByID(long recipeID) {
