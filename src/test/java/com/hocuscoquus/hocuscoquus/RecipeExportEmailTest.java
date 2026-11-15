@@ -12,8 +12,10 @@ import com.hocuscoquus.hocuscoquus.entity.Recipe;
 import com.hocuscoquus.hocuscoquus.entity.RecipeIngredient;
 import com.hocuscoquus.hocuscoquus.service.export.RecipeExportEmail;
 
+/** Tests that recipe email exports build valid, encoded mailto URIs. */
 class RecipeExportEmailTest {
 
+    /** Ensures recipe content is included and encoded in the generated URI. */
     @Test
     void export_buildsPrefilledMailtoUriWithEncodedRecipeContents() {
         Ingredient tomato = new Ingredient();
@@ -42,6 +44,7 @@ class RecipeExportEmailTest {
         assertTrue(mailtoUri.contains("Mix%20%26%20serve"));
     }
 
+    /** Ensures an exporter cannot be created without a recipient address. */
     @Test
     void export_requiresRecipientEmail() {
         org.junit.jupiter.api.Assertions.assertThrows(

@@ -19,6 +19,7 @@ import com.hocuscoquus.hocuscoquus.service.export.RecipeExportEmail;
 import com.hocuscoquus.hocuscoquus.service.export.RecipeExportFactory;
 import com.hocuscoquus.hocuscoquus.service.export.RecipeExportType;
 
+/** Tests recipe lookup and email-export delegation in the export service. */
 @ExtendWith(MockitoExtension.class)
 class RecipeExportServiceTest {
 
@@ -31,6 +32,7 @@ class RecipeExportServiceTest {
     @Mock
     private RecipeExportEmail recipeExport;
 
+    /** Ensures an existing recipe is passed to the email exporter and its URI is returned. */
     @Test
     void shareRecipeByEmail_usesEmailExportForExistingRecipe() {
         Recipe recipe = Recipe.builder().setRecipeName("Pancakes").build();
@@ -52,6 +54,7 @@ class RecipeExportServiceTest {
                 RecipeExportType.EMAIL, "friend@example.com");
     }
 
+    /** Ensures a missing recipe produces a not-found response. */
     @Test
     void shareRecipeByEmail_missingRecipeReturnsNotFound() {
         when(recipeRepository.findByRecipeId(999L)).thenReturn(null);

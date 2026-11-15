@@ -12,11 +12,18 @@ import com.hocuscoquus.hocuscoquus.service.export.RecipeExportEmail;
 import com.hocuscoquus.hocuscoquus.service.export.RecipeExportFactory;
 import com.hocuscoquus.hocuscoquus.service.export.RecipeExportType;
 
+/** Coordinates loading a recipe and creating its email export. */
 @Service
 public class RecipeExportService {
     private final RecipeRepository recipeRepository;
     private final RecipeExportFactory recipeExportFactory;
 
+    /**
+     * Creates the service with its recipe repository and exporter factory.
+     *
+     * @param recipeRepository repository used to load recipes
+     * @param recipeExportFactory factory that creates the requested exporter
+     */
     public RecipeExportService(
             RecipeRepository recipeRepository,
             RecipeExportFactory recipeExportFactory) {
@@ -24,6 +31,15 @@ public class RecipeExportService {
         this.recipeExportFactory = recipeExportFactory;
     }
 
+    /**
+     * Builds a prefilled mailto URI for a recipe.
+     *
+     * @param recipeId ID of the recipe to share
+     * @param recipientEmail email address to place in the mailto URI
+     * @return encoded mailto URI with the recipe details
+     * @throws ResponseStatusException if the recipe does not exist
+     * @throws IllegalStateException if the email exporter fails or does not provide a URI
+     */
     @Transactional(readOnly = true)
     public String shareRecipeByEmail(long recipeId, String recipientEmail) {
         Recipe recipe = recipeRepository.findByRecipeId(recipeId);

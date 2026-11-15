@@ -9,10 +9,17 @@ import org.springframework.web.util.UriUtils;
 import com.hocuscoquus.hocuscoquus.entity.Recipe;
 import com.hocuscoquus.hocuscoquus.entity.RecipeIngredient;
 
+/** Formats a recipe as an encoded mailto URI for sharing by email. */
 public class RecipeExportEmail extends RecipeExportAbstract {
     private final String recipientEmail;
     private String mailtoUri;
 
+    /**
+     * Creates an email exporter for the specified recipient.
+     *
+     * @param recipientEmail address to include in the generated mailto URI
+     * @throws IllegalArgumentException if the address is null or blank
+     */
     public RecipeExportEmail(String recipientEmail) {
         if (recipientEmail == null || recipientEmail.isBlank()) {
             throw new IllegalArgumentException("Recipient email is required");
@@ -20,6 +27,14 @@ public class RecipeExportEmail extends RecipeExportAbstract {
         this.recipientEmail = recipientEmail.trim();
     }
 
+    /**
+     * Builds a mailto URI with the recipe name as the subject and recipe details as the body.
+     *
+     * @param recipe recipe whose details will be shared
+     * @return {@code true} after the mailto URI is built
+     * @throws NullPointerException if {@code recipe} is null
+     * @throws IllegalArgumentException if the recipient address is malformed
+     */
     @Override
     public boolean export(Recipe recipe) {
         Objects.requireNonNull(recipe, "Recipe is required");
@@ -31,6 +46,12 @@ public class RecipeExportEmail extends RecipeExportAbstract {
         return true;
     }
 
+    /**
+     * Returns the URI produced by {@link #export(Recipe)}.
+     *
+     * @return generated mailto URI
+     * @throws IllegalStateException if {@link #export(Recipe)} has not been called
+     */
     public String getMailtoUri() {
         if (mailtoUri == null) {
             throw new IllegalStateException("Recipe email has not been exported");
@@ -38,6 +59,13 @@ public class RecipeExportEmail extends RecipeExportAbstract {
         return mailtoUri;
     }
 
+    /**
+     * Encodes the recipient's local part and domain while preserving the address separator.
+     *
+     * @param recipientEmail recipient address to encode
+     * @return encoded address with its {@code @} separator preserved
+     * @throws IllegalArgumentException if the address has no local part or domain
+     */
     private String encodeRecipient(String recipientEmail) {
         int separator = recipientEmail.lastIndexOf('@');
         if (separator <= 0 || separator == recipientEmail.length() - 1) {
@@ -76,6 +104,12 @@ public class RecipeExportEmail extends RecipeExportAbstract {
         return encoded.toString();
     }
 
+    /**
+     * Formats the recipe name, description, image, ingredients, and instructions as email text.
+     *
+     * @param recipe recipe to format
+     * @return readable, unencoded recipe text for the email body
+     */
     private String formatRecipe(Recipe recipe) {
         StringBuilder body = new StringBuilder(recipe.getRecipeName());
         appendSection(body, recipe.getRecipeDescription());
@@ -96,12 +130,25 @@ public class RecipeExportEmail extends RecipeExportAbstract {
         return body.toString();
     }
 
+    /**
+     * Adds a nonblank paragraph to the recipe body.
+     *
+     * @param body email body being assembled
+     * @param value paragraph to append, if nonblank
+     */
     private void appendSection(StringBuilder body, String value) {
         if (value != null && !value.isBlank()) {
             body.append("\n\n").append(value);
         }
     }
 
+    /**
+     * Adds a nonblank line, optionally prefixed with a label.
+     *
+     * @param body email body being assembled
+     * @param label optional line label; may be {@code null}
+     * @param value line content to append, if nonblank
+     */
     private void appendOptionalLine(StringBuilder body, String label, String value) {
         if (value != null && !value.isBlank()) {
             body.append("\n");
@@ -112,6 +159,12 @@ public class RecipeExportEmail extends RecipeExportAbstract {
         }
     }
 
+    /**
+     * Adds a nonblank value to the current ingredient line.
+     *
+     * @param body email body being assembled
+     * @param value ingredient detail to append, if nonblank
+     */
     private void appendInline(StringBuilder body, String value) {
         if (value != null && !value.isBlank()) {
             body.append(' ').append(value);

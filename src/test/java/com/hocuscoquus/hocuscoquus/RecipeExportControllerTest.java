@@ -23,6 +23,7 @@ import com.hocuscoquus.hocuscoquus.entity.Account;
 import com.hocuscoquus.hocuscoquus.entity.AccountDetails;
 import com.hocuscoquus.hocuscoquus.service.RecipeExportService;
 
+/** Tests the HTTP endpoint for sharing a recipe by email. */
 @WebMvcTest(RecipeExportController.class)
 @Import(SecurityConfig.class)
 class RecipeExportControllerTest {
@@ -33,6 +34,11 @@ class RecipeExportControllerTest {
     @MockitoBean
     private RecipeExportService recipeExportService;
 
+    /**
+     * Creates an authenticated test user for requests to the secured endpoint.
+     *
+     * @return test account details used to authenticate MockMvc requests
+     */
     private AccountDetails testUser() {
         Account account = new Account();
         account.setAccountId(1L);
@@ -42,6 +48,11 @@ class RecipeExportControllerTest {
         return new AccountDetails(account);
     }
 
+    /**
+     * Ensures a valid request returns the generated mailto URI as plain text.
+     *
+     * @throws Exception if the MockMvc request or response assertion fails
+     */
     @Test
     void shareRecipeByEmail_returnsPrefilledMailtoUri() throws Exception {
         when(recipeExportService.shareRecipeByEmail(7L, "friend@example.com"))
@@ -61,6 +72,11 @@ class RecipeExportControllerTest {
                     .andExpect(content().string("mailto:friend@example.com?subject=Recipe"));
     }
 
+    /**
+     * Ensures an invalid email is rejected before the service is called.
+     *
+     * @throws Exception if the MockMvc request or response assertion fails
+     */
     @Test
     void shareRecipeByEmail_rejectsInvalidRecipient() throws Exception {
         mockMvc.perform(post("/api/recipe/7/share/email")
