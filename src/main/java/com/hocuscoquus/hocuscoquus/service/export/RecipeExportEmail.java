@@ -11,16 +11,16 @@ import com.hocuscoquus.hocuscoquus.entity.RecipeIngredient;
 
 /** Formats a recipe as an encoded mailto URI for sharing by email. */
 public class RecipeExportEmail extends RecipeExportAbstract {
-    private final String recipientEmail;
+    private String recipientEmail;
     private String mailtoUri;
 
     /**
-     * Creates an email exporter for the specified recipient.
+     * Sets the address to include in the generated mailto URI.
      *
      * @param recipientEmail address to include in the generated mailto URI
      * @throws IllegalArgumentException if the address is null or blank
      */
-    public RecipeExportEmail(String recipientEmail) {
+    public void setRecipientEmail(String recipientEmail) {
         if (recipientEmail == null || recipientEmail.isBlank()) {
             throw new IllegalArgumentException("Recipient email is required");
         }
@@ -33,11 +33,15 @@ public class RecipeExportEmail extends RecipeExportAbstract {
      * @param recipe recipe whose details will be shared
      * @return {@code true} after the mailto URI is built
      * @throws NullPointerException if {@code recipe} is null
+     * @throws IllegalStateException if no recipient address has been set
      * @throws IllegalArgumentException if the recipient address is malformed
      */
     @Override
     public boolean export(Recipe recipe) {
         Objects.requireNonNull(recipe, "Recipe is required");
+        if (recipientEmail == null) {
+            throw new IllegalStateException("Recipient email has not been set");
+        }
         String subject = "Recipe: " + recipe.getRecipeName();
         String body = formatRecipe(recipe);
         mailtoUri = "mailto:" + encodeRecipient(recipientEmail)

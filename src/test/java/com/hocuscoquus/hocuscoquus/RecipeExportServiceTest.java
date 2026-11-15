@@ -37,8 +37,7 @@ class RecipeExportServiceTest {
     void shareRecipeByEmail_usesEmailExportForExistingRecipe() {
         Recipe recipe = Recipe.builder().setRecipeName("Pancakes").build();
         when(recipeRepository.findByRecipeId(7L)).thenReturn(recipe);
-        when(recipeExportFactory.getRecipeExportAbstraction(
-                RecipeExportType.EMAIL, "friend@example.com"))
+        when(recipeExportFactory.getRecipeExportAbstraction(RecipeExportType.EMAIL))
                 .thenReturn(recipeExport);
         when(recipeExport.export(recipe))
                 .thenReturn(true);
@@ -50,8 +49,8 @@ class RecipeExportServiceTest {
         assertEquals(
                 "mailto:friend@example.com?subject=Recipe",
                 service.shareRecipeByEmail(7L, "friend@example.com"));
-        verify(recipeExportFactory).getRecipeExportAbstraction(
-                RecipeExportType.EMAIL, "friend@example.com");
+        verify(recipeExportFactory).getRecipeExportAbstraction(RecipeExportType.EMAIL);
+        verify(recipeExport).setRecipientEmail("friend@example.com");
     }
 
     /** Ensures a missing recipe produces a not-found response. */

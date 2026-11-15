@@ -33,7 +33,8 @@ class RecipeExportEmailTest {
                 .setRecipeIngredients(new ArrayList<>(List.of(recipeIngredient)))
                 .build();
 
-        RecipeExportEmail exporter = new RecipeExportEmail("friend@example.com");
+        RecipeExportEmail exporter = new RecipeExportEmail();
+        exporter.setRecipientEmail("friend@example.com");
         assertTrue(exporter.export(recipe));
         String mailtoUri = exporter.getMailtoUri();
 
@@ -49,6 +50,6 @@ class RecipeExportEmailTest {
     void export_requiresRecipientEmail() {
         org.junit.jupiter.api.Assertions.assertThrows(
                 IllegalArgumentException.class,
-                () -> new RecipeExportEmail(" "));
+                () -> new RecipeExportEmail().setRecipientEmail(" "));
     }
 }

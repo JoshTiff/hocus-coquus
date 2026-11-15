@@ -48,12 +48,13 @@ public class RecipeExportService {
         }
 
         RecipeExportAbstract exporter = recipeExportFactory
-                .getRecipeExportAbstraction(RecipeExportType.EMAIL, recipientEmail);
-        if (!exporter.export(recipe)) {
-            throw new IllegalStateException("Recipe email export failed");
-        }
+                .getRecipeExportAbstraction(RecipeExportType.EMAIL);
         if (!(exporter instanceof RecipeExportEmail emailExporter)) {
             throw new IllegalStateException("Email export did not provide a mailto URI");
+        }
+        emailExporter.setRecipientEmail(recipientEmail);
+        if (!exporter.export(recipe)) {
+            throw new IllegalStateException("Recipe email export failed");
         }
         return emailExporter.getMailtoUri();
     }
