@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 public interface RecipeTagRepository extends JpaRepository<RecipeTag, Long> {
 	
     RecipeTag findById(long recipeTagId);
-    List<RecipeTag> findByAccount(long accountId);
+    List<RecipeTag> findByAccount(Account account);
     RecipeTag findByAccountAndTag(Account account, String tag);
     RecipeTag findByRecipeTagId(long recipeTagId);
     void deleteByRecipeTagId(long recipeTagId);

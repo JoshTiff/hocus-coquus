@@ -155,4 +155,18 @@ public class RecipeHandler {
 		RecipeTagRecord response = RecipeTagRecord.getRecord(deletedTag);
 		return ResponseEntity.ok(response);
 	}
+
+	public ResponseEntity<?> getRecipeTagsByAccount(long accountID) {
+		List<RecipeTag> recipeTags = recipeService.getRecipeTagsByAccount(accountID);
+		List<RecipeTagRecord> response = new ArrayList<>(recipeTags.size());
+		for (RecipeTag tag : recipeTags)
+			response.add(RecipeTagRecord.getRecord(tag));
+		return ResponseEntity.ok(response);
+	}
+
+	public ResponseEntity<?> getRecipeTag(long accountId, long recipeTagId) {
+		RecipeTag tag = recipeService.getRecipeTag(accountId, recipeTagId);
+		RecipeTagRecord response = RecipeTagRecord.getRecord(tag);
+		return ResponseEntity.ok(response);
+	}
 }

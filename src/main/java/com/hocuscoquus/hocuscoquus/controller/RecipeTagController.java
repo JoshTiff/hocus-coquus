@@ -38,4 +38,17 @@ public class RecipeTagController {
             return recipeHandler.deleteRecipeTagFromRecipe(details.getAccountId(), recipeTagId, recipeId);
     }
 
+    @GetMapping("/view-all")
+    public ResponseEntity<?> getRecipeTagsByAccount(@AuthenticationPrincipal AccountDetails details) {
+        return recipeHandler.getRecipeTagsByAccount(details.getAccountId());
+    }
+
+    @GetMapping("/view-tag/{recipeTagId}")
+    public ResponseEntity<?> getRecipeTagsByAccount(
+            @AuthenticationPrincipal AccountDetails details,
+            @PathVariable long recipeTagId) {
+        return recipeHandler.getRecipeTag(details.getAccountId(), recipeTagId);
+    }
+
+
 }

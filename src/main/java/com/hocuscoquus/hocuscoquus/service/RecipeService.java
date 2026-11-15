@@ -382,6 +382,31 @@ public class RecipeService {
         }
     }
 
+    /**
+     * Used to retrieve all recipe tags associated with a given account ID.
+     * @param accountID ID of the {@link Account} object from which to query recipe tags.
+     * @return A list of {@link RecipeTag} objects representing the account's recipe tags.
+     */
+    public List<RecipeTag> getRecipeTagsByAccount(long accountID) {
+        Account account = accountService.getAccountByID(accountID);
+        if (account == null)
+            throw new IllegalArgumentException("No account found for given ID.");
+        return tagRepository.findByAccount(account);
+    }
+
+    /**
+     * Used to retrieve a specific recipe tag from an account.
+     * @param accountId ID of the {@link Account} object from which to query the recipe tag.
+     * @param recipeTagId ID of the {@link RecipeTag} object we want to query.
+     * @return A {@link RecipeTag} object representation of the account's recipe tag.
+     */
+    public RecipeTag getRecipeTag(long accountId, long recipeTagId) {
+        RecipeTag recipeTag = tagRepository.findByRecipeTagId(recipeTagId);
+        if (recipeTag.getAccount().getAccountId() != accountId)
+            throw new IllegalArgumentException("Recipe tag ID not associated with account.");
+        return recipeTag;
+    }
+
     public Recipe getRecipeByID(long recipeID) {
         return recipeRepository.getRecipeByRecipeId(recipeID);
     }
