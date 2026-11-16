@@ -23,6 +23,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@Transactional
 public class AddRecipeTagTest {
     private long accountID;
     private final String email = "test" + UUID.randomUUID() + "@test.com";
@@ -38,43 +39,35 @@ public class AddRecipeTagTest {
 
     @BeforeEach
     void before() {
-//        // Create account.
-//        Account account = accountService.createAccount("Test", email, password);
-//        assertNotNull(account);
-//        accountID = account.getAccountId();
-//        // Create recipe.
-//        List<RecipeIngredientCreateRequest> ingredientList = new ArrayList<>(1);
-//        ingredientList.add(new RecipeIngredientCreateRequest("Dihydrogen Monoxide", 2, "Litres"));
-//        Recipe recipe = recipeService.createRecipe(account, new RecipeCreateRequest(
-//                "Test Recipe",
-//                "This is a test recipe.",
-//                "There are no instructions for this recipe.",
-//                "test.jpg",
-//                ingredientList
-//        ));
-//        assertNotNull(recipe);
-//        recipeID = recipe.getRecipeId();
+        // Create account.
+        Account account = accountService.createAccount("Test", email, password);
+        assertNotNull(account);
+        accountID = account.getAccountId();
+        // Create recipe.
+        List<RecipeIngredientCreateRequest> ingredientList = new ArrayList<>(1);
+        ingredientList.add(new RecipeIngredientCreateRequest("Dihydrogen Monoxide", 2, "Litres"));
+        Recipe recipe = recipeService.createRecipe(account, new RecipeCreateRequest(
+                "Test Recipe",
+                "This is a test recipe.",
+                "There are no instructions for this recipe.",
+                "test.jpg",
+                ingredientList
+        ));
+        assertNotNull(recipe);
+        recipeID = recipe.getRecipeId();
     }
 
     @Test
     void createRecipeTag() {
-//        RecipeTag tag = recipeService.addRecipeTag(accountID, recipeID, tagName);
-//        // Basic integrity check.
-//        assertNotNull(tag);
-//        assertEquals(tagName, tag.getTag());
-//        assertEquals(accountID, tag.getAccount().getAccountId());
-//        // Checking association with account.
-//        RecipeTag retrievedTag = recipeService.getRecipeTag(accountID, tag.getRecipeTagId());
-//        assertEquals(tagName, retrievedTag.getTag());
-//        assertEquals(accountID, retrievedTag.getAccount().getAccountId());
-//        // Remove tag.
-//        recipeService.removeRecipeTag(accountID, tag.getRecipeTagId());
-    }
-
-    @AfterEach
-    void after() {
-//        recipeService.deleteRecipe(recipeID);
-//        accountService.deleteAccount(accountID, email, password);
+        RecipeTag tag = recipeService.addRecipeTag(accountID, recipeID, tagName);
+        // Basic integrity check.
+        assertNotNull(tag);
+        assertEquals(tagName, tag.getTag());
+        assertEquals(accountID, tag.getAccount().getAccountId());
+        // Checking association with account.
+        RecipeTag retrievedTag = recipeService.getRecipeTag(accountID, tag.getRecipeTagId());
+        assertEquals(tagName, retrievedTag.getTag());
+        assertEquals(accountID, retrievedTag.getAccount().getAccountId());
     }
 
 }
