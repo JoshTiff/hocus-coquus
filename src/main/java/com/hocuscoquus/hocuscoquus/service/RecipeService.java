@@ -52,10 +52,8 @@ public class RecipeService {
 
     
     @Transactional
-    public Recipe createRecipe(RecipeCreateRequest request) {
+    public Recipe createRecipe(Account account, RecipeCreateRequest request) {
 
-    	Account account = ((AccountDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getAccount();
-    	
     	List<RecipeIngredient> recipeIngredientList = new ArrayList<>();
     	
     	Recipe r = Recipe.builder()
@@ -402,6 +400,8 @@ public class RecipeService {
      */
     public RecipeTag getRecipeTag(long accountId, long recipeTagId) {
         RecipeTag recipeTag = tagRepository.findByRecipeTagId(recipeTagId);
+        if (recipeTag == null)
+            throw new IllegalArgumentException("Recipe tag ID not found.");
         if (recipeTag.getAccount().getAccountId() != accountId)
             throw new IllegalArgumentException("Recipe tag ID not associated with account.");
         return recipeTag;

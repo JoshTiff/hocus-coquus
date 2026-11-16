@@ -1,5 +1,6 @@
 package com.hocuscoquus.hocuscoquus.handler;
 
+import com.hocuscoquus.hocuscoquus.entity.Account;
 import com.hocuscoquus.hocuscoquus.entity.Recipe;
 import com.hocuscoquus.hocuscoquus.entity.RecipeIngredient;
 import com.hocuscoquus.hocuscoquus.entity.RecipeTag;
@@ -35,10 +36,10 @@ public class RecipeHandler {
      * 
      * returns a Recipe object
      */
-    public ResponseEntity<?> processRecipeCreateRequest(RecipeCreateRequest request) {
+    public ResponseEntity<?> processRecipeCreateRequest(Account account, RecipeCreateRequest request) {
     	
     	try {
-    		Recipe newRecipe = recipeService.createRecipe(request);
+    		Recipe newRecipe = recipeService.createRecipe(account, request);
     		
     		 
     		List<RecipeIngredientRecord> ingredients = new ArrayList<>();
