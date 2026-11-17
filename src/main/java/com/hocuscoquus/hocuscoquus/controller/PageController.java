@@ -9,13 +9,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.hocuscoquus.hocuscoquus.model.IngredientCreateDto;
+import com.hocuscoquus.hocuscoquus.service.RecipeService;
 
 @Controller
 public class PageController {
+	private final RecipeService recipeService;
+
+	public PageController(RecipeService recipeService) {
+		this.recipeService = recipeService;
+	}
 
 	@GetMapping({ "/", "/index" })
 	public String index() {
@@ -50,6 +57,13 @@ public class PageController {
 	@GetMapping("/search")
 	public String search() {
 		return "search";
+	}
+
+	@GetMapping("/recipe/{recipeId}")
+	public String viewRecipe(@PathVariable long recipeId, Model model) {
+		model.addAttribute("recipe", recipeService.getRecipeByID(recipeId));
+		model.addAttribute("recipeId", recipeId);
+		return "view-recipe";
 	}
 
 	@GetMapping("/login")

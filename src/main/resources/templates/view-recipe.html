@@ -3,8 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Cozy Pumpkin Soup - Hocus Coquus</title>
-        <!-- <title th:text="${recipe != null ? recipe.recipeName + ' - Hocus Coquus' : 'View Recipe - Hocus Coquus'}">View Recipe - Hocus Coquus</title> -->
+        <title th:text="${recipe.recipeName + ' - Hocus Coquus'}">View Recipe - Hocus Coquus</title>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
@@ -25,13 +24,8 @@
         <main class="recipe-page">
             <a class="recipe-back-link" th:href="@{/}">&larr; Back to recipes</a>
 
-            <!-- Dynamic version can conditionally display this recipe:
-            <article class="recipe-view" th:if="${recipe != null}">
-            -->
             <article class="recipe-view">
                 <section class="recipe-hero">
-                    <div class="recipe-hero-placeholder" aria-hidden="true"></div>
-                    <!-- Dynamic image alternative:
                     <img class="recipe-hero-image"
                          th:if="${recipe.image != null and !#strings.isEmpty(recipe.image)}"
                          th:src="${recipe.image}"
@@ -39,133 +33,140 @@
                     <div class="recipe-hero-placeholder"
                          th:unless="${recipe.image != null and !#strings.isEmpty(recipe.image)}"
                          aria-hidden="true"></div>
-                    -->
                     <div class="recipe-hero-shade"></div>
                     <div class="recipe-hero-title">
                         <p class="recipe-kicker">From the Hocus Coquus kitchen</p>
-                        <h1>Cozy Pumpkin Soup</h1>
-                        <p class="recipe-description">
-                            A silky, warmly spiced soup for crisp autumn evenings.
-                        </p>
-                        <!-- Dynamic alternative:
                         <h1 th:text="${recipe.recipeName}">Recipe name</h1>
                         <p class="recipe-description"
                            th:if="${recipe.recipeDescription != null and !#strings.isEmpty(recipe.recipeDescription)}"
-                           th:text="${recipe.recipeDescription}">A little kitchen magic.</p>
-                        -->
+                           th:text="${recipe.recipeDescription}">Recipe description</p>
                     </div>
                 </section>
 
                 <section class="recipe-tags" aria-label="Recipe tags">
-                    <span class="recipe-tag">Easy</span>
-                    <span class="recipe-tag">Dinner</span>
-                    <span class="recipe-tag">Autumn</span>
-                    <span class="recipe-tag">Vegetarian</span>
+                    <span class="recipe-tag" th:if="${recipe.recipeTags != null}"
+                          th:each="recipeTag : ${recipe.recipeTags}"
+                          th:text="${recipeTag.tag}">Recipe tag</span>
+                    <p class="empty-section"
+                       th:if="${recipe.recipeTags == null or #lists.isEmpty(recipe.recipeTags)}">
+                        No tags have been added yet.
+                    </p>
                 </section>
-                <!-- Dynamic tags alternative:
-                <section class="recipe-tags" aria-label="Recipe tags"
-                         th:if="${recipe.recipeTags != null and !#lists.isEmpty(recipe.recipeTags)}">
-                    <th:block th:each="tagGroup : ${recipe.recipeTags}">
-                        <span class="recipe-tag" th:each="tag : ${tagGroup.recipeTags}"
-                              th:text="${tag}">Tag</span>
-                    </th:block>
-                </section>
-                -->
 
                 <div class="recipe-content">
                     <div class="recipe-sidebar">
                         <section class="recipe-section ingredients-section">
                             <h2>Ingredients</h2>
-                            <ul class="ingredient-list">
-                                <li>
-                                    <span class="ingredient-quantity">2</span>
-                                    <span class="ingredient-measurement">cups</span>
-                                    pumpkin puree
-                                </li>
-                                <li>
-                                    <span class="ingredient-quantity">3</span>
-                                    <span class="ingredient-measurement">cups</span>
-                                    vegetable broth
-                                </li>
-                                <li>
-                                    <span class="ingredient-quantity">1</span>
-                                    <span class="ingredient-measurement">small</span>
-                                    yellow onion, diced
-                                </li>
-                                <li>
-                                    <span class="ingredient-quantity">2</span>
-                                    <span class="ingredient-measurement">cloves</span>
-                                    garlic, minced
-                                </li>
-                                <li>
-                                    <span class="ingredient-measurement">to taste</span>
-                                    cream
-                                </li>
-                            </ul>
-                            <!-- Dynamic ingredients alternative:
                             <ul class="ingredient-list"
-                                th:if="${recipe.ingredients != null and !#lists.isEmpty(recipe.ingredients)}">
-                                <li th:each="ingredient : ${recipe.ingredients}">
-                                    <span class="ingredient-quantity"
-                                          th:if="${ingredient.quantity > 0}"
-                                          th:text="${ingredient.quantity}">1</span>
+                                th:if="${recipe.recipeIngredients != null and !#lists.isEmpty(recipe.recipeIngredients)}">
+                                <li th:each="recipeIngredient : ${recipe.recipeIngredients}">
+                                    <span class="ingredient-quantity" th:if="${recipeIngredient.quantity > 0}"
+                                          th:text="${recipeIngredient.quantity}">1</span>
                                     <span class="ingredient-measurement"
-                                          th:if="${ingredient.measurement != null and !#strings.isEmpty(ingredient.measurement)}"
-                                          th:text="${ingredient.measurement}">cup</span>
-                                    <span th:text="${ingredient.ingredientName}">Ingredient</span>
+                                          th:if="${recipeIngredient.measurement != null and !#strings.isEmpty(recipeIngredient.measurement)}"
+                                          th:text="${recipeIngredient.measurement}">cup</span>
+                                    <span th:if="${recipeIngredient.ingredient != null and recipeIngredient.ingredient.ingredientName != null}"
+                                          th:text="${recipeIngredient.ingredient.ingredientName}">Ingredient</span>
                                 </li>
                             </ul>
                             <p class="empty-section"
-                               th:if="${recipe.ingredients == null or #lists.isEmpty(recipe.ingredients)}">
+                               th:if="${recipe.recipeIngredients == null or #lists.isEmpty(recipe.recipeIngredients)}">
                                 No ingredients have been added yet.
                             </p>
-                            -->
                         </section>
 
                         <section class="recipe-section notes-section">
                             <h2>Notes</h2>
-                            <ul class="recipe-note-list">
-                                <li>Top with toasted pumpkin seeds and a swirl of cream.</li>
+                            <ul class="recipe-note-list"
+                                th:if="${recipe.recipeNotes != null and !#lists.isEmpty(recipe.recipeNotes)}">
+                                <li th:each="recipeNote : ${recipe.recipeNotes}"
+                                    th:text="${recipeNote.message}">Recipe note</li>
                             </ul>
-                            <!-- Dynamic notes alternative:
-                            <section class="recipe-section notes-section"
-                                     th:if="${recipe.recipeNotes != null and !#lists.isEmpty(recipe.recipeNotes)}">
-                                <h2>Notes</h2>
-                                <ul class="recipe-note-list">
-                                <li th:each="note : ${recipe.recipeNotes}"
-                                    th:text="${note.message}">Recipe notes will appear here.</li>
-                                </ul>
-                            </section>
-                            -->
+                            <p class="empty-section"
+                               th:if="${recipe.recipeNotes == null or #lists.isEmpty(recipe.recipeNotes)}">
+                                No notes have been added yet.
+                            </p>
+                        </section>
+                        <section class="recipe-section recipe-share-section" aria-labelledby="recipe-share-heading">
+                            <h2 id="recipe-share-heading">Share this recipe</h2>
+                            <form id="recipe-email-share-form"
+                                  th:action="@{/api/recipe/{recipeId}/share/email(recipeId=${recipeId})}">
+                                <label for="recipe-share-email">Email address</label>
+                                <div class="recipe-share-controls">
+                                    <input id="recipe-share-email" name="recipientEmail" type="email"
+                                           autocomplete="email" required />
+                                    <button class="btn" type="submit">Share by email</button>
+                                </div>
+                                <p id="recipe-share-status" class="recipe-share-status" role="status" aria-live="polite"></p>
+                                <p id="recipe-share-error" class="recipe-share-error" role="alert" hidden></p>
+                            </form>
                         </section>
                     </div>
 
                     <section class="recipe-section instructions-section">
                         <h2>Instructions</h2>
-                        <p class="recipe-instructions">
-                            1. Warm the olive oil in a large pot over medium heat.
-                            2. Add the onion and garlic; cook until soft and fragrant.
-                            3. Stir in the pumpkin, broth, and spices. Simmer for 20 minutes.
-                            4. Blend until smooth, then stir in the cream and season to taste.
-                        </p>
-                        <!-- Dynamic instructions alternative:
                         <p class="recipe-instructions"
                            th:if="${recipe.instructions != null and !#strings.isEmpty(recipe.instructions)}"
-                           th:text="${recipe.instructions}">Follow the recipe instructions here.</p>
+                           th:text="${recipe.instructions}">Recipe instructions</p>
                         <p class="empty-section"
                            th:if="${recipe.instructions == null or #strings.isEmpty(recipe.instructions)}">
                             No instructions have been added yet.
                         </p>
-                        -->
                     </section>
                 </div>
             </article>
-            <!-- Dynamic empty state alternative:
-            <section class="recipe-empty-state" th:unless="${recipe != null}">
-                <h1>Recipe not found</h1>
-                <p>Choose a recipe from the kitchen to see its ingredients and instructions.</p>
-            </section>
-            -->
         </main>
+        <script>
+            const shareForm = document.getElementById('recipe-email-share-form');
+            const shareEmail = document.getElementById('recipe-share-email');
+            const shareButton = shareForm.querySelector('button[type="submit"]');
+            const shareStatus = document.getElementById('recipe-share-status');
+            const shareError = document.getElementById('recipe-share-error');
+
+            shareForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                if (shareButton.disabled) {
+                    return;
+                }
+
+                shareButton.disabled = true;
+                shareStatus.textContent = 'Preparing your email...';
+                shareError.hidden = true;
+
+                try {
+                    const response = await fetch(shareForm.action, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'text/plain'
+                        },
+                        body: JSON.stringify({ recipientEmail: shareEmail.value })
+                    });
+
+                    if (!response.ok) {
+                        if (response.status === 400) {
+                            throw new Error('Enter a valid email address and try again.');
+                        }
+                        if (response.status === 404) {
+                            throw new Error('This recipe could not be found.');
+                        }
+                        throw new Error('Could not prepare the recipe email. Please try again.');
+                    }
+
+                    const mailtoUri = (await response.text()).trim();
+                    if (!mailtoUri.startsWith('mailto:')) {
+                        throw new Error('Could not prepare the recipe email. Please try again.');
+                    }
+
+                    shareStatus.textContent = 'Opening your email application...';
+                    window.location.assign(mailtoUri);
+                } catch (error) {
+                    shareStatus.textContent = '';
+                    shareError.textContent = error.message || 'Could not prepare the recipe email. Please try again.';
+                    shareError.hidden = false;
+                    shareButton.disabled = false;
+                }
+            });
+        </script>
     </body>
 </html>

@@ -291,7 +291,19 @@ public class RecipeService {
         // TODO: add implementation for this method
     }
 
+    @Transactional(readOnly = true)
     public Recipe getRecipeByID(long recipeID) {
-        return recipeRepository.getRecipeByRecipeId(recipeID);
+        Recipe recipe = recipeRepository.findByRecipeId(recipeID);
+        if (recipe == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Recipe not found");
+        }
+        recipe.getRecipeIngredients().forEach(recipeIngredient -> {
+            if (recipeIngredient.getIngredient() != null) {
+                recipeIngredient.getIngredient().getIngredientName();
+            }
+        });
+        recipe.getRecipeTags().forEach(recipeTag -> recipeTag.getTag());
+        recipe.getRecipeNotes().forEach(recipeNote -> recipeNote.getMessage());
+        return recipe;
     }
 }

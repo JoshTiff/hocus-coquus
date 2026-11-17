@@ -42,7 +42,7 @@ public class RecipeExportEmail extends RecipeExportAbstract {
         if (recipientEmail == null) {
             throw new IllegalStateException("Recipient email has not been set");
         }
-        String subject = "Recipe: " + recipe.getRecipeName();
+        String subject = "Hocus Coquus Recipe: " + recipe.getRecipeName();
         String body = formatRecipe(recipe);
         mailtoUri = "mailto:" + encodeRecipient(recipientEmail)
                 + "?subject=" + encodeHeaderValue(subject)
@@ -112,14 +112,14 @@ public class RecipeExportEmail extends RecipeExportAbstract {
      * Formats the recipe name, description, image, ingredients, and instructions as email text.
      *
      * @param recipe recipe to format
-     * @return readable, unencoded recipe text for the email body
+     * @return readable, unencoded recipe text with Markdown-style bold section headers
      */
     private String formatRecipe(Recipe recipe) {
         StringBuilder body = new StringBuilder(recipe.getRecipeName());
-        appendSection(body, recipe.getRecipeDescription());
+        appendSection(body, "Description", recipe.getRecipeDescription());
         appendOptionalLine(body, "Image", recipe.getImage());
 
-        body.append("\n\nIngredients:");
+        body.append("\n\n**Ingredients:**");
         for (RecipeIngredient ingredient : recipe.getRecipeIngredients()) {
             body.append("\n- ")
                     .append(BigDecimal.valueOf(ingredient.getQuantity()).stripTrailingZeros().toPlainString());
@@ -129,20 +129,21 @@ public class RecipeExportEmail extends RecipeExportAbstract {
             }
         }
 
-        body.append("\n\nInstructions:");
+        body.append("\n\n**Instructions:**");
         appendOptionalLine(body, null, recipe.getInstructions());
         return body.toString();
     }
 
     /**
-     * Adds a nonblank paragraph to the recipe body.
+     * Adds a nonblank paragraph with a Markdown-style bold header to the recipe body.
      *
      * @param body email body being assembled
+     * @param label section header
      * @param value paragraph to append, if nonblank
      */
-    private void appendSection(StringBuilder body, String value) {
+    private void appendSection(StringBuilder body, String label, String value) {
         if (value != null && !value.isBlank()) {
-            body.append("\n\n").append(value);
+            body.append("\n\n**").append(label).append(":**\n").append(value);
         }
     }
 
@@ -157,7 +158,7 @@ public class RecipeExportEmail extends RecipeExportAbstract {
         if (value != null && !value.isBlank()) {
             body.append("\n");
             if (label != null) {
-                body.append(label).append(": ");
+                body.append("**").append(label).append(":** ");
             }
             body.append(value);
         }
