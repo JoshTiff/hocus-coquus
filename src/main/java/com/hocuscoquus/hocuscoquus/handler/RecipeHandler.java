@@ -1,7 +1,9 @@
 package com.hocuscoquus.hocuscoquus.handler;
 
+import com.hocuscoquus.hocuscoquus.entity.Account;
 import com.hocuscoquus.hocuscoquus.entity.Recipe;
 import com.hocuscoquus.hocuscoquus.entity.RecipeIngredient;
+import com.hocuscoquus.hocuscoquus.entity.RecipeTag;
 import com.hocuscoquus.hocuscoquus.model.*;
 import com.hocuscoquus.hocuscoquus.service.RecipeService;
 import org.springframework.boot.http.converter.autoconfigure.ServerHttpMessageConvertersCustomizer;
@@ -34,10 +36,10 @@ public class RecipeHandler {
      * 
      * returns a Recipe object
      */
-    public ResponseEntity<?> processRecipeCreateRequest(RecipeCreateRequest request) {
+    public ResponseEntity<?> processRecipeCreateRequest(Account account, RecipeCreateRequest request) {
     	
     	try {
-    		Recipe newRecipe = recipeService.createRecipe(request);
+    		Recipe newRecipe = recipeService.createRecipe(account, request);
     		
     		 
     		List<RecipeIngredientRecord> ingredients = new ArrayList<>();
@@ -135,5 +137,37 @@ public class RecipeHandler {
 		} catch (IllegalArgumentException e) {
 			return ResponseEntity.badRequest().build();
 		}
+	}
+
+	public ResponseEntity<?> addRecipeTag(long accountID, long recipeID, String tagName) {
+		RecipeTag addedTag = recipeService.addRecipeTag(accountID, recipeID, tagName);
+		RecipeTagRecord response = RecipeTagRecord.getRecord(addedTag);
+		return ResponseEntity.ok(response);
+	}
+
+	public ResponseEntity<?> deleteRecipeTag(long accountID, long recipeTagID) {
+		RecipeTag deletedTag = recipeService.removeRecipeTag(accountID, recipeTagID);
+		RecipeTagRecord response = RecipeTagRecord.getRecord(deletedTag);
+		return ResponseEntity.ok(response);
+	}
+
+	public ResponseEntity<?> deleteRecipeTagFromRecipe(long accountID, long recipeTagID, long recipeID) {
+		RecipeTag deletedTag = recipeService.removeRecipeTagFromRecipe(accountID, recipeTagID, recipeID);
+		RecipeTagRecord response = RecipeTagRecord.getRecord(deletedTag);
+		return ResponseEntity.ok(response);
+	}
+
+	public ResponseEntity<?> getRecipeTagsByAccount(long accountID) {
+		List<RecipeTag> recipeTags = recipeService.getRecipeTagsByAccount(accountID);
+		List<RecipeTagRecord> response = new ArrayList<>(recipeTags.size());
+		for (RecipeTag tag : recipeTags)
+			response.add(RecipeTagRecord.getRecord(tag));
+		return ResponseEntity.ok(response);
+	}
+
+	public ResponseEntity<?> getRecipeTag(long accountId, long recipeTagId) {
+		RecipeTag tag = recipeService.getRecipeTag(accountId, recipeTagId);
+		RecipeTagRecord response = RecipeTagRecord.getRecord(tag);
+		return ResponseEntity.ok(response);
 	}
 }
