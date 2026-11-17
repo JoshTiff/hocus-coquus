@@ -164,6 +164,7 @@
                     shareStatus.textContent = '';
                     shareError.textContent = error.message || 'Could not prepare the recipe email. Please try again.';
                     shareError.hidden = false;
+                } finally { // butten is re-enabled after success or failure, so can retry
                     shareButton.disabled = false;
                 }
             });
