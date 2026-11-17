@@ -2,6 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
     <head th:replace="~{fragments/layout :: head('Create Calendar')}"></head>
     <body>
+        <header th:replace="~{fragments/layout :: site-header}"></header>
         <div>
             <p id="calendar-create-error" role="alert" hidden></p>
             <form id="calendar-create-form" method="post" th:action="@{/api/calendar/create}"
