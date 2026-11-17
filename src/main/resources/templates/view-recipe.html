@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -87,7 +87,13 @@
                                 No notes have been added yet.
                             </p>
                         </section>
-                        <section class="recipe-section recipe-share-section" aria-labelledby="recipe-share-heading">
+                        <section class="recipe-section recipe-share-section" aria-labelledby="recipe-share-heading"
+                                 sec:authorize="!isAuthenticated()">
+                            <h2 id="recipe-share-heading">Share this recipe</h2>
+                            <a class="btn" th:href="@{/login}">Share by email</a>
+                        </section>
+                        <section class="recipe-section recipe-share-section" aria-labelledby="recipe-share-heading"
+                                 sec:authorize="isAuthenticated()">
                             <h2 id="recipe-share-heading">Share this recipe</h2>
                             <form id="recipe-email-share-form"
                                   th:action="@{/api/recipe/{recipeId}/share/email(recipeId=${recipeId})}">
@@ -118,56 +124,58 @@
         </main>
         <script>
             const shareForm = document.getElementById('recipe-email-share-form');
-            const shareEmail = document.getElementById('recipe-share-email');
-            const shareButton = shareForm.querySelector('button[type="submit"]');
-            const shareStatus = document.getElementById('recipe-share-status');
-            const shareError = document.getElementById('recipe-share-error');
+            if (shareForm) {
+                const shareEmail = document.getElementById('recipe-share-email');
+                const shareButton = shareForm.querySelector('button[type="submit"]');
+                const shareStatus = document.getElementById('recipe-share-status');
+                const shareError = document.getElementById('recipe-share-error');
 
-            shareForm.addEventListener('submit', async (event) => {
-                event.preventDefault();
-                if (shareButton.disabled) {
-                    return;
-                }
-
-                shareButton.disabled = true;
-                shareStatus.textContent = 'Preparing your email...';
-                shareError.hidden = true;
-
-                try {
-                    const response = await fetch(shareForm.action, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'text/plain'
-                        },
-                        body: JSON.stringify({ recipientEmail: shareEmail.value })
-                    });
-
-                    if (!response.ok) {
-                        if (response.status === 400) {
-                            throw new Error('Enter a valid email address and try again.');
-                        }
-                        if (response.status === 404) {
-                            throw new Error('This recipe could not be found.');
-                        }
-                        throw new Error('Could not prepare the recipe email. Please try again.');
+                shareForm.addEventListener('submit', async (event) => {
+                    event.preventDefault();
+                    if (shareButton.disabled) {
+                        return;
                     }
 
-                    const mailtoUri = (await response.text()).trim();
-                    if (!mailtoUri.startsWith('mailto:')) {
-                        throw new Error('Could not prepare the recipe email. Please try again.');
-                    }
+                    shareButton.disabled = true;
+                    shareStatus.textContent = 'Preparing your email...';
+                    shareError.hidden = true;
 
-                    shareStatus.textContent = 'Opening your email application...';
-                    window.location.assign(mailtoUri);
-                } catch (error) {
-                    shareStatus.textContent = '';
-                    shareError.textContent = error.message || 'Could not prepare the recipe email. Please try again.';
-                    shareError.hidden = false;
-                } finally { // butten is re-enabled after success or failure, so can retry
-                    shareButton.disabled = false;
-                }
-            });
+                    try {
+                        const response = await fetch(shareForm.action, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'text/plain'
+                            },
+                            body: JSON.stringify({ recipientEmail: shareEmail.value })
+                        });
+
+                        if (!response.ok) {
+                            if (response.status === 400) {
+                                throw new Error('Enter a valid email address and try again.');
+                            }
+                            if (response.status === 404) {
+                                throw new Error('This recipe could not be found.');
+                            }
+                            throw new Error('Could not prepare the recipe email. Please try again.');
+                        }
+
+                        const mailtoUri = (await response.text()).trim();
+                        if (!mailtoUri.startsWith('mailto:')) {
+                            throw new Error('Could not prepare the recipe email. Please try again.');
+                        }
+
+                        shareStatus.textContent = 'Opening your email application...';
+                        window.location.assign(mailtoUri);
+                    } catch (error) {
+                        shareStatus.textContent = '';
+                        shareError.textContent = error.message || 'Could not prepare the recipe email. Please try again.';
+                        shareError.hidden = false;
+                    } finally { // butten is re-enabled after success or failure, so can retry
+                        shareButton.disabled = false;
+                    }
+                });
+            }
         </script>
     </body>
 </html>
