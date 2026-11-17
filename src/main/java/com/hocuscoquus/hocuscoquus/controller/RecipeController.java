@@ -36,8 +36,9 @@ public class RecipeController {
     }
 
     @PostMapping("/api/recipe/create")
-    public ResponseEntity<?> saveRecipe(@Valid @RequestBody RecipeCreateRequest request) {
-        return recipeHandler.processRecipeCreateRequest(request);
+    public ResponseEntity<?> saveRecipe(@Valid @RequestBody RecipeCreateRequest request,
+                                        @AuthenticationPrincipal AccountDetails account) {
+        return recipeHandler.processRecipeCreateRequest(account.getAccount(), request);
     }
 
     @GetMapping("/api/recipe/view-recipe/{recipeId}")
