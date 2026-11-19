@@ -44,12 +44,15 @@
                 </section>
 
                 <section class="recipe-tags" aria-label="Recipe tags">
-                    <span class="recipe-tag" th:if="${recipe.recipeTags != null}"
-                          th:each="recipeTag : ${recipe.recipeTags}"
+                    <span class="recipe-tag" th:if="${recipe.visibleRecipeTags != null}"
+                          th:each="recipeTag : ${recipe.visibleRecipeTags}"
                           th:text="${recipeTag.tag}">Recipe tag</span>
                     <p class="empty-section"
-                       th:if="${recipe.recipeTags == null or #lists.isEmpty(recipe.recipeTags)}">
+                       th:if="${recipe.visibleRecipeTags == null or #lists.isEmpty(recipe.visibleRecipeTags)}">
                         No tags have been added yet.
+                    </p>
+                    <p class="empty-section recipe-login-prompt" sec:authorize="!isAuthenticated()">
+                        <a th:href="@{/login}">Log in</a> to add tags.
                     </p>
                 </section>
 
@@ -78,22 +81,19 @@
                         <section class="recipe-section notes-section">
                             <h2>Notes</h2>
                             <ul class="recipe-note-list"
-                                th:if="${recipe.recipeNotes != null and !#lists.isEmpty(recipe.recipeNotes)}">
-                                <li th:each="recipeNote : ${recipe.recipeNotes}"
+                                th:if="${recipe.visibleRecipeNotes != null and !#lists.isEmpty(recipe.visibleRecipeNotes)}">
+                                <li th:each="recipeNote : ${recipe.visibleRecipeNotes}"
                                     th:text="${recipeNote.message}">Recipe note</li>
                             </ul>
                             <p class="empty-section"
-                               th:if="${recipe.recipeNotes == null or #lists.isEmpty(recipe.recipeNotes)}">
+                               th:if="${recipe.visibleRecipeNotes == null or #lists.isEmpty(recipe.visibleRecipeNotes)}">
                                 No notes have been added yet.
                             </p>
+                            <p class="empty-section" sec:authorize="!isAuthenticated()">
+                                <a th:href="@{/login}">Log in</a> to add a note.
+                            </p>
                         </section>
-                        <section class="recipe-section recipe-share-section" aria-labelledby="recipe-share-heading"
-                                 sec:authorize="!isAuthenticated()">
-                            <h2 id="recipe-share-heading">Share this recipe</h2>
-                            <a class="btn" th:href="@{/login}">Share by email</a>
-                        </section>
-                        <section class="recipe-section recipe-share-section" aria-labelledby="recipe-share-heading"
-                                 sec:authorize="isAuthenticated()">
+                        <section class="recipe-section recipe-share-section" aria-labelledby="recipe-share-heading">
                             <h2 id="recipe-share-heading">Share this recipe</h2>
                             <form id="recipe-email-share-form"
                                   th:action="@{/api/recipe/{recipeId}/share/email(recipeId=${recipeId})}">

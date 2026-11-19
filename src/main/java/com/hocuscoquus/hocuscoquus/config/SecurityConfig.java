@@ -30,6 +30,7 @@ public class SecurityConfig {
 						"/images/**",
 						"/index",
 						"/recipe/*",
+						"/api/recipe/*/share/email",
 						"/search",
 						"/signup").permitAll()
 						.anyRequest().authenticated())

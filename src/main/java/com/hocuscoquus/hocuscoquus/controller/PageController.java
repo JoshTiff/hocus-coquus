@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.hocuscoquus.hocuscoquus.entity.AccountDetails;
 import com.hocuscoquus.hocuscoquus.model.IngredientCreateDto;
 import com.hocuscoquus.hocuscoquus.service.RecipeService;
 
@@ -60,8 +62,11 @@ public class PageController {
 	}
 
 	@GetMapping("/recipe/{recipeId}")
-	public String viewRecipe(@PathVariable long recipeId, Model model) {
-		model.addAttribute("recipe", recipeService.getRecipeByID(recipeId));
+	public String viewRecipe(@PathVariable long recipeId,
+			@AuthenticationPrincipal AccountDetails account,
+			Model model) {
+		model.addAttribute("recipe", recipeService.getRecipeByID(
+				recipeId, account == null ? null : account.getAccountId()));
 		model.addAttribute("recipeId", recipeId);
 		return "view-recipe";
 	}

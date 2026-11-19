@@ -112,14 +112,14 @@ public class RecipeExportEmail extends RecipeExportAbstract {
      * Formats the recipe name, description, image, ingredients, and instructions as email text.
      *
      * @param recipe recipe to format
-     * @return readable, unencoded recipe text with Markdown-style bold section headers
+     * @return readable, unencoded recipe text with plain section headers
      */
     private String formatRecipe(Recipe recipe) {
         StringBuilder body = new StringBuilder(recipe.getRecipeName());
         appendSection(body, "Description", recipe.getRecipeDescription());
         appendOptionalLine(body, "Image", recipe.getImage());
 
-        body.append("\n\n**Ingredients:**");
+        body.append("\n\nIngredients:");
         for (RecipeIngredient ingredient : recipe.getRecipeIngredients()) {
             body.append("\n- ")
                     .append(BigDecimal.valueOf(ingredient.getQuantity()).stripTrailingZeros().toPlainString());
@@ -129,13 +129,13 @@ public class RecipeExportEmail extends RecipeExportAbstract {
             }
         }
 
-        body.append("\n\n**Instructions:**");
+        body.append("\n\nInstructions:");
         appendOptionalLine(body, null, recipe.getInstructions());
         return body.toString();
     }
 
     /**
-     * Adds a nonblank paragraph with a Markdown-style bold header to the recipe body.
+     * Adds a nonblank paragraph with a plain-text section header to the recipe body.
      *
      * @param body email body being assembled
      * @param label section header
@@ -143,7 +143,7 @@ public class RecipeExportEmail extends RecipeExportAbstract {
      */
     private void appendSection(StringBuilder body, String label, String value) {
         if (value != null && !value.isBlank()) {
-            body.append("\n\n**").append(label).append(":**\n").append(value);
+            body.append("\n\n").append(label).append(":\n").append(value);
         }
     }
 
@@ -158,7 +158,7 @@ public class RecipeExportEmail extends RecipeExportAbstract {
         if (value != null && !value.isBlank()) {
             body.append("\n");
             if (label != null) {
-                body.append("**").append(label).append(":** ");
+                body.append(label).append(": ");
             }
             body.append(value);
         }

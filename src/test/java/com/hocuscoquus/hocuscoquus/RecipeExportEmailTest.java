@@ -49,10 +49,11 @@ class RecipeExportEmailTest {
         String body = URLDecoder.decode(
                 mailtoUri.substring(mailtoUri.indexOf("&body=") + "&body=".length()),
                 StandardCharsets.UTF_8);
-        assertTrue(body.contains("**Description:**\nA quick lunch"));
-        assertTrue(body.contains("**Image:** https://example.com/image?a=1&b=2"));
-        assertTrue(body.contains("**Ingredients:**"));
-        assertTrue(body.contains("**Instructions:**\nMix & serve"));
+        assertTrue(body.contains("Description:\nA quick lunch"));
+        assertTrue(body.contains("Image: https://example.com/image?a=1&b=2"));
+        assertTrue(body.contains("Ingredients:"));
+        assertTrue(body.contains("Instructions:\nMix & serve"));
+        org.junit.jupiter.api.Assertions.assertFalse(body.contains("**"));
     }
 
     /** Ensures an exporter cannot be created without a recipient address. */

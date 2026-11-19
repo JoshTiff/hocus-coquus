@@ -415,9 +415,27 @@ public class RecipeService {
 
     @Transactional(readOnly = true)
     public Recipe getRecipeByID(long recipeID) {
+        return getRecipeByID(recipeID, null);
+    }
+
+    @Transactional(readOnly = true)
+    public Recipe getRecipeByID(long recipeID, Long accountId) {
         Recipe recipe = recipeRepository.findByRecipeId(recipeID);
         if (recipe == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Recipe not found");
+        }
+        if (accountId == null) {
+            recipe.setVisibleRecipeTags(List.of());
+            recipe.setVisibleRecipeNotes(List.of());
+        } else {
+            recipe.setVisibleRecipeTags(recipe.getRecipeTags().stream()
+                    .filter(tag -> tag.getAccount() != null
+                            && tag.getAccount().getAccountId() == accountId)
+                    .toList());
+            recipe.setVisibleRecipeNotes(recipe.getRecipeNotes().stream()
+                    .filter(note -> note.getAccount() != null
+                            && note.getAccount().getAccountId() == accountId)
+                    .toList());
         }
         recipe.getRecipeIngredients().forEach(recipeIngredient -> {
             if (recipeIngredient.getIngredient() != null) {

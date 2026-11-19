@@ -51,6 +51,12 @@ public class Recipe {
 	@OneToMany(mappedBy="recipe")
 	private final List<Reaction> reactions = new ArrayList<>();
 
+	@jakarta.persistence.Transient
+	private List<RecipeTag> visibleRecipeTags = new ArrayList<>();
+
+	@jakarta.persistence.Transient
+	private List<RecipeNote> visibleRecipeNotes = new ArrayList<>();
+
     @ManyToMany(mappedBy="recipes")
     private List<CalendarEntry> calendarEntries;
     
@@ -126,6 +132,22 @@ public class Recipe {
 
 	public List<RecipeNote> getRecipeNotes() {
 		return recipeNotes;
+	}
+
+	public List<RecipeTag> getVisibleRecipeTags() {
+		return visibleRecipeTags;
+	}
+
+	public void setVisibleRecipeTags(List<RecipeTag> visibleRecipeTags) {
+		this.visibleRecipeTags = visibleRecipeTags == null ? new ArrayList<>() : visibleRecipeTags;
+	}
+
+	public List<RecipeNote> getVisibleRecipeNotes() {
+		return visibleRecipeNotes;
+	}
+
+	public void setVisibleRecipeNotes(List<RecipeNote> visibleRecipeNotes) {
+		this.visibleRecipeNotes = visibleRecipeNotes == null ? new ArrayList<>() : visibleRecipeNotes;
 	}
 
 	public List<Reaction> getReactions() {

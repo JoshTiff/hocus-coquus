@@ -73,7 +73,11 @@ public class RecipeHandler {
 	 * @return {@link RecipeRecord} as a ResponseEntity.
 	 */
 	public ResponseEntity<?> getRecipeByID(long recipeID) {
-		Recipe recipe = recipeService.getRecipeByID(recipeID);
+		return getRecipeByID(recipeID, null);
+	}
+
+	public ResponseEntity<?> getRecipeByID(long recipeID, Long accountId) {
+		Recipe recipe = recipeService.getRecipeByID(recipeID, accountId);
 
 		List<RecipeIngredientRecord> ingredients = new ArrayList<>(recipe.getRecipeIngredients().size());
 		HashMap<ReactionType, Integer> reactions = new HashMap<>(2);

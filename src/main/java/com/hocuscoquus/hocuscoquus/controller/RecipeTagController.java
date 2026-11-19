@@ -24,6 +24,9 @@ public class RecipeTagController {
             @AuthenticationPrincipal AccountDetails details,
             @PathVariable long recipeID,
             @RequestParam String tagName) {
+        if (details == null) {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED).build();
+        }
         return recipeHandler.addRecipeTag(details.getAccountId(), recipeID, tagName);
     }
 
@@ -32,6 +35,9 @@ public class RecipeTagController {
             @AuthenticationPrincipal AccountDetails details,
             @PathVariable long recipeTagId,
             @RequestParam(required = false) Long recipeId) {
+        if (details == null) {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED).build();
+        }
         if (recipeId == null) // Delete entire recipe tag.
             return recipeHandler.deleteRecipeTag(details.getAccountId(), recipeTagId);
         else // Delete recipe tag from single recipe.
@@ -40,6 +46,9 @@ public class RecipeTagController {
 
     @GetMapping("/view-all")
     public ResponseEntity<?> getRecipeTagsByAccount(@AuthenticationPrincipal AccountDetails details) {
+        if (details == null) {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED).build();
+        }
         return recipeHandler.getRecipeTagsByAccount(details.getAccountId());
     }
 
@@ -47,6 +56,9 @@ public class RecipeTagController {
     public ResponseEntity<?> getRecipeTagsByAccount(
             @AuthenticationPrincipal AccountDetails details,
             @PathVariable long recipeTagId) {
+        if (details == null) {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED).build();
+        }
         return recipeHandler.getRecipeTag(details.getAccountId(), recipeTagId);
     }
 
