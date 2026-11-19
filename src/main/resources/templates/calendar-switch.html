@@ -2,6 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
     <head th:replace="~{fragments/layout :: head('Switch Calendar')}"></head>
     <body>
+        <header th:replace="~{fragments/layout :: site-header}"></header>
         <div>
             <p th:if="${calendarSwitchError}" th:text="${calendarSwitchError}" role="alert"></p>
             <form th:if="${not #lists.isEmpty(calendars)}" th:action="@{/api/calendar/switch}" method="post">

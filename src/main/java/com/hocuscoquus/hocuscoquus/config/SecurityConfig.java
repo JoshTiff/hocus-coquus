@@ -29,6 +29,8 @@ public class SecurityConfig {
 						"/error",
 						"/images/**",
 						"/index",
+						"/recipe/*",
+						"/api/recipe/*/share/email",
 						"/search",
 						"/signup").permitAll()
 						.anyRequest().authenticated())

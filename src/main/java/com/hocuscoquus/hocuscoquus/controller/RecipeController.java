@@ -42,8 +42,14 @@ public class RecipeController {
     }
 
     @GetMapping("/api/recipe/view-recipe/{recipeId}")
-    public ResponseEntity<?> viewRecipe(@PathVariable long recipeId) {
-        return recipeHandler.getRecipeByID(recipeId);
+    public ResponseEntity<?> viewRecipe(@PathVariable long recipeId,
+            @AuthenticationPrincipal AccountDetails account) {
+        return recipeHandler.getRecipeByID(recipeId,
+                account == null ? null : account.getAccountId());
+    }
+
+    public ResponseEntity<?> viewRecipe(long recipeId) {
+        return recipeHandler.getRecipeByID(recipeId, null);
     }
 
     @GetMapping("/edit/recipe")

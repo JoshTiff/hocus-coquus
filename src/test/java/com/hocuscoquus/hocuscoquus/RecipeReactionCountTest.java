@@ -1,11 +1,12 @@
-package com.hocuscoquus.hocuscoquus.entity;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+package com.hocuscoquus.hocuscoquus;
 
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
+import com.hocuscoquus.hocuscoquus.entity.Reaction;
+import com.hocuscoquus.hocuscoquus.entity.Recipe;
 import com.hocuscoquus.hocuscoquus.model.ReactionType;
 
 class RecipeReactionCountTest {

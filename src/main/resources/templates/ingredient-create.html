@@ -2,6 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
     <head th:replace="~{fragments/layout :: head('Create Ingredient')}"></head>
     <body>
+        <header th:replace="~{fragments/layout :: site-header}"></header>
     	<div>
 	    	<p th:if="${ingredientCreateError}" th:text="${ingredientCreateError}" role="alert"></p>
 			<form th:action="@{/api/ingredient/create}" th:object="${ingredientCreateDto}" method="post">

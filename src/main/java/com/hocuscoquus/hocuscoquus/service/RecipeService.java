@@ -6,10 +6,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-import com.hocuscoquus.hocuscoquus.entity.*;
-import com.hocuscoquus.hocuscoquus.repository.RecipeTagRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,18 +13,28 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.hocuscoquus.hocuscoquus.model.IngredientCreateDto;
-import com.hocuscoquus.hocuscoquus.model.IngredientCreateRequest;
+import com.hocuscoquus.hocuscoquus.entity.Account;
+import com.hocuscoquus.hocuscoquus.entity.AccountDetails;
+import com.hocuscoquus.hocuscoquus.entity.Ingredient;
+import com.hocuscoquus.hocuscoquus.entity.Reaction;
+import com.hocuscoquus.hocuscoquus.entity.Recipe;
+import com.hocuscoquus.hocuscoquus.entity.RecipeIngredient;
+import com.hocuscoquus.hocuscoquus.entity.RecipeNote;
+import com.hocuscoquus.hocuscoquus.entity.RecipeTag;
 import com.hocuscoquus.hocuscoquus.model.IngredientModel;
 import com.hocuscoquus.hocuscoquus.model.ReactionType;
 import com.hocuscoquus.hocuscoquus.model.RecipeCreateRequest;
-import com.hocuscoquus.hocuscoquus.model.RecipeIngredientCreateRequest;
-import com.hocuscoquus.hocuscoquus.model.RecipeNoteCreateRequest;
 import com.hocuscoquus.hocuscoquus.model.RecipeEditRequest;
 import com.hocuscoquus.hocuscoquus.model.RecipeEditRequest.IngredientRow;
+import com.hocuscoquus.hocuscoquus.model.RecipeIngredientCreateRequest;
+import com.hocuscoquus.hocuscoquus.model.RecipeNoteCreateRequest;
 import com.hocuscoquus.hocuscoquus.repository.IngredientRepository;
 import com.hocuscoquus.hocuscoquus.repository.RecipeIngredientRepository;
 import com.hocuscoquus.hocuscoquus.repository.RecipeRepository;
+import com.hocuscoquus.hocuscoquus.repository.RecipeTagRepository;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 @Service
 public class RecipeService {
@@ -407,7 +413,37 @@ public class RecipeService {
         return recipeTag;
     }
 
+    @Transactional(readOnly = true)
     public Recipe getRecipeByID(long recipeID) {
-        return recipeRepository.getRecipeByRecipeId(recipeID);
+        return getRecipeByID(recipeID, null);
+    }
+
+    @Transactional(readOnly = true)
+    public Recipe getRecipeByID(long recipeID, Long accountId) {
+        Recipe recipe = recipeRepository.findByRecipeId(recipeID);
+        if (recipe == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Recipe not found");
+        }
+        if (accountId == null) {
+            recipe.setVisibleRecipeTags(List.of());
+            recipe.setVisibleRecipeNotes(List.of());
+        } else {
+            recipe.setVisibleRecipeTags(recipe.getRecipeTags().stream()
+                    .filter(tag -> tag.getAccount() != null
+                            && tag.getAccount().getAccountId() == accountId)
+                    .toList());
+            recipe.setVisibleRecipeNotes(recipe.getRecipeNotes().stream()
+                    .filter(note -> note.getAccount() != null
+                            && note.getAccount().getAccountId() == accountId)
+                    .toList());
+        }
+        recipe.getRecipeIngredients().forEach(recipeIngredient -> {
+            if (recipeIngredient.getIngredient() != null) {
+                recipeIngredient.getIngredient().getIngredientName();
+            }
+        });
+        recipe.getRecipeTags().forEach(recipeTag -> recipeTag.getTag());
+        recipe.getRecipeNotes().forEach(recipeNote -> recipeNote.getMessage());
+        return recipe;
     }
 }
