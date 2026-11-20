@@ -39,4 +39,12 @@ public class IngredientService {
        // TODO: add implementation for this method
         return new IngredientModel();
     }
+    
+    public Ingredient getIngredientByName(String name) {
+    	Ingredient i = ingredientRepository.findByIngredientName(name);
+    	if (i == null) {
+    		throw new RuntimeException("Ingredient '" + name + "'not found");
+    	}
+    	return i;
+    }
 }
