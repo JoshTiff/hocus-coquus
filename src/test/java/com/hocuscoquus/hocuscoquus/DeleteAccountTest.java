@@ -1,7 +1,9 @@
 package com.hocuscoquus.hocuscoquus;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import com.hocuscoquus.hocuscoquus.entity.AccountDetails;
 
 import java.util.UUID;
 
@@ -31,14 +33,23 @@ public class DeleteAccountTest {
         Account created = accountService.createAccount("Test", email, password);
         long id = created.getAccountId();
 
-        // Confirm account creation
-        assertNotNull(accountRepository.findById(id));
+        // Confirm that account has been created and is not archived
+        Account before = accountRepository.findById(id);
+        assertNotNull(before);
+        assertFalse(before.isArchived());
 
-        // Delete account
+        // Archive account
         accountService.deleteAccount(id, email, password);
 
-        // Confirm account deletion
-        assertNull(accountRepository.findById(id));
-        assertNull(accountRepository.findByEmail(email));
+        // Confirm record exists
+        Account after = accountRepository.findById(id);
+        assertNotNull(after);
+
+        // Confirm record is archived
+        assertTrue(after.isArchived());
+        assertNotNull(accountRepository.findByEmail(email));
+
+        // Confirm the user can no longer log in
+        assertFalse(new AccountDetails(after).isEnabled());
     }
 }
