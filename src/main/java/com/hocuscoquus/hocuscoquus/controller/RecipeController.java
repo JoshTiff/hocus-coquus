@@ -115,4 +115,9 @@ public class RecipeController {
             @PathVariable long recipeId) {
         return recipeHandler.processReactionDeleteRequest(recipeId);
     }
+
+    @GetMapping("/api/recipe/view-recipe")
+    public ResponseEntity<?> viewRandomRecipe(@AuthenticationPrincipal AccountDetails account) {
+        return recipeHandler.getRandomRecipe(account == null ? null : account.getAccountId());
+    }
 }
