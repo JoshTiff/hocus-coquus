@@ -7,10 +7,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PutMapping;
 
 import com.hocuscoquus.hocuscoquus.entity.AccountDetails;
 import com.hocuscoquus.hocuscoquus.handler.RecipeHandler;
 import com.hocuscoquus.hocuscoquus.model.RecipeNoteCreateRequest;
+import com.hocuscoquus.hocuscoquus.model.RecipeNoteUpdateRequest;
 
 import jakarta.validation.Valid;
 
@@ -34,6 +36,19 @@ public class RecipeNoteController {
         }
 
         return recipeHandler.processRecipeNoteCreateRequest(
+                details.getAccountId(), request);
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<?> updateRecipeNote(
+            @AuthenticationPrincipal AccountDetails details,
+            @Valid @RequestBody RecipeNoteUpdateRequest request) {
+
+        if (details == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        return recipeHandler.processRecipeNoteUpdateRequest(
                 details.getAccountId(), request);
     }
 }

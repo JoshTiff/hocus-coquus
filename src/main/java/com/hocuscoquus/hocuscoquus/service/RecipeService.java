@@ -28,6 +28,7 @@ import com.hocuscoquus.hocuscoquus.model.RecipeEditRequest;
 import com.hocuscoquus.hocuscoquus.model.RecipeEditRequest.IngredientRow;
 import com.hocuscoquus.hocuscoquus.model.RecipeIngredientCreateRequest;
 import com.hocuscoquus.hocuscoquus.model.RecipeNoteCreateRequest;
+import com.hocuscoquus.hocuscoquus.model.RecipeNoteUpdateRequest;
 import com.hocuscoquus.hocuscoquus.repository.IngredientRepository;
 import com.hocuscoquus.hocuscoquus.repository.RecipeIngredientRepository;
 import com.hocuscoquus.hocuscoquus.repository.RecipeRepository;
@@ -257,6 +258,31 @@ public class RecipeService {
         note.setMessage(request.message().trim());
 
         entityManager.persist(note);
+
+        return note;
+    }
+
+    @Transactional
+    public RecipeNote updateRecipeNote(long accountId, RecipeNoteUpdateRequest request) {
+        if (request == null
+                || request.recipeNoteId() == null
+                || request.recipeNoteId() <= 0
+                || request.message() == null
+                || request.message().isBlank()
+                || request.message().length() > 255) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid recipe note");
+        }
+
+        RecipeNote note = entityManager.find(RecipeNote.class, request.recipeNoteId());
+
+        // Avoid revealing notes owned by other accounts
+        if (note == null
+                || note.getAccount() == null
+                || note.getAccount().getAccountId() != accountId) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Recipe note not found");
+        }
+
+        note.setMessage(request.message().trim());
 
         return note;
     }
