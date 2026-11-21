@@ -79,8 +79,9 @@ public class AccountService implements UserDetailsService {
             throw new IllegalArgumentException("Invalid password for ID: " + accountId);
         }
 
-        // Delete the account
-        this.accountRepository.deleteById(accountId);
+        // Archive the account
+        acc.setArchived(true);
+        accountRepository.save(acc);
     }
 
     @Transactional

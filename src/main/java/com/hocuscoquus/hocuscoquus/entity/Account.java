@@ -49,6 +49,9 @@ public class Account {
 	
 	@OneToMany(mappedBy="account")
 	private List<Calendar> calendars = new ArrayList<>();
+
+	@Column(nullable = false, columnDefinition = "NUMBER(1) DEFAULT 0 NOT NULL")
+	private boolean archived = false;
 	
 	public Account() {
 		
@@ -84,6 +87,14 @@ public class Account {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public boolean isArchived() {
+		return archived;
+	}
+
+	public void setArchived(boolean archived) {
+		this.archived = archived;
 	}
 
 	public List<RecipeTag> getRecipeTags() {

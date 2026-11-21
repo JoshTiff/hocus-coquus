@@ -35,6 +35,11 @@ public class AccountDetails implements UserDetails {
         return account.getEmail();
     }
 
+    @Override
+    public boolean isEnabled() {
+        return !account.isArchived();
+    }
+
     public long getAccountId() {
         return account.getAccountId();
     }
