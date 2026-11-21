@@ -103,6 +103,9 @@
             </section>
 
             <button class="btn brew">Brew Recipes</button>
+            <form action="#" th:action="@{/recipe/random}" method="get">
+                <input type="submit" class="btn brew" value="Random Recipe"/>
+            </form>
         </main>
     </body>
 </html>
