@@ -47,23 +47,4 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     		""")
     List<Recipe> findByIngredients(@Param("ingredients") List<Ingredient> ingredients);
 	
-    
-
-    @Query("""
-    	    SELECT r
-    	    FROM Recipe r
-    	    JOIN r.recipeIngredients ri
-    	    WHERE ri.ingredient IN :ingredients
-    	      AND NOT EXISTS (
-    	          SELECT 1
-    	          FROM RecipeIngredient bad
-    	          JOIN bad.ingredient badIng
-    	          JOIN badIng.dietaryRestriction dr
-    	          WHERE bad.recipe = r
-    	            AND dr IN :restrictions
-    	      )
-    	    GROUP BY r
-    	    ORDER BY COUNT(ri) DESC
-    	    """)
-    List<Recipe> findByIngredientsWithRestrictions(@Param("ingredients") List<Ingredient> ingredients, @Param("restrictions") List<DietaryRestriction> dietaryRestrictions);
 }

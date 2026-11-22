@@ -20,16 +20,16 @@ public class RecipeSearchController {
 	}
 	
 	/**
-	 * 
-	 * @param ingredients
-	 * @return
+	 * Used to search recipes by ingredients
+	 * @param ingredients - list of ingredients to search by 
+	 * @param usePantry - indicates to use the user's ingredients (defaults true)
+	 * @return list of recipes that match the user's query parameters
 	 */
 	@GetMapping("/search-by-ingredients")
 	public ResponseEntity<?> searchByIngredients(
 			@RequestParam(required = false) List<String> ingredients, 
-			@RequestParam(defaultValue = "true") boolean applyRestrictions,
 			@RequestParam(defaultValue = "true") boolean usePantry) {
-		return recipeSearchHandler.processSearchByIngredientsRequest(ingredients, applyRestrictions, usePantry);
+		return recipeSearchHandler.processSearchByIngredientsRequest(ingredients,usePantry);
 	}
 	
 	

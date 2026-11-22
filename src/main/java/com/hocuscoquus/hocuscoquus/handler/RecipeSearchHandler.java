@@ -33,28 +33,21 @@ public class RecipeSearchHandler {
 		this.accountService = accountService;
 	}
 	
-	public ResponseEntity<?> processSearchByIngredientsRequest(List<String> request, boolean applyRestrictions, boolean usePantry) {
+	public ResponseEntity<?> processSearchByIngredientsRequest(List<String> request, boolean usePantry) {
 		try {
 			
+			//list of ingredients that the searched list of ingredients and the list of ingredients tied to the user's account will be stored in
 			List<Ingredient> ingredients = new ArrayList<>();
-			List<DietaryRestriction> restrictions = new ArrayList<>();
 			
 			//if there is a logged in user, add their ingredients to the list/query
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-			if ((applyRestrictions || usePantry) && !(auth instanceof AnonymousAuthenticationToken)) {
+			if (usePantry && !(auth instanceof AnonymousAuthenticationToken)) {
 				Account act = ((AccountDetails) auth.getPrincipal()).getAccount();
 				//have to load account fresh from repository because ingredients is lazy-load
 				Account freshAccount = accountService.getAccountByID(act.getAccountId()); 
 				
-				if (usePantry) {
-					List<Ingredient> actIngredients = freshAccount.getIngredients();
-					ingredients.addAll(actIngredients);
-				}
-				
-			    if (applyRestrictions) {
-			    	restrictions.addAll(freshAccount.getDietaryRestrictions());
-			    }
-			    
+				List<Ingredient> actIngredients = freshAccount.getIngredients();
+				ingredients.addAll(actIngredients);
 			}
 			
 			//The user doesn't necessarily need to supply ingredients if they have some saved to their account
@@ -72,12 +65,8 @@ public class RecipeSearchHandler {
 			
 			//search for the recipes with those ingredients
 			List<Recipe> recipes = new ArrayList<>();
-			if (applyRestrictions) {
-				recipes = recipeSearchService.searchRecipesByIngredientsWithRestrictions(ingredients, restrictions);
-			} else {
-				recipes = recipeSearchService.searchRecipesByIngredients(ingredients);
-			}
-			
+			recipes = recipeSearchService.searchRecipesByIngredients(ingredients);
+
 			
 			if (recipes.isEmpty()) {
 				return ResponseEntity.ok("No recipes found with those ingredients");

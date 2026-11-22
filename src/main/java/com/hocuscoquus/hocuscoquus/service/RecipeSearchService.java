@@ -28,14 +28,5 @@ public class RecipeSearchService {
 		return recipeRepository.findByIngredients(ingredients);
 	}
 
-	/**
-	 * 
-	 * This method returns a list of recipes which match the supplied ingredients in descending order of how many of the ingredients were in the recipe
-	 * @param ingredients
-	 * @param dietaryRestrictions
-	 * @return list of recipes matching specified ingredients
-	 * */
-	public List<Recipe> searchRecipesByIngredientsWithRestrictions(List<Ingredient> ingredients, List<DietaryRestriction> dietaryRestrictions) {
-		return recipeRepository.findByIngredientsWithRestrictions(ingredients, dietaryRestrictions);
-	}
+
 }
