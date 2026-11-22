@@ -4,8 +4,10 @@ import com.hocuscoquus.hocuscoquus.entity.Account;
 import com.hocuscoquus.hocuscoquus.entity.Recipe;
 import com.hocuscoquus.hocuscoquus.entity.RecipeIngredient;
 import com.hocuscoquus.hocuscoquus.entity.RecipeTag;
+import com.hocuscoquus.hocuscoquus.entity.RecipeNote;
 import com.hocuscoquus.hocuscoquus.model.*;
 import com.hocuscoquus.hocuscoquus.service.RecipeService;
+
 import org.springframework.boot.http.converter.autoconfigure.ServerHttpMessageConvertersCustomizer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -78,36 +80,12 @@ public class RecipeHandler {
 
 	public ResponseEntity<?> getRecipeByID(long recipeID, Long accountId) {
 		Recipe recipe = recipeService.getRecipeByID(recipeID, accountId);
+		return ResponseEntity.ok(RecipeRecord.getRecord(recipe));
+	}
 
-		List<RecipeIngredientRecord> ingredients = new ArrayList<>(recipe.getRecipeIngredients().size());
-		HashMap<ReactionType, Integer> reactions = new HashMap<>(2);
-
-		for (RecipeIngredient ingredient : recipe.getRecipeIngredients()) {
-			ingredients.add(
-					new RecipeIngredientRecord(
-							ingredient.getMeasurement(),
-							ingredient.getQuantity(),
-							ingredient.getIngredient().getIngredientName(),
-							ingredient.getIngredient().getIngredientId()
-					)
-			);
-		}
-
-		reactions.put(ReactionType.POSITIVE, recipeService.computeNumReactions(recipeID, ReactionType.POSITIVE));
-		reactions.put(ReactionType.NEGATIVE, recipeService.computeNumReactions(recipeID, ReactionType.NEGATIVE));
-
-		RecipeRecord response = new RecipeRecord(
-				recipe.getRecipeId(),
-				recipe.getRecipeName(),
-				recipe.getRecipeDescription(),
-				recipe.getInstructions(),
-				ingredients,
-				recipe.getImage(),
-				reactions,
-				recipe.getAccount().getAccountId()
-		);
-
-		return ResponseEntity.ok(response);
+	public ResponseEntity<?> getRandomRecipe(Long accountID) {
+		Recipe recipe = recipeService.getRandomRecipe(accountID);
+		return ResponseEntity.ok(RecipeRecord.getRecord(recipe));
 	}
 
 	public ResponseEntity<Map<ReactionType, Integer>> processReactionCreateRequest(
@@ -172,6 +150,12 @@ public class RecipeHandler {
 	public ResponseEntity<?> getRecipeTag(long accountId, long recipeTagId) {
 		RecipeTag tag = recipeService.getRecipeTag(accountId, recipeTagId);
 		RecipeTagRecord response = RecipeTagRecord.getRecord(tag);
+		return ResponseEntity.ok(response);
+	}
+	
+	public ResponseEntity<?> processRecipeNoteUpdateRequest(long accountId, RecipeNoteUpdateRequest request) {
+		RecipeNote note = recipeService.updateRecipeNote(accountId, request);
+		RecipeNoteRecord response = RecipeNoteRecord.getRecord(note);
 		return ResponseEntity.ok(response);
 	}
 }
