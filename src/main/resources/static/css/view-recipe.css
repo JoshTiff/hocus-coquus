@@ -180,6 +180,35 @@
     color: var(--light-primary);
 }
 
+.recipe-print-controls {
+    display: grid;
+    gap: 0.65rem;
+    margin-top: 1rem;
+}
+
+.recipe-print-controls .btn {
+    justify-self: start;
+    padding: 0.8rem 1.5rem;
+    cursor: pointer;
+}
+
+.recipe-print-controls .btn:focus-visible {
+    outline: 2px solid var(--light-primary);
+    outline-offset: 3px;
+}
+
+.recipe-print-controls .btn:disabled {
+    cursor: wait;
+    opacity: 0.7;
+}
+
+.recipe-print-frame {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border: 0;
+}
+
 .recipe-tag {
     display: inline-flex;
     min-height: 2.3rem;
@@ -315,5 +344,9 @@
         min-height: 2rem;
         padding: 0.3rem 0.85rem;
         font-size: 0.85rem;
+    }
+
+    .recipe-print-controls .btn {
+        justify-self: stretch;
     }
 }

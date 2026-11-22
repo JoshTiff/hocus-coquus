@@ -9,6 +9,7 @@ import com.hocuscoquus.hocuscoquus.entity.Recipe;
 import com.hocuscoquus.hocuscoquus.repository.RecipeRepository;
 import com.hocuscoquus.hocuscoquus.service.export.RecipeExportAbstract;
 import com.hocuscoquus.hocuscoquus.service.export.RecipeExportEmail;
+import com.hocuscoquus.hocuscoquus.service.export.RecipeExportPrint;
 import com.hocuscoquus.hocuscoquus.service.export.RecipeExportFactory;
 import com.hocuscoquus.hocuscoquus.service.export.RecipeExportType;
 
@@ -57,5 +58,31 @@ public class RecipeExportService {
             throw new IllegalStateException("Recipe email export failed");
         }
         return emailExporter.getMailtoUri();
+    }
+
+    /**
+     * Builds a printable HTML page for a recipe.
+     *
+     * @param recipeId ID of the recipe to print
+     * @return HTML page with the recipe details
+     * @throws ResponseStatusException if the recipe does not exist
+     * @throws IllegalStateException if the print exporter fails or does not provide HTML
+     */
+    @Transactional(readOnly = true)
+    public String printRecipe(long recipeId) {
+        Recipe recipe = recipeRepository.findByRecipeId(recipeId);
+        if (recipe == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Recipe not found");
+        }
+
+        RecipeExportAbstract exporter = recipeExportFactory
+                .getRecipeExportAbstraction(RecipeExportType.PRINT);
+        if (!(exporter instanceof RecipeExportPrint printExporter)) {
+            throw new IllegalStateException("Print export did not provide HTML");
+        }
+        if (!exporter.export(recipe)) {
+            throw new IllegalStateException("Recipe print export failed");
+        }
+        return printExporter.getPrintHtml();
     }
 }
