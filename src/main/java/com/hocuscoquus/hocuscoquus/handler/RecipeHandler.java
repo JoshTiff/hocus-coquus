@@ -158,4 +158,10 @@ public class RecipeHandler {
 		RecipeNoteRecord response = RecipeNoteRecord.getRecord(note);
 		return ResponseEntity.ok(response);
 	}
+
+	public ResponseEntity<?> updateRecipeTag(long accountId, long recipeTagId, RecipeTagUpdateRequest request) {
+		RecipeTag tag = recipeService.updateRecipeTag(accountId, recipeTagId, request);
+		RecipeTagRecord response = RecipeTagRecord.getRecord(tag);
+		return ResponseEntity.ok(response);
+	}
 }
