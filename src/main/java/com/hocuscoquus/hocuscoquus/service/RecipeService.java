@@ -6,7 +6,11 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -170,9 +174,29 @@ public class RecipeService {
         // TODO: add implementation for this method
     }
 
-    public Recipe getRandomRecipe() {
-        // TODO: add implementation for this method
-        return null;
+    /**
+     * Used to retrieve a pseudorandom {@link Recipe} object from the repository.
+     * @return A pseudorandom {@link Recipe} object.
+     */
+    public Recipe getRandomRecipe(Long accountID) {
+        // Thank you to Pedro Leite on StackOverflow for this helpful solution to finding
+        // a random entry using Spring Data JPA!
+        Recipe recipe;
+        long entries = recipeRepository.count();
+        int index = (int) (Math.random() * entries);
+        Page<Recipe> result = recipeRepository.findAll(PageRequest.of(index, 1));
+        if (result.hasContent()) {
+            recipe = result.getContent().getFirst();
+            if (accountID == null) {
+                recipe.setVisibleRecipeTags(List.of());
+                recipe.setVisibleRecipeNotes(List.of());
+            } else {
+                filterRecipeTags(accountID, recipe);
+            }
+            return recipe;
+        } else {
+            throw new RuntimeException("Unable to retrieve random recipe.");
+        }
     }
 
     public Recipe likeRecipe(long recipeId, long accountId) {
@@ -454,14 +478,7 @@ public class RecipeService {
             recipe.setVisibleRecipeTags(List.of());
             recipe.setVisibleRecipeNotes(List.of());
         } else {
-            recipe.setVisibleRecipeTags(recipe.getRecipeTags().stream()
-                    .filter(tag -> tag.getAccount() != null
-                            && tag.getAccount().getAccountId() == accountId)
-                    .toList());
-            recipe.setVisibleRecipeNotes(recipe.getRecipeNotes().stream()
-                    .filter(note -> note.getAccount() != null
-                            && note.getAccount().getAccountId() == accountId)
-                    .toList());
+            filterRecipeTags(accountId, recipe);
         }
         recipe.getRecipeIngredients().forEach(recipeIngredient -> {
             if (recipeIngredient.getIngredient() != null) {
@@ -471,5 +488,21 @@ public class RecipeService {
         recipe.getRecipeTags().forEach(recipeTag -> recipeTag.getTag());
         recipe.getRecipeNotes().forEach(recipeNote -> recipeNote.getMessage());
         return recipe;
+    }
+
+    /**
+     * Filters recipe tags for an individual account.
+     * @param accountId ID of the account.
+     * @param recipe Recipe with tags to filter.
+     */
+    private static void filterRecipeTags(@NotNull long accountId, Recipe recipe) {
+        recipe.setVisibleRecipeTags(recipe.getRecipeTags().stream()
+                .filter(tag -> tag.getAccount() != null
+                        && tag.getAccount().getAccountId() == accountId)
+                .toList());
+        recipe.setVisibleRecipeNotes(recipe.getRecipeNotes().stream()
+                .filter(note -> note.getAccount() != null
+                        && note.getAccount().getAccountId() == accountId)
+                .toList());
     }
 }

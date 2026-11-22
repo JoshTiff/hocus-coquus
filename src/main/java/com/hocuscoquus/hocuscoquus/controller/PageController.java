@@ -71,6 +71,14 @@ public class PageController {
 		return "view-recipe";
 	}
 
+	@GetMapping("/recipe/random")
+	public String viewRandomRecipe(@AuthenticationPrincipal AccountDetails account,
+			 Model model) {
+		model.addAttribute("recipe", recipeService.getRandomRecipe(
+				 account == null ? null : account.getAccountId()));
+		return "view-recipe";
+	}
+
 	@GetMapping("/login")
 	public String login() {
 		return "login";

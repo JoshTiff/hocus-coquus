@@ -1,66 +1,81 @@
 package com.hocuscoquus.hocuscoquus;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import com.hocuscoquus.hocuscoquus.controller.RecipeController;
 import com.hocuscoquus.hocuscoquus.entity.*;
-import com.hocuscoquus.hocuscoquus.model.ReactionType;
-import com.hocuscoquus.hocuscoquus.model.RecipeIngredientRecord;
-import com.hocuscoquus.hocuscoquus.model.RecipeRecord;
-import com.hocuscoquus.hocuscoquus.service.RecipeService;
+import com.hocuscoquus.hocuscoquus.repository.RecipeRepository;
+import com.hocuscoquus.hocuscoquus.service.AccountService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.ResponseEntity;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 
 @SpringBootTest
+@AutoConfigureMockMvc
 @Transactional
 public class ViewRecipeTest {
 
     @Autowired
-    RecipeController recipeController;
+    MockMvc mockMvc;
 
     @Autowired
-    RecipeService recipeService;
+    RecipeRepository recipeRepository;
+
+    @Autowired
+    AccountService accountService;
+
+    Account account;
+
+    Long recipeID = null;
+    final String recipeName = "Cheese Hot Dish";
+    final String recipeDescription = "A hot dish primarily composed of cheese.";
+    final String recipeInstructions = "Place cheese whiz in pan. Cook at 450 degrees Fahrenheit for ten minutes.";
+
+    @BeforeEach
+    void before() {
+        account = accountService.createAccount("Test", "test@example.com", "storedHash");
+        Recipe recipe = Recipe.builder()
+                .setRecipeName(recipeName)
+                .setRecipeDescription(recipeDescription)
+                .setInstructions(recipeInstructions)
+                .setAccount(account)
+                .build();
+        recipe = recipeRepository.save(recipe);
+        recipeID = recipe.getRecipeId();
+    }
 
     @Test
-    void viewRecipe() {
-        final int recipeID = 29;
-        ResponseEntity<?> viewRecipeResponse = recipeController.viewRecipe(recipeID);
-        assertTrue(viewRecipeResponse.getStatusCode().is2xxSuccessful());
-        Recipe recipe = recipeService.getRecipeByID(recipeID);
-        RecipeRecord recipeRecord = ((RecipeRecord) viewRecipeResponse.getBody());
-        assertNotNull(recipeRecord);
+    void viewRecipeWithAPIAndNoAccount() throws Exception {
+        mockMvc.perform(get("/api/recipe/view-recipe/" + recipeID).with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(recipeID))
+                .andExpect(jsonPath("$.description").value(recipeDescription))
+                .andExpect(jsonPath("$.instructions").value(recipeInstructions))
+                .andExpect(jsonPath("$.accountId").value(account.getAccountId()));
+    }
 
-        // Test that basic fields match.
-        assertEquals(recipe.getRecipeId(), recipeRecord.id());
-        assertEquals(recipe.getRecipeName(), recipeRecord.name());
-        assertEquals(recipe.getRecipeDescription(), recipeRecord.description());
-        assertEquals(recipe.getInstructions(), recipeRecord.instructions());
-        assertEquals(recipe.getAccount().getAccountId(), recipeRecord.accountId());
-        assertEquals(recipe.getImage(), recipeRecord.image());
+    @Test
+    void viewRecipeWithAPIAndAccount() throws Exception {
+        mockMvc.perform(get("/api/recipe/view-recipe/" + recipeID).with(csrf()).with(user(new AccountDetails(account))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(recipeID))
+                .andExpect(jsonPath("$.description").value(recipeDescription))
+                .andExpect(jsonPath("$.instructions").value(recipeInstructions))
+                .andExpect(jsonPath("$.accountId").value(account.getAccountId()));
+    }
 
-        // Test ingredients match.
-        assertEquals(recipe.getRecipeIngredients().size(), recipeRecord.ingredients().size());
-        List<Long> recipeIngredientIDs = new ArrayList<>();
-        List<Long> recipeRecordIngredientIDs = new ArrayList<>();
-        for (RecipeIngredientRecord ingredientRecord : recipeRecord.ingredients())
-            recipeRecordIngredientIDs.add(ingredientRecord.ingredientId());
-        for (RecipeIngredient ingredient : recipe.getRecipeIngredients())
-            recipeIngredientIDs.add(ingredient.getIngredient().getIngredientId());
-        for (Long ingredientID : recipeIngredientIDs)
-            assertTrue(recipeRecordIngredientIDs.contains(ingredientID));
-
-        // Test reactions match.
-        int positiveReactions = recipeService.computeNumReactions(recipeID, ReactionType.POSITIVE);
-        int negativeReactions = recipeService.computeNumReactions(recipeID, ReactionType.NEGATIVE);
-        Map<ReactionType, Integer> recipeRecordReactions = recipeRecord.reactions();
-        assertEquals(positiveReactions, recipeRecordReactions.get(ReactionType.POSITIVE));
-        assertEquals(negativeReactions, recipeRecordReactions.get(ReactionType.NEGATIVE));
+    @Test
+    void viewRecipe() throws Exception {
+        mockMvc.perform(get("/recipe/" + recipeID).with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("recipe"))
+                .andExpect(model().attributeHasNoErrors("recipe"));
     }
 }
