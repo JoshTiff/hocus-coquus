@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.hocuscoquus.hocuscoquus.entity.DietaryRestriction;
+import com.hocuscoquus.hocuscoquus.entity.Ingredient;
 import com.hocuscoquus.hocuscoquus.entity.Reaction;
 import com.hocuscoquus.hocuscoquus.entity.Recipe;
 
@@ -35,6 +37,14 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     Reaction findByRecipe_RecipeIdAndAccount_AccountId(
             @Param("recipeId") long recipeId, @Param("accountId") long accountId);
 
-    //List<Recipe> findByRecipeIngredients_Ingredient(List<RecipeIngredient> recipeIngredients);
-
+    @Query("""
+    		SELECT r
+	        FROM Recipe r
+	        JOIN r.recipeIngredients ri
+	        WHERE ri.ingredient IN :ingredients
+	        GROUP BY r
+	        ORDER BY COUNT(ri) DESC
+    		""")
+    List<Recipe> findByIngredients(@Param("ingredients") List<Ingredient> ingredients);
+	
 }
