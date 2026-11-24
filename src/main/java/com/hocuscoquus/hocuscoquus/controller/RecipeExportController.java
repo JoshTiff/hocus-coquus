@@ -3,6 +3,7 @@ package com.hocuscoquus.hocuscoquus.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,5 +44,19 @@ public class RecipeExportController {
         return ResponseEntity.ok()
                 .contentType(MediaType.TEXT_PLAIN)
                 .body(mailtoUri);
+    }
+
+    /**
+     * Returns a printable HTML page containing the requested recipe.
+     *
+     * @param recipeId ID of the recipe to print
+     * @return HTML page with the recipe name, ingredients, and instructions
+     */
+    @GetMapping("/{recipeId}/print")
+    public ResponseEntity<String> printRecipe(@PathVariable long recipeId) {
+        String printHtml = recipeExportService.printRecipe(recipeId);
+        return ResponseEntity.ok()
+                .contentType(MediaType.TEXT_HTML)
+                .body(printHtml);
     }
 }

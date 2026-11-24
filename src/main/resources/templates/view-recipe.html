@@ -106,6 +106,15 @@
                                 <p id="recipe-share-status" class="recipe-share-status" role="status" aria-live="polite"></p>
                                 <p id="recipe-share-error" class="recipe-share-error" role="alert" hidden></p>
                             </form>
+                            <div class="recipe-print-controls">
+                                <button id="recipe-print-button" class="btn" type="button"
+                                        th:data-print-url="@{/api/recipe/{recipeId}/print(recipeId=${recipeId})}">
+                                    Print recipe
+                                </button>
+                                <p id="recipe-print-error" class="recipe-share-error" role="alert" hidden></p>
+                            </div>
+                            <iframe id="recipe-print-frame" class="recipe-print-frame"
+                                    title="Printable recipe" tabindex="-1" aria-hidden="true"></iframe>
                         </section>
                     </div>
 
@@ -173,6 +182,40 @@
                         shareError.hidden = false;
                     } finally { // butten is re-enabled after success or failure, so can retry
                         shareButton.disabled = false;
+                    }
+                });
+            }
+
+            const printButton = document.getElementById('recipe-print-button');
+            if (printButton) {
+                const printFrame = document.getElementById('recipe-print-frame');
+                const printError = document.getElementById('recipe-print-error');
+
+                printButton.addEventListener('click', async () => {
+                    if (printButton.disabled) {
+                        return;
+                    }
+
+                    printButton.disabled = true;
+                    printError.hidden = true;
+
+                    try {
+                        const response = await fetch(printButton.dataset.printUrl);
+                        if (!response.ok) {
+                            throw new Error('Could not prepare the recipe for printing. Please try again.');
+                        }
+                        const printHtml = await response.text();
+
+                        printFrame.onload = () => {
+                            printFrame.contentWindow.focus();
+                            printFrame.contentWindow.print();
+                            printButton.disabled = false;
+                        };
+                        printFrame.srcdoc = printHtml;
+                    } catch (error) {
+                        printError.textContent = error.message || 'Could not prepare the recipe for printing. Please try again.';
+                        printError.hidden = false;
+                        printButton.disabled = false;
                     }
                 });
             }

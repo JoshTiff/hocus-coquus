@@ -33,6 +33,7 @@ public class SecurityConfig {
 						"/view/random",
 						"/index",
 						"/recipe/*",
+						"/api/recipe/*/print",
 						"/api/recipe/*/share/email",
 						"/search",
 						"/signup").permitAll()
