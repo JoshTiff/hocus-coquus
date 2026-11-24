@@ -33,6 +33,7 @@ import com.hocuscoquus.hocuscoquus.model.RecipeEditRequest.IngredientRow;
 import com.hocuscoquus.hocuscoquus.model.RecipeIngredientCreateRequest;
 import com.hocuscoquus.hocuscoquus.model.RecipeNoteCreateRequest;
 import com.hocuscoquus.hocuscoquus.model.RecipeNoteUpdateRequest;
+import com.hocuscoquus.hocuscoquus.model.RecipeTagUpdateRequest;
 import com.hocuscoquus.hocuscoquus.repository.IngredientRepository;
 import com.hocuscoquus.hocuscoquus.repository.RecipeIngredientRepository;
 import com.hocuscoquus.hocuscoquus.repository.RecipeRepository;
@@ -460,6 +461,36 @@ public class RecipeService {
             throw new IllegalArgumentException("Recipe tag ID not found.");
         if (recipeTag.getAccount().getAccountId() != accountId)
             throw new IllegalArgumentException("Recipe tag ID not associated with account.");
+        return recipeTag;
+    }
+
+    /**
+     * Used to rename a specific recipe tag from an account.
+     * 
+     * @param accountId ID of the {@link Account} that owns the recipe tag.
+     * @param recipeTagId ID of the {@link RecipeTag} object to update.
+     * @param request {@link RecipeTagUpdateRequest} holding the new tag name.
+     * @return {@link RecipeTag} object representation of the updated tag.
+     */
+    @Transactional
+    public RecipeTag updateRecipeTag(long accountId, long recipeTagId, RecipeTagUpdateRequest request) {
+        RecipeTag recipeTag = tagRepository.findByRecipeTagId(recipeTagId);
+
+        if (recipeTag == null) {
+            throw new IllegalArgumentException("Recipe tag ID not found.");
+        }
+
+        if (recipeTag.getAccount().getAccountId() != accountId) {
+            throw new IllegalArgumentException("Recipe tag ID not associated with account.");
+        }
+
+        RecipeTag existingTag = tagRepository.findByAccountAndTag(recipeTag.getAccount(), request.tag());
+        if (existingTag != null && existingTag.getRecipeTagId() != recipeTagId) {
+            throw new IllegalArgumentException("Recipe tag name already exists.");
+        }
+
+        recipeTag.setTag(request.tag());
+        tagRepository.save(recipeTag);
         return recipeTag;
     }
 

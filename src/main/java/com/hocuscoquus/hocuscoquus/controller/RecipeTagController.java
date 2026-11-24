@@ -4,11 +4,15 @@ import com.hocuscoquus.hocuscoquus.entity.AccountDetails;
 import com.hocuscoquus.hocuscoquus.handler.RecipeHandler;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import com.hocuscoquus.hocuscoquus.model.RecipeTag;
+import com.hocuscoquus.hocuscoquus.model.RecipeTagUpdateRequest;
 import com.hocuscoquus.hocuscoquus.service.RecipeTagService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/recipe-tags")
@@ -62,5 +66,14 @@ public class RecipeTagController {
         return recipeHandler.getRecipeTag(details.getAccountId(), recipeTagId);
     }
 
-
+    @PutMapping("/update-tag/{recipeTagId}")
+    public ResponseEntity<?> updateRecipeTag(
+            @AuthenticationPrincipal AccountDetails details,
+            @PathVariable long recipeTagId,
+            @Valid @RequestBody RecipeTagUpdateRequest request) {
+        if (details == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return recipeHandler.updateRecipeTag(details.getAccountId(), recipeTagId, request);
+    }
 }
