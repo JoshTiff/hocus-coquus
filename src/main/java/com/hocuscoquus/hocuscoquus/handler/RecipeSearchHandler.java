@@ -2,6 +2,7 @@ package com.hocuscoquus.hocuscoquus.handler;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,7 +55,8 @@ public class RecipeSearchHandler {
 			if (null != request && !request.isEmpty()) {
 				//ensure ingredients exist
 				for(String i : request) {
-					ingredients.add(ingredientService.getIngredientByName(i.trim().toLowerCase()));
+					ingredients.add(ingredientService.getIngredientByName(
+							i.trim().toLowerCase(Locale.ROOT)));
 				}
 			}
 			
@@ -81,5 +83,65 @@ public class RecipeSearchHandler {
 		} catch(RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 		}
+	}
+
+	/**
+	 * Searches with every dietary restriction saved to the authenticated account.
+	 *
+	 * @return matching recipes or an error response when the account is unavailable or
+	 *         has no restrictions
+	 */
+	public ResponseEntity<?> processSearchByDietaryRestrictionsRequest() {
+		return processSearchByDietaryRestrictionsRequest(null);
+	}
+
+	/**
+	 * Searches with one selected restriction, or all account restrictions when the ID is null.
+	 *
+	 * @param dietaryRestrictionId optional restriction ID; it must belong to the account
+	 * @return matching recipes, or an error response for unauthenticated users, missing
+	 *         restrictions, or an unowned restriction ID
+	 */
+	public ResponseEntity<?> processSearchByDietaryRestrictionsRequest(
+			Long dietaryRestrictionId) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth == null || !auth.isAuthenticated()
+				|| !(auth.getPrincipal() instanceof AccountDetails accountDetails)) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+		}
+
+		List<DietaryRestriction> accountRestrictions =
+				accountService.getDietaryRestrictionsForAccount(accountDetails.getAccountId());
+		if (accountRestrictions.isEmpty()) {
+			return ResponseEntity.badRequest()
+					.body("At least one dietary restriction must be saved to your account");
+		}
+
+		List<DietaryRestriction> dietaryRestrictions = accountRestrictions;
+		if (dietaryRestrictionId != null) {
+			// Only resolve IDs from this account's list to prevent cross-account searches.
+			dietaryRestrictions = accountRestrictions.stream()
+					.filter(restriction -> restriction.getDietaryRestrictionId()
+							== dietaryRestrictionId)
+					.findFirst()
+					.map(List::of)
+					.orElse(null);
+			if (dietaryRestrictions == null) {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND)
+						.body("Dietary restriction not found");
+			}
+		}
+
+		List<Recipe> recipes =
+				recipeSearchService.searchRecipesByDietaryRestrictions(dietaryRestrictions);
+		if (recipes.isEmpty()) {
+			return ResponseEntity.ok("No recipes found that meet your dietary restrictions");
+		}
+
+		List<RecipeRecord> response = new ArrayList<>();
+		for (Recipe recipe : recipes) {
+			response.add(RecipeRecord.getRecord(recipe));
+		}
+		return ResponseEntity.ok(response);
 	}
 }
