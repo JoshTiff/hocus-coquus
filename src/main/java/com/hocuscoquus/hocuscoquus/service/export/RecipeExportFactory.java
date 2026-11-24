@@ -16,8 +16,7 @@ public class RecipeExportFactory {
         return switch (type) {
             case EMAIL -> new RecipeExportEmail();
             case PRINT -> new RecipeExportPrint();
-            case DOWNLOAD -> throw new UnsupportedOperationException(
-                    "Recipe export is not implemented: " + type);
+            case DOWNLOAD -> new RecipeExportDownload();
         };
     }
 }
