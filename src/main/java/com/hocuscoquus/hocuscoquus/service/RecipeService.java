@@ -1,47 +1,29 @@
 package com.hocuscoquus.hocuscoquus.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-
+import com.hocuscoquus.hocuscoquus.entity.*;
+import com.hocuscoquus.hocuscoquus.entity.Account;
+import com.hocuscoquus.hocuscoquus.entity.Reaction;
+import com.hocuscoquus.hocuscoquus.entity.RecipeNote;
+import com.hocuscoquus.hocuscoquus.entity.RecipeTag;
+import com.hocuscoquus.hocuscoquus.model.*;
+import com.hocuscoquus.hocuscoquus.model.RecipeEditRequest.IngredientRow;
+import com.hocuscoquus.hocuscoquus.repository.IngredientRepository;
+import com.hocuscoquus.hocuscoquus.repository.RecipeIngredientRepository;
+import com.hocuscoquus.hocuscoquus.repository.RecipeRepository;
+import com.hocuscoquus.hocuscoquus.repository.RecipeTagRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.hocuscoquus.hocuscoquus.entity.Account;
-import com.hocuscoquus.hocuscoquus.entity.AccountDetails;
-import com.hocuscoquus.hocuscoquus.entity.Ingredient;
-import com.hocuscoquus.hocuscoquus.entity.Reaction;
-import com.hocuscoquus.hocuscoquus.entity.Recipe;
-import com.hocuscoquus.hocuscoquus.entity.RecipeIngredient;
-import com.hocuscoquus.hocuscoquus.entity.RecipeNote;
-import com.hocuscoquus.hocuscoquus.entity.RecipeTag;
-import com.hocuscoquus.hocuscoquus.model.IngredientModel;
-import com.hocuscoquus.hocuscoquus.model.ReactionType;
-import com.hocuscoquus.hocuscoquus.model.RecipeCreateRequest;
-import com.hocuscoquus.hocuscoquus.model.RecipeEditRequest;
-import com.hocuscoquus.hocuscoquus.model.RecipeEditRequest.IngredientRow;
-import com.hocuscoquus.hocuscoquus.model.RecipeIngredientCreateRequest;
-import com.hocuscoquus.hocuscoquus.model.RecipeNoteCreateRequest;
-import com.hocuscoquus.hocuscoquus.model.RecipeNoteUpdateRequest;
-import com.hocuscoquus.hocuscoquus.model.RecipeTagUpdateRequest;
-import com.hocuscoquus.hocuscoquus.repository.IngredientRepository;
-import com.hocuscoquus.hocuscoquus.repository.RecipeIngredientRepository;
-import com.hocuscoquus.hocuscoquus.repository.RecipeRepository;
-import com.hocuscoquus.hocuscoquus.repository.RecipeTagRepository;
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
+import java.util.*;
 
 @Service
 public class RecipeService {
@@ -521,6 +503,20 @@ public class RecipeService {
         recipe.getRecipeTags().forEach(recipeTag -> recipeTag.getTag());
         recipe.getRecipeNotes().forEach(recipeNote -> recipeNote.getMessage());
         return recipe;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Recipe> getSimilarRecipes(long recipeID, Long accountID) {
+        Recipe originalRecipe = recipeRepository.getRecipeByRecipeId(recipeID);
+        if (originalRecipe != null) {
+            List<Recipe> recipes = recipeRepository.findBySimilarIngredients(recipeID);
+            if (accountID != null) {
+                for (Recipe recipe : recipes)
+                    filterRecipeTags(accountID, recipe);
+            }
+            return recipes;
+        } else
+            throw new IllegalArgumentException("Recipe ID not found.");
     }
 
     /**
