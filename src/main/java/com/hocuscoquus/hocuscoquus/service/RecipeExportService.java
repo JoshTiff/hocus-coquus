@@ -8,6 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.hocuscoquus.hocuscoquus.entity.Recipe;
 import com.hocuscoquus.hocuscoquus.repository.RecipeRepository;
 import com.hocuscoquus.hocuscoquus.service.export.RecipeExportAbstract;
+import com.hocuscoquus.hocuscoquus.service.export.RecipeExportDownload;
 import com.hocuscoquus.hocuscoquus.service.export.RecipeExportEmail;
 import com.hocuscoquus.hocuscoquus.service.export.RecipeExportPrint;
 import com.hocuscoquus.hocuscoquus.service.export.RecipeExportFactory;
@@ -84,5 +85,25 @@ public class RecipeExportService {
             throw new IllegalStateException("Recipe print export failed");
         }
         return printExporter.getPrintHtml();
+	}    
+    
+    /**
+     * Returns a byte that can be used to construct an http response that downloads a file
+     * @param recipe - Recipe object to download
+     * @return byte array for download file
+     */
+    public byte[] downloadRecipe(Recipe recipe) {
+    	
+    	RecipeExportAbstract exporter = recipeExportFactory.getRecipeExportAbstraction(RecipeExportType.DOWNLOAD);
+    	
+    	if (!(exporter instanceof RecipeExportDownload downloadExporter)) {
+            throw new IllegalStateException("Email export did not provide a mailto URI");
+        }
+    	
+    	if (!downloadExporter.export(recipe)) {
+            throw new IllegalStateException("Recipe download export failed");
+        }
+    	
+    	return downloadExporter.getFile();
     }
 }
