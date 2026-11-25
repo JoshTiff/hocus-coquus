@@ -312,6 +312,25 @@ public class RecipeService {
         return note;
     }
 
+    @Transactional
+    public void removeRecipeNote(long accountId, long recipeNoteId) {
+        if (recipeNoteId <= 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid recipe note");
+        }
+
+        int deleted = entityManager.createQuery("""
+                DELETE FROM RecipeNote note
+                WHERE note.recipeNoteId = :recipeNoteId AND note.account.accountId = :accountId
+                """)
+                .setParameter("recipeNoteId", recipeNoteId)
+                .setParameter("accountId", accountId)
+                .executeUpdate();
+
+        if (deleted == 0) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Recipe note not found");
+        }
+    }
+
     private Recipe findRecipe(long recipeId) {
         Recipe recipe = recipeRepository.findByRecipeId(recipeId);
         if (recipe == null) {
