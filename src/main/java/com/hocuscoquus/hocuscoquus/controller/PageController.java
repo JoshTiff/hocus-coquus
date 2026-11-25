@@ -1,22 +1,18 @@
 package com.hocuscoquus.hocuscoquus.controller;
 
-import java.time.LocalDate;
-import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.hocuscoquus.hocuscoquus.entity.AccountDetails;
+import com.hocuscoquus.hocuscoquus.entity.Recipe;
+import com.hocuscoquus.hocuscoquus.model.IngredientCreateDto;
+import com.hocuscoquus.hocuscoquus.service.RecipeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.hocuscoquus.hocuscoquus.entity.AccountDetails;
-import com.hocuscoquus.hocuscoquus.model.IngredientCreateDto;
-import com.hocuscoquus.hocuscoquus.service.RecipeService;
+import java.util.List;
 
 @Controller
 public class PageController {
@@ -76,6 +72,22 @@ public class PageController {
 			 Model model) {
 		model.addAttribute("recipe", recipeService.getRandomRecipe(
 				 account == null ? null : account.getAccountId()));
+		return "view-recipe";
+	}
+
+	@GetMapping("/recipe/similarto/{recipeId}")
+	public String viewRandomRecipe(@PathVariable long recipeId,
+								   @AuthenticationPrincipal AccountDetails account,
+								   Model model) {
+		List<Recipe> similarRecipes = recipeService.getSimilarRecipes(
+				recipeId, account == null ? null : account.getAccountId());
+		if (!similarRecipes.isEmpty()) {
+			model.addAttribute("recipe", similarRecipes.getFirst());
+		} else {
+			Recipe originalRecipe = recipeService.getRecipeByID(recipeId);
+			model.addAttribute("recipe", originalRecipe);
+			model.addAttribute("fail", "No similar recipes found! How unique.");
+		}
 		return "view-recipe";
 	}
 

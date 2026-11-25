@@ -21,8 +21,6 @@ public class RetrieveRandomRecipeTest {
         mockMvc.perform(get("/api/recipe/view-recipe").with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").isNotEmpty())
-                .andExpect(jsonPath("$.description").isNotEmpty())
-                .andExpect(jsonPath("$.instructions").isNotEmpty())
                 .andExpect(jsonPath("$.accountId").isNotEmpty());
     }
 

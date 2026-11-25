@@ -1,19 +1,17 @@
 package com.hocuscoquus.hocuscoquus.repository;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Lock;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-
-import com.hocuscoquus.hocuscoquus.entity.DietaryRestriction;
 import com.hocuscoquus.hocuscoquus.entity.Ingredient;
 import com.hocuscoquus.hocuscoquus.entity.Reaction;
 import com.hocuscoquus.hocuscoquus.entity.Recipe;
-
 import jakarta.persistence.LockModeType;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.NativeQuery;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.List;
+import java.util.Optional;
 
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     Recipe findById(long recipeId);
@@ -46,5 +44,27 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 	        ORDER BY COUNT(ri) DESC
     		""")
     List<Recipe> findByIngredients(@Param("ingredients") List<Ingredient> ingredients);
+
+    @NativeQuery("""
+        WITH matches AS (
+            SELECT
+                RECIPE_ID,
+                COUNT(*) AS MatchingIngredients,
+                (COUNT(*)/(SELECT COUNT(*)FROM RECIPE_INGREDIENT WHERE RECIPE_ID=:similarToRecipeId)) AS MatchPercentage
+            FROM
+                RECIPE_INGREDIENT
+            WHERE
+                INGREDIENT_ID IN (SELECT INGREDIENT_ID FROM RECIPE_INGREDIENT WHERE RECIPE_ID=:similarToRecipeId)
+                AND
+                RECIPE_ID<>:similarToRecipeId
+            GROUP BY
+                RECIPE_ID
+            ORDER BY
+                MatchPercentage DESC
+        )
+        SELECT *
+        FROM Recipe
+        NATURAL JOIN matches""")
+    List<Recipe> findBySimilarIngredients(@Param("similarToRecipeId") long similarToRecipeId);
 	
 }
