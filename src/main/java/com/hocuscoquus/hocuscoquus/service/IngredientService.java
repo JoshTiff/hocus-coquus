@@ -1,5 +1,6 @@
 package com.hocuscoquus.hocuscoquus.service;
 
+import java.util.Locale;
 import java.util.Objects;
 
 import org.springframework.stereotype.Service;
@@ -17,18 +18,22 @@ public class IngredientService {
     }
 
     public Ingredient createIngredient(Ingredient ingredient) {
-        // TODO: add implementation for this method
-    	
-    	String name = ingredient.getIngredientName().trim().toLowerCase();
-    	if ( name == null || name.isEmpty() ) {
-    		throw new IllegalArgumentException("Invalid Ingredient Name");
-    	}
-    	if ( ingredientRepository.existsByIngredientName(name) ) {
-    		String msg = "The Ingredient '" + name + "' already exists.";
+        if (ingredient == null || ingredient.getIngredientName() == null) {
+            throw new IllegalArgumentException("Invalid Ingredient Name");
+        }
+
+        String name = ingredient.getIngredientName().trim().toLowerCase(Locale.ROOT);
+        if (name.isEmpty()) {
+            throw new IllegalArgumentException("Invalid Ingredient Name");
+        }
+        ingredient.setIngredientName(name);
+
+        if (ingredientRepository.existsByIngredientName(name)) {
+            String msg = "The Ingredient '" + name + "' already exists.";
             throw new IllegalArgumentException(msg);
         }
-    	
-    	return ingredientRepository.save(ingredient);
+
+        return ingredientRepository.save(ingredient);
     }
 
     public void deleteIngredient(long ingredientId) {

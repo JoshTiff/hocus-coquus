@@ -18,7 +18,6 @@ import com.hocuscoquus.hocuscoquus.entity.DietaryRestriction;
 import com.hocuscoquus.hocuscoquus.entity.Ingredient;
 import com.hocuscoquus.hocuscoquus.model.AccountUpdateRequest;
 import com.hocuscoquus.hocuscoquus.repository.AccountRepository;
-import com.hocuscoquus.hocuscoquus.repository.DietaryRestrictionRepository;
 import com.hocuscoquus.hocuscoquus.repository.IngredientRepository;
 import com.hocuscoquus.hocuscoquus.service.AccountService;
 
@@ -32,9 +31,6 @@ class UpdateAccountUnitTest {
     private IngredientRepository ingredientRepository;
 
     @Mock
-    private DietaryRestrictionRepository dietaryRestrictionRepository;
-
-    @Mock
     private PasswordEncoder passwordEncoder;
 
     private AccountService accountService;
@@ -45,8 +41,7 @@ class UpdateAccountUnitTest {
         accountService = new AccountService(
                 accountRepository,
                 passwordEncoder,
-                ingredientRepository,
-                dietaryRestrictionRepository);
+                ingredientRepository);
 
         account = new Account();
         account.setAccountId(1L);
@@ -204,13 +199,12 @@ class UpdateAccountUnitTest {
         assertEquals(List.of(ingredient), account.getIngredients());
         assertEquals("storedHash", account.getPassword());
 
-        verifyNoInteractions(
-                ingredientRepository,
-                dietaryRestrictionRepository);
+        verifyNoInteractions(ingredientRepository);
     }
 
     @Test
     void updateAccount_replacesDietaryRestrictions() {
+        // The account collection now supplies existing restrictions for reconciliation.
         mockAccountExists();
 
         DietaryRestriction removed = new DietaryRestriction();
@@ -230,19 +224,11 @@ class UpdateAccountUnitTest {
         account.getDietaryRestrictions().add(removed);
         account.getDietaryRestrictions().add(retained);
 
-        when(dietaryRestrictionRepository.findByAccount_AccountId(1L))
-                .thenReturn(List.of(removed, retained));
-
-        when(dietaryRestrictionRepository.save(any(DietaryRestriction.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
-
         AccountUpdateRequest request = new AccountUpdateRequest(
                 null, null, null,
                 List.of("Dairy-Free", "Vegetarian"));
 
         assertTrue(accountService.updateAccount(1L, request));
-
-        verify(dietaryRestrictionRepository).delete(removed);
 
         assertFalse(account.getDietaryRestrictions().contains(removed));
         assertTrue(account.getDietaryRestrictions().contains(retained));
@@ -251,7 +237,7 @@ class UpdateAccountUnitTest {
         DietaryRestriction created = account.getDietaryRestrictions()
                 .stream()
                 .filter(r -> r.getDietaryRestrictionName()
-                        .equals("Vegetarian"))
+                        .equals("vegetarian"))
                 .findFirst()
                 .orElseThrow();
 
@@ -268,7 +254,6 @@ class UpdateAccountUnitTest {
 
         assertFalse(accountService.updateAccount(1L, request));
 
-        verifyNoInteractions(dietaryRestrictionRepository);
         verify(accountRepository, never()).save(any());
     }
 
@@ -371,9 +356,6 @@ class UpdateAccountUnitTest {
 
         account.getDietaryRestrictions().add(restriction);
 
-        when(dietaryRestrictionRepository.findByAccount_AccountId(1L))
-                .thenReturn(List.of(restriction));
-
         AccountUpdateRequest request = new AccountUpdateRequest(
                 null, null, null, List.of());
 
@@ -382,7 +364,7 @@ class UpdateAccountUnitTest {
         assertTrue(account.getDietaryRestrictions().isEmpty());
         assertFalse(ingredient.getDietaryRestriction().contains(restriction));
 
-        verify(dietaryRestrictionRepository).delete(restriction);
+        verify(accountRepository).save(account);
     }
 
     @Test
@@ -400,9 +382,6 @@ class UpdateAccountUnitTest {
 
         account.getDietaryRestrictions().add(restriction);
 
-        when(dietaryRestrictionRepository.findByAccount_AccountId(1L))
-                .thenReturn(List.of(restriction));
-
         AccountUpdateRequest request = new AccountUpdateRequest(
                 null, null, null, List.of("dairy-free"));
 
@@ -412,8 +391,7 @@ class UpdateAccountUnitTest {
         assertTrue(restriction.getIngredients().contains(ingredient));
         assertTrue(ingredient.getDietaryRestriction().contains(restriction));
 
-        verify(dietaryRestrictionRepository, never()).delete(any());
-        verify(dietaryRestrictionRepository, never()).save(any());
+        verify(accountRepository).save(account);
     }
 
     @Test
@@ -434,6 +412,5 @@ class UpdateAccountUnitTest {
         assertEquals("storedHash", account.getPassword());
         verify(passwordEncoder, never()).encode(anyString());
         verify(accountRepository, never()).save(any());
-        verifyNoInteractions(dietaryRestrictionRepository);
     }
 }

@@ -28,5 +28,14 @@ public class RecipeSearchService {
 		return recipeRepository.findByIngredients(ingredients);
 	}
 
+	/**
+	 * Returns recipes that contain no ingredients conflicting with the restrictions.
+	 * @param dietaryRestrictions the restrictions to apply
+	 * @return recipes that comply with all supplied restrictions
+	 */
+	public List<Recipe> searchRecipesByDietaryRestrictions(
+			List<DietaryRestriction> dietaryRestrictions) {
+		return recipeRepository.findRecipesWithoutDietaryRestrictions(dietaryRestrictions);
+	}
 
 }

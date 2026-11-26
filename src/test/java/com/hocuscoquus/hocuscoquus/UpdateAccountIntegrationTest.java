@@ -18,7 +18,6 @@ import com.hocuscoquus.hocuscoquus.entity.DietaryRestriction;
 import com.hocuscoquus.hocuscoquus.entity.Ingredient;
 import com.hocuscoquus.hocuscoquus.model.AccountUpdateRequest;
 import com.hocuscoquus.hocuscoquus.repository.AccountRepository;
-import com.hocuscoquus.hocuscoquus.repository.DietaryRestrictionRepository;
 import com.hocuscoquus.hocuscoquus.repository.IngredientRepository;
 import com.hocuscoquus.hocuscoquus.service.AccountService;
 
@@ -37,9 +36,6 @@ class UpdateAccountIntegrationTest {
 
     @Autowired
     private IngredientRepository ingredientRepository;
-
-    @Autowired
-    private DietaryRestrictionRepository dietaryRestrictionRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -64,7 +60,13 @@ class UpdateAccountIntegrationTest {
         DietaryRestriction restriction = new DietaryRestriction();
         restriction.setDietaryRestrictionName(name);
         restriction.setAccount(account);
-        return dietaryRestrictionRepository.save(restriction);
+        // Saving the parent account cascades persistence to its new restriction.
+        account.getDietaryRestrictions().add(restriction);
+        Account savedAccount = accountRepository.saveAndFlush(account);
+        return savedAccount.getDietaryRestrictions().stream()
+                .filter(saved -> saved.getDietaryRestrictionName().equalsIgnoreCase(name))
+                .findFirst()
+                .orElseThrow();
     }
 
     private void flushAndClear() {
@@ -80,7 +82,7 @@ class UpdateAccountIntegrationTest {
     }
 
     private Set<String> getAccountRestrictionNames(long accountId) {
-        return dietaryRestrictionRepository.findByAccount_AccountId(accountId)
+        return accountRepository.findDietaryRestrictionsByAccountId(accountId)
                 .stream()
                 .map(DietaryRestriction::getDietaryRestrictionName)
                 .collect(Collectors.toSet());
@@ -193,11 +195,11 @@ class UpdateAccountIntegrationTest {
         flushAndClear();
 
         List<DietaryRestriction> persisted =
-                dietaryRestrictionRepository.findByAccount_AccountId(accountId);
+                accountRepository.findDietaryRestrictionsByAccountId(accountId);
 
         assertEquals(2, persisted.size());
         assertEquals(
-                Set.of("Vegetarian", "Dairy-Free"),
+                Set.of("vegetarian", "dairy-free"),
                 getAccountRestrictionNames(accountId));
 
         for (DietaryRestriction restriction : persisted) {
@@ -208,6 +210,7 @@ class UpdateAccountIntegrationTest {
 
     @Test
     void updateAccount_restrictionDeletionPreservesExistingAssociations() {
+        // Removing one restriction should leave other restrictions and their links intact.
         Account account = createAccount();
 
         DietaryRestriction retained =
@@ -242,12 +245,13 @@ class UpdateAccountIntegrationTest {
         flushAndClear();
 
         List<DietaryRestriction> restrictions =
-                dietaryRestrictionRepository.findByAccount_AccountId(accountId);
+                accountRepository.findDietaryRestrictionsByAccountId(accountId);
 
         assertEquals(1, restrictions.size());
         assertEquals(retainedId, restrictions.get(0).getDietaryRestrictionId());
 
-        assertFalse(dietaryRestrictionRepository.existsById(removedId));
+        assertTrue(restrictions.stream()
+                .noneMatch(restriction -> restriction.getDietaryRestrictionId() == removedId));
 
         // Existing ingredient associations must be preserved
         Ingredient persistedMilk = ingredientRepository.findById(milkId);
@@ -305,7 +309,7 @@ class UpdateAccountIntegrationTest {
                 getAccountIngredientIds(accountId));
 
         assertEquals(
-                Set.of("Vegetarian"),
+                Set.of("vegetarian"),
                 getAccountRestrictionNames(accountId));
     }
 
@@ -337,7 +341,7 @@ class UpdateAccountIntegrationTest {
                 getAccountIngredientIds(accountId));
 
         assertEquals(
-                Set.of("Vegan"),
+                Set.of("vegan"),
                 getAccountRestrictionNames(accountId));
     }
 
@@ -368,7 +372,7 @@ class UpdateAccountIntegrationTest {
                 getAccountIngredientIds(accountId));
 
         assertEquals(
-                Set.of("Gluten-Free"),
+                Set.of("gluten-free"),
                 getAccountRestrictionNames(accountId));
 
         Account persisted = accountRepository.findById(accountId);

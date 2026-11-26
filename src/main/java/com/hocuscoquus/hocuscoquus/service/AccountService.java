@@ -3,6 +3,7 @@ package com.hocuscoquus.hocuscoquus.service;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,7 +19,6 @@ import com.hocuscoquus.hocuscoquus.entity.DietaryRestriction;
 import com.hocuscoquus.hocuscoquus.entity.Ingredient;
 import com.hocuscoquus.hocuscoquus.model.AccountUpdateRequest;
 import com.hocuscoquus.hocuscoquus.repository.AccountRepository;
-import com.hocuscoquus.hocuscoquus.repository.DietaryRestrictionRepository;
 import com.hocuscoquus.hocuscoquus.repository.IngredientRepository;
 
 @Service
@@ -27,18 +27,22 @@ public class AccountService implements UserDetailsService {
     
     private final AccountRepository accountRepository;
     private final IngredientRepository ingredientRepository;
-    private final DietaryRestrictionRepository dietaryRestrictionRepository;
 
+    /**
+     * Creates the account service and its persistence dependencies.
+     *
+     * @param accountRepository account and account-owned restriction persistence
+     * @param passwordEncoder encoder used for account passwords
+     * @param ingredientRepository ingredient lookup and pantry persistence
+     */
     public AccountService(
         AccountRepository accountRepository,
         PasswordEncoder passwordEncoder,
-        IngredientRepository ingredientRepository,
-        DietaryRestrictionRepository dietaryRestrictionRepository) {
+        IngredientRepository ingredientRepository) {
 
         this.accountRepository = accountRepository;
         this.passwordEncoder = passwordEncoder;
         this.ingredientRepository = ingredientRepository;
-        this.dietaryRestrictionRepository = dietaryRestrictionRepository;
     }
 
     public Account createAccount(String firstName, String email, String password) {
@@ -84,6 +88,14 @@ public class AccountService implements UserDetailsService {
         accountRepository.save(acc);
     }
 
+    /**
+     * Validates and applies account profile changes, including restriction names.
+     *
+     * @param accountId ID of the account to update
+     * @param request requested password, pantry, or restriction changes
+     * @return {@code true} when all requested changes are valid and saved;
+     *         {@code false} when the request or account is invalid
+     */
     @Transactional
     public boolean updateAccount(long accountId, AccountUpdateRequest request) {
         // Validate request and account
@@ -137,9 +149,9 @@ public class AccountService implements UserDetailsService {
                     return false;
                 }
 
-                String name = restriction.trim();
+                String name = restriction.trim().toLowerCase(Locale.ROOT);
 
-                if (name.length() > 255 || !seen.add(name.toLowerCase())) {
+                if (name.length() > 255 || !seen.add(name)) {
                     return false;
                 }
 
@@ -195,21 +207,26 @@ public class AccountService implements UserDetailsService {
         account.getIngredients().addAll(ingredients);
     }
 
+    /**
+     * Reconciles an account's saved restriction names with the supplied list.
+     *
+     * @param account account whose restrictions are being updated
+     * @param names normalized restriction names to retain or create
+     */
     private void updateDietaryRestrictions(Account account, List<String> names) {
-        long accountId = account.getAccountId();
-
+        // Account cascade persists new restrictions and orphan removal deletes removed ones.
         List<DietaryRestriction> current =
-                dietaryRestrictionRepository.findByAccount_AccountId(accountId);
+                new ArrayList<>(account.getDietaryRestrictions());
 
         Set<String> requestedNames = new HashSet<>();
         for (String name : names) {
-            requestedNames.add(name.toLowerCase());
+            requestedNames.add(name.toLowerCase(Locale.ROOT));
         }
 
         // Remove unselected restrictions
         for (DietaryRestriction restriction : current) {
             String name = restriction.getDietaryRestrictionName()
-                    .trim().toLowerCase();
+                    .trim().toLowerCase(Locale.ROOT);
 
             if (!requestedNames.contains(name)) {
                 // Remove owning-side ingredient associations
@@ -223,7 +240,6 @@ public class AccountService implements UserDetailsService {
                         r -> r.getDietaryRestrictionId()
                                 == restriction.getDietaryRestrictionId());
 
-                dietaryRestrictionRepository.delete(restriction);
             }
         }
 
@@ -238,10 +254,7 @@ public class AccountService implements UserDetailsService {
                 restriction.setDietaryRestrictionName(name);
                 restriction.setAccount(account);
 
-                DietaryRestriction saved =
-                        dietaryRestrictionRepository.save(restriction);
-
-                account.getDietaryRestrictions().add(saved);
+                account.getDietaryRestrictions().add(restriction);
             }
         }
     }
@@ -262,5 +275,15 @@ public class AccountService implements UserDetailsService {
             throw new UsernameNotFoundException("Account not found for account ID: " + accountID);
         }
         return account;
+    }
+
+    /**
+     * Retrieves restrictions owned by an account through the account repository.
+     *
+     * @param accountId ID of the account to query
+     * @return the account's saved dietary restrictions
+     */
+    public List<DietaryRestriction> getDietaryRestrictionsForAccount(long accountId) {
+        return accountRepository.findDietaryRestrictionsByAccountId(accountId);
     }
 }

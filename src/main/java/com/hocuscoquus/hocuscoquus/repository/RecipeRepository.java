@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.NativeQuery;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
+import com.hocuscoquus.hocuscoquus.entity.DietaryRestriction;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,6 +45,21 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     		""")
     List<Recipe> findByIngredients(@Param("ingredients") List<Ingredient> ingredients);
 
+    @Query("""
+            SELECT r
+            FROM Recipe r
+            WHERE NOT EXISTS (
+                SELECT ri
+                FROM RecipeIngredient ri
+                JOIN ri.ingredient i
+                JOIN i.dietaryRestriction dr
+                WHERE ri.recipe = r
+                  AND dr IN :dietaryRestrictions
+            )
+              AND r.account IS NOT NULL
+            """)
+    List<Recipe> findRecipesWithoutDietaryRestrictions(
+            @Param("dietaryRestrictions") List<DietaryRestriction> dietaryRestrictions);
     @NativeQuery("""
         WITH matches AS (
             SELECT

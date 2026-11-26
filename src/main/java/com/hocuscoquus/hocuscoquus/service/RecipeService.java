@@ -63,12 +63,13 @@ public class RecipeService {
     	for (RecipeIngredientCreateRequest i : request.ingredients()) {
     		
     		//check if ingredient exists
-    		Ingredient ingredient = ingredientRepository.findByIngredientName(i.ingredient().trim().toLowerCase());
+		String ingredientName = i.ingredient().trim().toLowerCase(Locale.ROOT);
+		Ingredient ingredient = ingredientRepository.findByIngredientName(ingredientName);
     		
     		//if it doesn't, create it
     		if (ingredient == null) {
     			ingredient = new Ingredient();
-    			ingredient.setIngredientName(i.ingredient().trim().toLowerCase());
+				ingredient.setIngredientName(ingredientName);
     			ingredient = ingredientService.createIngredient(ingredient);
     		}
     		
@@ -135,7 +136,7 @@ public class RecipeService {
             if (!Double.isFinite(input.quantity())) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid ingredient quantity");
             }
-            String name = input.ingredient().strip().toLowerCase();
+            String name = input.ingredient().strip().toLowerCase(Locale.ROOT);
             Ingredient ingredient = ingredientRepository.findByIngredientName(name);
             if (ingredient == null) {
                 Ingredient newIngredient = new Ingredient();
