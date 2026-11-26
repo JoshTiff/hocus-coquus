@@ -3,6 +3,7 @@ package com.hocuscoquus.hocuscoquus.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -41,7 +42,11 @@ public class Account {
 	@OneToMany(mappedBy="account")
 	private List<Recipe> recipes = new ArrayList<>();
 	
-	@OneToMany(mappedBy="account")
+	/**
+	 * Restrictions owned by this account. Saving the account cascades changes to them,
+	 * and removing one from this list deletes it.
+	 */
+	@OneToMany(mappedBy="account", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<DietaryRestriction> dietaryRestrictions = new ArrayList<>();
 	
 	@ManyToMany(mappedBy="accounts")
