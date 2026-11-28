@@ -367,3 +367,66 @@
     justify-content: center;
     padding: 1rem 2rem 3rem;
 }
+
+#recipe-calendar-form:not([hidden]),
+#inline-create-calendar-form:not([hidden]) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+#recipe-calendar-controls [hidden] {
+    display: none;
+}
+
+#recipe-calendar-controls label {
+    color: var(--white);
+    font-size: 1rem;
+}
+
+#recipe-calendar-form select,
+#recipe-calendar-form input,
+#inline-create-calendar-form input,
+#inline-create-calendar-form textarea {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--white);
+    border-radius: var(--border-radius);
+    color: var(--white);
+    background: rgba(8, 0, 46, 0.3);
+    font: inherit;
+    color-scheme: dark;
+}
+
+#recipe-calendar-form select option {
+    color: var(--white);
+    background: #1f1650;
+}
+
+#inline-create-calendar-form textarea {
+    resize: vertical;
+}
+
+#recipe-calendar-controls .btn {
+    padding: 0.8rem 1.5rem;
+    cursor: pointer;
+}
+
+#recipe-calendar-controls .btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+#recipe-calendar-controls :focus-visible {
+    outline: 2px solid var(--light-primary);
+    outline-offset: 3px;
+}
+
+#recipe-calendar-status:not(:empty),
+#recipe-calendar-error:not([hidden]) {
+    margin-top: 0.75rem;
+    font-size: 0.95rem;
+}

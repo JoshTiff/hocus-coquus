@@ -5,60 +5,37 @@
         <header th:replace="~{fragments/layout :: site-header}"></header>
 
         <main class="calendar-page">
-            <section class="calendar-panel panel" aria-labelledby="calendar-title">
+            <section class="calendar-panel panel" aria-labelledby="calendar-title"
+                     id="meal-calendar"
+                     th:data-calendar-id="${currentCalendar != null ? currentCalendar.calendarId : ''}"
+                     th:data-calendar-api="@{/api/calendar}"
+                     th:data-recipe-base="@{/recipe}">
                 <div class="calendar-heading">
                     <p th:text="${currentCalendar != null ? currentCalendar.calendarName : 'Your recipe calendar'}">Your recipe calendar</p>
                     <div class="calendar-month-navigation">
-                        <button class="btn calendar-month-button prev-month-button" type="button" title="prev-month-button">Prev month</button>
-                        <h1 id="calendar-title">November</h1>
-                        <button class="btn calendar-month-button next-month-button" type="button" title="next-month-button">Next month</button>
+                        <button id="previous-calendar-month" class="btn calendar-month-button prev-month-button" type="button">Prev month</button>
+                        <h1 id="calendar-title">Calendar</h1>
+                        <button id="next-calendar-month" class="btn calendar-month-button next-month-button" type="button">Next month</button>
                     </div>
                 </div>
 
-                <div class="calendar-grid" role="grid" aria-label="November calendar">
-                    <div class="calendar-weekday" role="columnheader">Sun</div>
-                    <div class="calendar-weekday" role="columnheader">Mon</div>
-                    <div class="calendar-weekday" role="columnheader">Tue</div>
-                    <div class="calendar-weekday" role="columnheader">Wed</div>
-                    <div class="calendar-weekday" role="columnheader">Thu</div>
-                    <div class="calendar-weekday" role="columnheader">Fri</div>
-                    <div class="calendar-weekday" role="columnheader">Sat</div>
+                <p id="calendar-status" class="calendar-message" role="status" aria-live="polite"></p>
+                <p id="calendar-error" class="calendar-message calendar-error" role="alert" hidden></p>
 
-                    <div class="calendar-day" role="gridcell"><span>1</span></div>
-                    <div class="calendar-day" role="gridcell"><span>2</span></div>
-                    <div class="calendar-day" role="gridcell"><span>3</span></div>
-                    <div class="calendar-day" role="gridcell"><span>4</span></div>
-                    <div class="calendar-day" role="gridcell"><span>5</span></div>
-                    <div class="calendar-day" role="gridcell"><span>6</span></div>
-                    <div class="calendar-day" role="gridcell"><span>7</span></div>
-                    <div class="calendar-day" role="gridcell"><span>8</span></div>
-                    <div class="calendar-day" role="gridcell"><span>9</span></div>
-                    <div class="calendar-day" role="gridcell"><span>10</span></div>
-                    <div class="calendar-day" role="gridcell"><span>11</span></div>
-                    <div class="calendar-day" role="gridcell"><span>12</span></div>
-                    <div class="calendar-day" role="gridcell"><span>13</span></div>
-                    <div class="calendar-day" role="gridcell"><span>14</span></div>
-                    <div class="calendar-day" role="gridcell"><span>15</span></div>
-                    <div class="calendar-day" role="gridcell"><span>16</span></div>
-                    <div class="calendar-day" role="gridcell"><span>17</span></div>
-                    <div class="calendar-day" role="gridcell"><span>18</span></div>
-                    <div class="calendar-day" role="gridcell"><span>19</span></div>
-                    <div class="calendar-day" role="gridcell"><span>20</span></div>
-                    <div class="calendar-day" role="gridcell"><span>21</span></div>
-                    <div class="calendar-day" role="gridcell"><span>22</span></div>
-                    <div class="calendar-day" role="gridcell"><span>23</span></div>
-                    <div class="calendar-day" role="gridcell"><span>24</span></div>
-                    <div class="calendar-day" role="gridcell"><span>25</span></div>
-                    <div class="calendar-day" role="gridcell"><span>26</span></div>
-                    <div class="calendar-day" role="gridcell"><span>27</span></div>
-                    <div class="calendar-day" role="gridcell"><span>28</span></div>
-                    <div class="calendar-day" role="gridcell"><span>29</span></div>
-                    <div class="calendar-day" role="gridcell"><span>30</span></div>
-                    <div class="calendar-day" role="gridcell" aria-label=""></div>
-                    <div class="calendar-day" role="gridcell" aria-label=""></div>
-                    <div class="calendar-day" role="gridcell" aria-label=""></div>
-                    <div class="calendar-day" role="gridcell" aria-label=""></div>
-                    <div class="calendar-day" role="gridcell" aria-label=""></div>
+                <div th:if="${currentCalendar == null}" class="calendar-message">
+                    Select an existing calendar or create one to start meal planning.
+                </div>
+
+                <div class="calendar-grid-scroll" th:if="${currentCalendar != null}">
+                    <div id="calendar-grid" class="calendar-grid" role="group" aria-label="Meal planning calendar">
+                        <div class="calendar-weekday">Sun</div>
+                        <div class="calendar-weekday">Mon</div>
+                        <div class="calendar-weekday">Tue</div>
+                        <div class="calendar-weekday">Wed</div>
+                        <div class="calendar-weekday">Thu</div>
+                        <div class="calendar-weekday">Fri</div>
+                        <div class="calendar-weekday">Sat</div>
+                    </div>
                 </div>
 
                 <div class="calendar-actions calendar-management-actions" aria-label="Calendar management actions">
@@ -70,10 +47,382 @@
                 <div class="calendar-actions" aria-label="Calendar actions">
                     <button class="btn" type="button">Download</button>
                     <button class="btn" type="button">Sync Google</button>
-                    <button class="btn" type="button">Add Recipe</button>
-                    <button class="btn" type="button">Remove Recipe</button>
+                    <button id="calendar-add-recipe" class="btn" type="button"
+                            th:if="${currentCalendar != null}" disabled>Add Recipe</button>
                 </div>
+
+                <dialog id="calendar-entry-dialog" class="calendar-entry-dialog"
+                        aria-labelledby="calendar-dialog-title">
+                    <h2 id="calendar-dialog-title">Add Recipe</h2>
+                    <form id="calendar-entry-form">
+                        <div id="calendar-recipe-field" class="calendar-dialog-field">
+                            <label for="calendar-recipe-select">Recipe</label>
+                            <select id="calendar-recipe-select" required>
+                                <option value="">Select a recipe</option>
+                            </select>
+                        </div>
+                        <div id="calendar-datetime-field" class="calendar-dialog-field">
+                            <label for="calendar-entry-datetime">Date and time</label>
+                            <input id="calendar-entry-datetime" type="datetime-local" step="1" required />
+                        </div>
+                        <p id="calendar-dialog-description" class="calendar-message" hidden></p>
+                        <p id="calendar-dialog-error" class="calendar-message calendar-error" role="alert" hidden></p>
+                        <div class="calendar-dialog-actions">
+                            <button id="calendar-dialog-submit" class="btn" type="submit">Save</button>
+                            <button id="calendar-dialog-cancel" class="btn" type="button">Cancel</button>
+                        </div>
+                    </form>
+                </dialog>
             </section>
         </main>
+
+        <script>
+            const panel = document.getElementById('meal-calendar');
+            const calendarId = panel.dataset.calendarId;
+            const calendarTitle = document.getElementById('calendar-title');
+            const previousMonth = document.getElementById('previous-calendar-month');
+            const nextMonth = document.getElementById('next-calendar-month');
+            const calendarStatus = document.getElementById('calendar-status');
+            const errorMessage = document.getElementById('calendar-error');
+            const today = new Date();
+            let displayedMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+            const monthFormatter = new Intl.DateTimeFormat(undefined, {
+                month: 'long', year: 'numeric'
+            });
+            calendarTitle.textContent = monthFormatter.format(displayedMonth);
+
+            if (!calendarId) {
+                previousMonth.disabled = true;
+                nextMonth.disabled = true;
+            } else {
+                const calendarApi = `${panel.dataset.calendarApi}/${encodeURIComponent(calendarId)}`;
+                const recipeBase = panel.dataset.recipeBase;
+                const grid = document.getElementById('calendar-grid');
+                const addButton = document.getElementById('calendar-add-recipe');
+                const dialog = document.getElementById('calendar-entry-dialog');
+                const form = document.getElementById('calendar-entry-form');
+                const dialogTitle = document.getElementById('calendar-dialog-title');
+                const recipeField = document.getElementById('calendar-recipe-field');
+                const recipeSelect = document.getElementById('calendar-recipe-select');
+                const dateTimeField = document.getElementById('calendar-datetime-field');
+                const dateTimeInput = document.getElementById('calendar-entry-datetime');
+                const dialogDescription = document.getElementById('calendar-dialog-description');
+                const dialogError = document.getElementById('calendar-dialog-error');
+                const submitButton = document.getElementById('calendar-dialog-submit');
+                const cancelButton = document.getElementById('calendar-dialog-cancel');
+                const timeFormatter = new Intl.DateTimeFormat(undefined, {
+                    hour: 'numeric', minute: '2-digit'
+                });
+
+                let entries = [];
+                let busy = false;
+                let entriesLoaded = false;
+                let activeEntry = null;
+                let mode = 'schedule';
+
+                function localDateTime(date) {
+                    const pad = value => String(value).padStart(2, '0');
+                    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
+                        + `T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+                }
+
+                async function request(url, method = 'GET', body) {
+                    const options = { method, headers: { 'Accept': 'application/json' } };
+                    if (body !== undefined) {
+                        options.headers['Content-Type'] = 'application/json';
+                        options.body = JSON.stringify(body);
+                    }
+                    const response = await fetch(url, options);
+                    if (response.redirected || response.status === 401) {
+                        throw new Error('Please log in again.');
+                    }
+                    if (!response.ok) {
+                        const errors = {
+                            400: 'The request is invalid. Check your selection.',
+                            403: 'You are not allowed to perform this action.',
+                            404: 'The calendar, entry or recipe could not be found.',
+                            409: 'A conflicting entry or recipe already exists at this date and time.'
+                        };
+                        throw new Error(errors[response.status] || 'The calendar request failed. Please try again.');
+                    }
+                    return response.status === 204 ? null : response.json();
+                }
+
+                function setBusy(value) {
+                    busy = value;
+                    addButton.disabled = value || !entriesLoaded;
+                    submitButton.disabled = value || (mode !== 'move' && recipeSelect.options.length <= 1);
+                    cancelButton.disabled = value;
+                    grid.querySelectorAll('button').forEach(button => {
+                        button.disabled = value || !entriesLoaded;
+                    });
+                }
+
+                function showError(element, message) {
+                    element.textContent = message;
+                    element.hidden = !message;
+                }
+
+                function entryButton(text, onClick, label = text) {
+                    const button = document.createElement('button');
+                    button.type = 'button';
+                    button.className = 'calendar-entry-action';
+                    button.textContent = text;
+                    button.setAttribute('aria-label', label);
+                    button.disabled = busy || !entriesLoaded;
+                    button.addEventListener('click', onClick);
+                    return button;
+                }
+
+                function renderCalendar() {
+                    calendarTitle.textContent = monthFormatter.format(displayedMonth);
+                    grid.setAttribute('aria-label', `${calendarTitle.textContent} meal planning calendar`);
+                    grid.querySelectorAll('.calendar-day').forEach(day => day.remove());
+
+                    const year = displayedMonth.getFullYear();
+                    const month = displayedMonth.getMonth();
+                    const offset = new Date(year, month, 1).getDay();
+                    const days = new Date(year, month + 1, 0).getDate();
+                    const cellCount = Math.ceil((offset + days) / 7) * 7;
+                    const byDay = new Map();
+
+                    entries.forEach(entry => {
+                        const date = new Date(entry.dateTime);
+                        if (date.getFullYear() === year && date.getMonth() === month) {
+                            const day = date.getDate();
+                            if (!byDay.has(day)) byDay.set(day, []);
+                            byDay.get(day).push(entry);
+                        }
+                    });
+
+                    for (let i = 0; i < cellCount; i++) {
+                        const cell = document.createElement('div');
+                        cell.className = 'calendar-day';
+                        const day = i - offset + 1;
+                        if (day < 1 || day > days) {
+                            cell.classList.add('calendar-day-empty');
+                            cell.setAttribute('aria-hidden', 'true');
+                            grid.append(cell);
+                            continue;
+                        }
+
+                        const dayNumber = document.createElement('span');
+                        dayNumber.textContent = day;
+                        cell.append(dayNumber);
+                        if (year === today.getFullYear() && month === today.getMonth()
+                                && day === today.getDate()) {
+                            cell.classList.add('calendar-day-today');
+                            dayNumber.setAttribute('aria-current', 'date');
+                        }
+
+                        (byDay.get(day) || []).forEach(entry => {
+                            const card = document.createElement('div');
+                            card.className = 'calendar-scheduled-entry';
+                            const time = document.createElement('time');
+                            const date = new Date(entry.dateTime);
+                            time.dateTime = date.toISOString();
+                            time.textContent = timeFormatter.format(date);
+                            card.append(time);
+
+                            entry.recipes.forEach(recipe => {
+                                const row = document.createElement('div');
+                                row.className = 'calendar-scheduled-recipe';
+                                const link = document.createElement('a');
+                                link.href = `${recipeBase}/${encodeURIComponent(recipe.recipeId)}`;
+                                link.textContent = recipe.recipeName;
+                                row.append(link, entryButton('Remove', () => removeRecipe(entry, recipe),
+                                    `Remove ${recipe.recipeName} from calendar`));
+                                card.append(row);
+                            });
+
+                            const actions = document.createElement('div');
+                            actions.className = 'calendar-entry-actions';
+                            actions.append(entryButton('Move', () => openDialog('move', entry)),
+                                entryButton('Add recipe', () => openDialog('add', entry)));
+                            if (entry.recipes.length === 0) {
+                                actions.append(entryButton('Delete entry', () => deleteEmptyEntry(entry)));
+                            }
+                            card.append(actions);
+                            cell.append(card);
+                        });
+
+                        grid.append(cell);
+                    }
+                }
+
+                async function loadEntries() {
+                    entries = await request(`${calendarApi}/entries`);
+                    entriesLoaded = true;
+                    renderCalendar();
+                }
+
+                async function refreshAfterMutation(message) {
+                    try {
+                        await loadEntries();
+                        calendarStatus.textContent = message;
+                    } catch (error) {
+                        entriesLoaded = false;
+                        calendarStatus.textContent = message;
+                        showError(errorMessage, 'The change was saved, but the calendar could not refresh. Reload the page.');
+                    }
+                }
+
+                async function openDialog(nextMode, entry = null) {
+                    if (busy || !entriesLoaded) return;
+                    mode = nextMode;
+                    activeEntry = entry;
+                    form.reset();
+                    showError(dialogError, '');
+                    showError(errorMessage, '');
+                    dialogDescription.hidden = true;
+                    const isMove = mode === 'move';
+                    const isAdd = mode === 'add';
+                    dialogTitle.textContent = isMove ? 'Move Calendar Entry' : 'Add Recipe';
+                    submitButton.textContent = isMove ? 'Save Changes' : 'Add Recipe';
+                    recipeField.hidden = isMove;
+                    recipeSelect.disabled = isMove;
+                    dateTimeField.hidden = isAdd;
+                    dateTimeInput.disabled = isAdd;
+
+                    if (entry) {
+                        const date = new Date(entry.dateTime);
+                        dateTimeInput.value = localDateTime(date);
+                        dialogDescription.textContent = isMove
+                            ? 'All recipes in this entry will move together.'
+                            : `Add a recipe to the entry on ${date.toLocaleString()}.`;
+                        dialogDescription.hidden = false;
+                    } else {
+                        const now = new Date();
+                        const defaultDay = displayedMonth.getFullYear() === now.getFullYear()
+                            && displayedMonth.getMonth() === now.getMonth() ? now.getDate() : 1;
+                        dateTimeInput.value = localDateTime(new Date(displayedMonth.getFullYear(),
+                            displayedMonth.getMonth(), defaultDay, 18));
+                    }
+
+                    if (!isMove) recipeSelect.replaceChildren(new Option('Select a recipe', ''));
+                    dialog.showModal();
+                    if (isMove) {
+                        setBusy(false);
+                        return;
+                    }
+
+                    setBusy(true);
+                    try {
+                        const recipes = await searchRecipes();
+                        const existingIds = new Set(isAdd ? entry.recipes.map(recipe => String(recipe.recipeId)) : []);
+                        recipes.forEach(recipe => {
+                            if (!existingIds.has(String(recipe.recipeId))) {
+                                recipeSelect.add(new Option(recipe.recipeName, recipe.recipeId));
+                            }
+                        });
+                        if (recipeSelect.options.length === 1) {
+                            showError(dialogError, 'No additional recipes are available.');
+                        }
+                    } catch (error) {
+                        showError(dialogError, error.message);
+                    } finally {
+                        setBusy(false);
+                    }
+                }
+
+                async function removeRecipe(entry, recipe) {
+                    if (busy || !entriesLoaded || !window.confirm(`Remove "${recipe.recipeName}" from this calendar entry?`)) return;
+                    setBusy(true);
+                    showError(errorMessage, '');
+                    calendarStatus.textContent = '';
+                    try {
+                        await request(`${calendarApi}/entries/${entry.calendarEntryId}/recipes/remove/${recipe.recipeId}`, 'DELETE');
+                        await refreshAfterMutation('Recipe removed from calendar.');
+                    } catch (error) {
+                        showError(errorMessage, error.message);
+                    } finally {
+                        setBusy(false);
+                    }
+                }
+
+                async function deleteEmptyEntry(entry) {
+                    if (busy || !entriesLoaded || !window.confirm('Delete this empty calendar entry?')) return;
+                    setBusy(true);
+                    showError(errorMessage, '');
+                    calendarStatus.textContent = '';
+                    try {
+                        await request(`${calendarApi}/entries/delete/${entry.calendarEntryId}`, 'DELETE');
+                        await refreshAfterMutation('Calendar entry deleted.');
+                    } catch (error) {
+                        showError(errorMessage, error.message);
+                    } finally {
+                        setBusy(false);
+                    }
+                }
+
+                async function searchRecipes() {
+                    // TODO: Integrate with Search Recipes by Name
+                    // once its REST API is implemented.
+                    return [];
+                }
+
+                addButton.addEventListener('click', () => openDialog('schedule'));
+                cancelButton.addEventListener('click', () => dialog.close());
+                dialog.addEventListener('cancel', event => {
+                    if (busy) event.preventDefault();
+                });
+
+                form.addEventListener('submit', async event => {
+                    event.preventDefault();
+                    if (busy) return;
+                    showError(dialogError, '');
+                    showError(errorMessage, '');
+                    setBusy(true);
+                    try {
+                        let response;
+                        const date = mode === 'add' ? new Date(activeEntry.dateTime) : new Date(dateTimeInput.value);
+                        if (Number.isNaN(date.getTime())) throw new Error('Enter a valid date and time.');
+                        if (mode === 'move') {
+                            response = await request(`${calendarApi}/entries/update/${activeEntry.calendarEntryId}`, 'PUT', {
+                                dateTime: date.toISOString()
+                            });
+                        } else {
+                            if (!recipeSelect.value) throw new Error('Select a recipe.');
+                            const recipeId = Number(recipeSelect.value);
+                            if (mode === 'add') {
+                                response = await request(`${calendarApi}/entries/${activeEntry.calendarEntryId}/recipes/add`, 'POST', { recipeId });
+                            } else {
+                                response = await request(`${calendarApi}/recipes/schedule`, 'POST', {
+                                    recipeId, dateTime: date.toISOString()
+                                });
+                            }
+                        }
+                        const savedDate = new Date(response.dateTime);
+                        displayedMonth = new Date(savedDate.getFullYear(), savedDate.getMonth(), 1);
+                        dialog.close();
+                        await refreshAfterMutation(mode === 'move' ? 'Calendar entry updated.' : 'Recipe added to calendar.');
+                    } catch (error) {
+                        showError(dialogError, error.message);
+                    } finally {
+                        setBusy(false);
+                    }
+                });
+
+                previousMonth.addEventListener('click', () => {
+                    displayedMonth = new Date(displayedMonth.getFullYear(), displayedMonth.getMonth() - 1, 1);
+                    renderCalendar();
+                });
+                nextMonth.addEventListener('click', () => {
+                    displayedMonth = new Date(displayedMonth.getFullYear(), displayedMonth.getMonth() + 1, 1);
+                    renderCalendar();
+                });
+
+                renderCalendar();
+                setBusy(true);
+                calendarStatus.textContent = 'Loading calendar...';
+                loadEntries().then(() => {
+                    calendarStatus.textContent = '';
+                }).catch(error => {
+                    calendarStatus.textContent = '';
+                    showError(errorMessage, error.message);
+                }).finally(() => setBusy(false));
+            }
+        </script>
     </body>
 </html>
