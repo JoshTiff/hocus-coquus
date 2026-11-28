@@ -3,6 +3,8 @@ package com.hocuscoquus.hocuscoquus.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,5 +52,16 @@ public class RecipeNoteController {
 
         return recipeHandler.processRecipeNoteUpdateRequest(
                 details.getAccountId(), request);
+    }
+
+    @DeleteMapping("/delete/{recipeNoteId}")
+    public ResponseEntity<Void> deleteRecipeNote(
+            @AuthenticationPrincipal AccountDetails details,
+            @PathVariable long recipeNoteId) {
+        if (details == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        return recipeHandler.deleteRecipeNote(details.getAccountId(), recipeNoteId);
     }
 }
