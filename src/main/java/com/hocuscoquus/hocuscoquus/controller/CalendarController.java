@@ -1,5 +1,7 @@
 package com.hocuscoquus.hocuscoquus.controller;
 
+import java.util.Comparator;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -7,13 +9,11 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hocuscoquus.hocuscoquus.entity.AccountDetails;
-import com.hocuscoquus.hocuscoquus.entity.CalendarEntry;
+import com.hocuscoquus.hocuscoquus.entity.Calendar;
 import com.hocuscoquus.hocuscoquus.service.CalendarService;
 
 @Controller
@@ -29,9 +29,22 @@ public class CalendarController {
             @AuthenticationPrincipal AccountDetails details,
             @RequestParam(required = false) Long calendarId,
             Model model) {
+
+        Calendar currentCalendar;
+
         if (calendarId != null) {
-            model.addAttribute("currentCalendar", calendarService.getCalendarForAccount(calendarId, details.getAccountId()));
+            currentCalendar = calendarService.getCalendarForAccount(
+                    calendarId, details.getAccountId());
+        } else {
+            currentCalendar = calendarService.getCalendarsForAccount(
+                    details.getAccountId())
+                    .stream()
+                    .min(Comparator.comparingLong(Calendar::getCalendarId))
+                    .orElse(null);
         }
+
+        model.addAttribute("currentCalendar", currentCalendar);
+
         return "calendar";
     }
 
@@ -63,29 +76,5 @@ public class CalendarController {
             @PathVariable long calendarId) {
         calendarService.deleteCalendar(details.getAccountId(), calendarId);
     }
-
-    @PostMapping("/api/calendars/{calendarId}/entries")
-    @ResponseBody
-    public CalendarEntry addEntry(@PathVariable long calendarId, @RequestBody CalendarEntry entry) {
-        return calendarService.addEntry(calendarId, entry);
-    }
-
-    @DeleteMapping("/api/calendars/entries/{calendarEntryId}")
-    @ResponseBody
-    public void deleteEntry(
-            @AuthenticationPrincipal AccountDetails details,
-            @PathVariable long calendarEntryId) {
-        calendarService.deleteEntry(details.getAccountId(), calendarEntryId);
-    }
-
-    @PutMapping("/api/calendars/entries")
-    @ResponseBody
-    public CalendarEntry updateEntry(@RequestBody CalendarEntry entry) {
-        return calendarService.updateEntry(entry);
-    }
-
-    // need printRecipe, downloadCalendar, syncGoogleAccount?
-
-    // add way to go cycle months (Aidan can do this later)
 
 }

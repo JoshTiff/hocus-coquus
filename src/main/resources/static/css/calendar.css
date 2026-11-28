@@ -149,3 +149,133 @@
         padding: 0.75rem 1.25rem;
     }
 }
+
+.calendar-scheduled-entry time {
+    color: var(--light-primary);
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+
+.calendar-scheduled-recipe {
+    display: grid;
+    gap: 0.15rem;
+}
+
+.calendar-scheduled-recipe a {
+    color: var(--white);
+    font-size: 0.95rem;
+    text-decoration: underline;
+}
+
+.calendar-entry-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    padding-top: 0.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.calendar-entry-action {
+    justify-self: start;
+    padding: 0.2rem 0.35rem;
+    border: 1px solid rgba(255, 255, 255, 0.65);
+    border-radius: 0.3rem;
+    background: transparent;
+    color: var(--white);
+    font: inherit;
+    font-size: 0.75rem;
+    cursor: pointer;
+}
+
+.calendar-entry-action:hover:not(:disabled) {
+    color: var(--primary);
+    border-color: var(--primary);
+}
+
+#meal-calendar button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+#meal-calendar :focus-visible {
+    outline: 2px solid var(--light-primary);
+    outline-offset: 2px;
+}
+
+.calendar-message {
+    margin: 0.75rem 0;
+    font-size: 0.95rem;
+    color: var(--white);
+}
+
+.calendar-message:empty {
+    display: none;
+}
+
+.calendar-error {
+    color: var(--light-primary);
+}
+
+.calendar-entry-dialog {
+    position: fixed;
+    inset: 0;
+    margin: auto;
+    width: min(30rem, calc(100% - 2rem));
+    max-height: calc(100% - 2rem);
+    overflow: auto;
+    box-sizing: border-box;
+    padding: 1.5rem;
+    border: 1px solid var(--white);
+    border-radius: var(--border-radius);
+    background: #1f1650;
+    color: var(--white);
+    color-scheme: dark;
+}
+
+.calendar-entry-dialog::backdrop {
+    background: rgba(8, 0, 46, 0.75);
+}
+
+.calendar-entry-dialog h2 {
+    margin: 0 0 1rem;
+    color: var(--primary);
+    font-family: "Italianno", "Tangerine", cursive;
+    font-size: var(--font-size-2);
+    font-weight: 400;
+}
+
+#calendar-entry-form,
+.calendar-dialog-field:not([hidden]) {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.calendar-dialog-field input,
+.calendar-dialog-field select {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--white);
+    border-radius: var(--border-radius);
+    background: rgba(8, 0, 46, 0.3);
+    color: var(--white);
+    font: inherit;
+    color-scheme: dark;
+}
+
+.calendar-dialog-field select option {
+    background: #1f1650;
+    color: var(--white);
+}
+
+.calendar-dialog-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.calendar-dialog-actions .btn {
+    cursor: pointer;
+}

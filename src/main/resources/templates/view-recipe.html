@@ -117,6 +117,88 @@
                             <iframe id="recipe-print-frame" class="recipe-print-frame"
                                     title="Printable recipe" tabindex="-1" aria-hidden="true"></iframe>
                         </section>
+
+                        <section class="recipe-section"
+                                aria-labelledby="recipe-calendar-heading">
+                            <h2 id="recipe-calendar-heading">Meal Planning</h2>
+                            <div sec:authorize="isAuthenticated()"
+                                id="recipe-calendar-controls"
+                                th:data-recipe-id="${recipe.getRecipeId()}"
+                                th:data-calendar-api="@{/api/calendar}">
+                                <button id="add-to-calendar-button"
+                                        class="btn"
+                                        type="button">
+                                    Add to Calendar
+                                </button>
+                                <form id="recipe-calendar-form" hidden>
+                                    <label for="recipe-calendar-select">
+                                        Calendar
+                                    </label>
+                                    <select id="recipe-calendar-select" required>
+                                        <option value="">Select a calendar</option>
+                                    </select>
+                                    <button id="show-create-calendar-button"
+                                            class="btn"
+                                            type="button">
+                                        Create New Calendar
+                                    </button>
+                                    <label for="recipe-calendar-datetime">
+                                        Date and time
+                                    </label>
+                                    <input id="recipe-calendar-datetime"
+                                        type="datetime-local"
+                                        required />
+                                    <button class="btn" type="submit">
+                                        Schedule Recipe
+                                    </button>
+                                    <button id="cancel-calendar-button"
+                                            class="btn"
+                                            type="button">
+                                        Cancel
+                                    </button>
+                                </form>
+                                <form id="inline-create-calendar-form" hidden>
+                                    <label for="inline-calendar-name">
+                                        Calendar name
+                                    </label>
+
+                                    <input id="inline-calendar-name"
+                                        type="text"
+                                        maxlength="255"
+                                        required />
+
+                                    <label for="inline-calendar-description">
+                                        Description (optional)
+                                    </label>
+
+                                    <textarea id="inline-calendar-description"
+                                            maxlength="255"
+                                            rows="3"></textarea>
+
+                                    <button class="btn" type="submit">
+                                        Create Calendar
+                                    </button>
+
+                                    <button id="cancel-create-calendar-button"
+                                            class="btn"
+                                            type="button">
+                                        Cancel
+                                    </button>
+                                </form>
+                                <p id="recipe-calendar-status"
+                                role="status"
+                                aria-live="polite"></p>
+                                <p id="recipe-calendar-error"
+                                class="recipe-share-error"
+                                role="alert"
+                                hidden></p>
+                            </div>
+                            <p class="empty-section"
+                            sec:authorize="!isAuthenticated()">
+                                <a th:href="@{/login}">Log in</a>
+                                to add this recipe to your calendar.
+                            </p>
+                        </section>
                     </div>
 
                     <section class="recipe-section instructions-section">
@@ -222,6 +304,290 @@
                         printError.textContent = error.message || 'Could not prepare the recipe for printing. Please try again.';
                         printError.hidden = false;
                         printButton.disabled = false;
+                    }
+                });
+            }
+
+            const calendarControls = document.getElementById(
+                'recipe-calendar-controls'
+            );
+
+            if (calendarControls) {
+                const calendarApi = calendarControls.dataset.calendarApi;
+                const recipeId = Number(calendarControls.dataset.recipeId);
+
+                const addButton = document.getElementById(
+                    'add-to-calendar-button'
+                );
+
+                const cancelButton = document.getElementById(
+                    'cancel-calendar-button'
+                );
+
+                const calendarForm = document.getElementById(
+                    'recipe-calendar-form'
+                );
+
+                const calendarSelect = document.getElementById(
+                    'recipe-calendar-select'
+                );
+
+                const dateTimeInput = document.getElementById(
+                    'recipe-calendar-datetime'
+                );
+
+                const calendarStatus = document.getElementById(
+                    'recipe-calendar-status'
+                );
+
+                const calendarError = document.getElementById(
+                    'recipe-calendar-error'
+                );
+
+                const submitButton = calendarForm.querySelector(
+                    'button[type="submit"]'
+                );
+
+                const showCreateCalendarButton = document.getElementById(
+                    'show-create-calendar-button'
+                );
+
+                const createCalendarForm = document.getElementById(
+                    'inline-create-calendar-form'
+                );
+
+                const calendarNameInput = document.getElementById(
+                    'inline-calendar-name'
+                );
+
+                const calendarDescriptionInput = document.getElementById(
+                    'inline-calendar-description'
+                );
+
+                const cancelCreateCalendarButton = document.getElementById(
+                    'cancel-create-calendar-button'
+                );
+
+                const createCalendarSubmitButton =
+                    createCalendarForm.querySelector('button[type="submit"]');
+
+                addButton.addEventListener('click', async () => {
+                    addButton.disabled = true;
+                    calendarError.hidden = true;
+                    calendarStatus.textContent = 'Loading calendars...';
+
+                    try {
+                        const response = await fetch(calendarApi, {
+                            headers: {
+                                'Accept': 'application/json'
+                            }
+                        });
+
+                        if (!response.ok || response.redirected) {
+                            throw new Error('Could not retrieve calendars.');
+                        }
+
+                        const calendars = await response.json();
+
+                        calendarSelect.replaceChildren(
+                            new Option('Select a calendar', '')
+                        );
+
+                        calendars.forEach(calendar => {
+                            calendarSelect.add(new Option(
+                                calendar.calendarName,
+                                calendar.calendarId
+                            ));
+                        });
+
+                        calendarForm.hidden = false;
+                        addButton.hidden = true;
+                        submitButton.disabled = calendars.length === 0;
+
+                        calendarStatus.textContent = calendars.length === 0
+                            ? 'Create a calendar before scheduling a recipe.'
+                            : '';
+
+                    } catch (error) {
+                        calendarStatus.textContent = '';
+                        calendarError.textContent = error.message;
+                        calendarError.hidden = false;
+
+                    } finally {
+                        addButton.disabled = false;
+                    }
+                });
+
+                showCreateCalendarButton.addEventListener('click', () => {
+                    calendarForm.hidden = true;
+                    createCalendarForm.hidden = false;
+                    calendarError.hidden = true;
+                    calendarStatus.textContent = '';
+                    calendarNameInput.focus();
+                });
+
+                cancelCreateCalendarButton.addEventListener('click', () => {
+                    createCalendarForm.reset();
+                    createCalendarForm.hidden = true;
+                    calendarForm.hidden = false;
+                    calendarError.hidden = true;
+                    calendarStatus.textContent = calendarSelect.options.length === 1
+                        ? 'Create a calendar before scheduling a recipe.'
+                        : '';
+                });
+
+                createCalendarForm.addEventListener('submit', async event => {
+                    event.preventDefault();
+
+                    if (createCalendarSubmitButton.disabled) {
+                        return;
+                    }
+
+                    const calendarName = calendarNameInput.value.trim();
+                    const description = calendarDescriptionInput.value.trim();
+
+                    if (!calendarName) {
+                        calendarStatus.textContent = '';
+                        calendarError.textContent = 'Enter a calendar name.';
+                        calendarError.hidden = false;
+                        return;
+                    }
+
+                    createCalendarSubmitButton.disabled = true;
+                    cancelCreateCalendarButton.disabled = true;
+                    calendarError.hidden = true;
+                    calendarStatus.textContent = 'Creating calendar...';
+
+                    try {
+                        const response = await fetch(`${calendarApi}/create`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                calendarName: calendarName,
+                                description: description
+                            })
+                        });
+
+                        if (response.redirected) {
+                            throw new Error('Please log in again.');
+                        }
+
+                        if (response.status !== 201) {
+                            const error = await response.json().catch(() => ({}));
+                            throw new Error(
+                                error.message || 'Could not create calendar.'
+                            );
+                        }
+
+                        const calendar = await response.json();
+
+                        calendarSelect.add(new Option(
+                            calendarName,
+                            calendar.calendarId,
+                            false,
+                            true
+                        ));
+
+                        createCalendarForm.reset();
+                        createCalendarForm.hidden = true;
+                        calendarForm.hidden = false;
+                        submitButton.disabled = false;
+                        calendarStatus.textContent = 'Calendar successfully created.';
+
+                    } catch (error) {
+                        calendarStatus.textContent = '';
+                        calendarError.textContent = error.message;
+                        calendarError.hidden = false;
+
+                    } finally {
+                        createCalendarSubmitButton.disabled = false;
+                        cancelCreateCalendarButton.disabled = false;
+                    }
+                });
+
+                cancelButton.addEventListener('click', () => {
+                    calendarForm.reset();
+                    calendarForm.hidden = true;
+                    addButton.hidden = false;
+                    calendarError.hidden = true;
+                    calendarStatus.textContent = '';
+                });
+
+                calendarForm.addEventListener('submit', async event => {
+                    event.preventDefault();
+
+                    if (submitButton.disabled) {
+                        return;
+                    }
+
+                    submitButton.disabled = true;
+                    cancelButton.disabled = true;
+                    showCreateCalendarButton.disabled = true;
+                    calendarError.hidden = true;
+                    calendarStatus.textContent = 'Scheduling recipe...';
+
+                    try {
+                        const calendarId = calendarSelect.value;
+                        const dateTime = new Date(dateTimeInput.value);
+
+                        if (!calendarId || Number.isNaN(dateTime.getTime())) {
+                            throw new Error(
+                                'Select a calendar and a valid date and time.'
+                            );
+                        }
+
+                        const response = await fetch(
+                            `${calendarApi}/${calendarId}/recipes/schedule`,
+                            {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    recipeId: recipeId,
+                                    dateTime: dateTime.toISOString()
+                                })
+                            }
+                        );
+
+                        if (response.redirected) {
+                            throw new Error('Please log in again.');
+                        }
+
+                        if (response.status === 409) {
+                            throw new Error(
+                                'This recipe is already scheduled at this date and time.'
+                            );
+                        }
+
+                        if (response.status === 404) {
+                            throw new Error('Calendar or recipe not found.');
+                        }
+
+                        if (response.status !== 201) {
+                            throw new Error('Could not schedule the recipe.');
+                        }
+
+                        calendarStatus.textContent =
+                            'Recipe successfully added to calendar.';
+
+                        calendarForm.reset();
+                        calendarForm.hidden = true;
+                        addButton.hidden = false;
+
+                    } catch (error) {
+                        calendarStatus.textContent = '';
+                        calendarError.textContent = error.message;
+                        calendarError.hidden = false;
+
+                    } finally {
+                        submitButton.disabled = false;
+                        cancelButton.disabled = false;
+                        showCreateCalendarButton.disabled = false;
                     }
                 });
             }
