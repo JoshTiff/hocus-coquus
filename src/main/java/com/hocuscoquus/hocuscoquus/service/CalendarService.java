@@ -1,38 +1,27 @@
 package com.hocuscoquus.hocuscoquus.service;
 
-import java.util.Objects;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+
 import com.hocuscoquus.hocuscoquus.entity.Account;
 import com.hocuscoquus.hocuscoquus.entity.Calendar;
 import com.hocuscoquus.hocuscoquus.entity.CalendarEntry;
 import com.hocuscoquus.hocuscoquus.model.CalendarCreateDto;
-import com.hocuscoquus.hocuscoquus.repository.AccountRepository;
-import com.hocuscoquus.hocuscoquus.repository.CalendarEntryRepository;
-import com.hocuscoquus.hocuscoquus.repository.CalendarRepository;
 
 @Service
 public class CalendarService {
     private static final int MAX_CALENDAR_TEXT_LENGTH = 255;
 
-    private final CalendarRepository calendarRepository;
-    private final CalendarEntryRepository calendarEntryRepository;
-    private final AccountRepository accountRepository;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-    // TODO: review/add constructor(s)
-
-    public CalendarService(
-            CalendarRepository calendarRepository,
-            CalendarEntryRepository calendarEntryRepository,
-            AccountRepository accountRepository) {
-        this.calendarRepository = Objects.requireNonNull(calendarRepository);
-        this.calendarEntryRepository = Objects.requireNonNull(calendarEntryRepository);
-        this.accountRepository = Objects.requireNonNull(accountRepository);
-    }
-
+    @Transactional
     public Calendar createCalendar(
             CalendarCreateDto calendarCreateDto,
             long accountId) {
@@ -53,7 +42,7 @@ public class CalendarService {
             }
         }
 
-        Account account = accountRepository.findById(accountId);
+        Account account = entityManager.find(Account.class, accountId);
         if (account == null) {
             throw new IllegalArgumentException("Account not found for ID: " + accountId);
         }
@@ -62,35 +51,57 @@ public class CalendarService {
         calendar.setCalendarName(name);
         calendar.setDescription(description == null || description.isBlank() ? null : description);
         calendar.setAccount(account);
-        return calendarRepository.save(calendar);
+        entityManager.persist(calendar);
+        return calendar;
     }
 
+    @Transactional(readOnly = true)
     public Calendar getCalendarForAccount(long calendarId, long accountId) {
-        return calendarRepository.findByCalendarIdAndAccount_AccountId(calendarId, accountId);
+        return entityManager.createQuery("""
+                SELECT c FROM Calendar c
+                WHERE c.calendarId = :calendarId
+                AND c.account.accountId = :accountId
+                """, Calendar.class)
+                .setParameter("calendarId", calendarId)
+                .setParameter("accountId", accountId)
+                .getResultList()
+                .stream()
+                .findFirst()
+                .orElse(null);
     }
 
+    @Transactional(readOnly = true)
     public List<Calendar> getCalendarsForAccount(long accountId) {
-        return calendarRepository.findByAccount_AccountId(accountId);
+        return entityManager.createQuery("""
+                SELECT c FROM Calendar c
+                WHERE c.account.accountId = :accountId
+                """, Calendar.class)
+                .setParameter("accountId", accountId)
+                .getResultList();
     }
 
     @Transactional
     public boolean deleteCalendar(long requesterId, long calendarId) {
-        // Confirm calendar exists
-        Calendar cal = calendarRepository.findById(calendarId);
-        if (cal == null) {
-            throw new IllegalArgumentException("Calendar not found for ID: " + calendarId);
+        Calendar calendar = entityManager.find(Calendar.class, calendarId);
+
+        if (calendar == null) {
+            throw new IllegalArgumentException(
+                    "Calendar not found for ID: " + calendarId);
         }
 
-        // Confirm requesting account owns calendar to delete
-        long ownerId = cal.getAccountId();
-        if (requesterId != ownerId) {
-            throw new IllegalArgumentException("Account with ID " + requesterId
-                    + " attempting to delete calendar from account with ID " + ownerId);
+        if (calendar.getAccountId() != requesterId) {
+            throw new IllegalArgumentException(
+                    "Account with ID " + requesterId
+                    + " attempting to delete calendar from account with ID "
+                    + calendar.getAccountId());
         }
 
-        // Delete calendar
-        this.calendarEntryRepository.deleteByCalendar_CalendarId(calendarId);
-        this.calendarRepository.deleteById(calendarId);
+        for (CalendarEntry entry : new ArrayList<>(calendar.getEntries())) {
+            removeCalendarEntry(entry);
+        }
+
+        entityManager.remove(calendar);
+
         return true;
     }
 
@@ -101,40 +112,36 @@ public class CalendarService {
      * @param entry the calendar entry to add
      */
     public CalendarEntry addEntry(long calendarId, CalendarEntry entry) {
-        // TODO: add implementation for this method
-
-        // Calendar calendar = calendarRepository.findById(calendarId);
-        // if (calendar == null) {
-        //     throw new IllegalArgumentException("Calendar not found: " + calendarId);
-        // }
-        // calendar.addEntry(entry);
-        // calendarRepository.save(calendar);
-        // return calendarEntryRepository.save(entry);
         return new CalendarEntry();
     }
 
-    /**
-     * Removes the calendar entry with the matching unique ID.
-     * If no entry with the given ID exists, the list remains unchanged.
-     *
-     * @param calendarEntryId the ID of the calendar entry to remove
-     */
+    private void removeCalendarEntry(CalendarEntry entry) {
+        entry.getRecipes().clear();
+        entry.getCalendar().getEntries().remove(entry);
+        entityManager.remove(entry);
+    }
+
+    @Transactional
     public boolean deleteEntry(long requesterId, long calendarEntryId) {
-        // Confirm calendar entry exists
-        CalendarEntry entry = calendarEntryRepository.findById(calendarEntryId);
+        CalendarEntry entry = entityManager.find(
+                CalendarEntry.class, calendarEntryId);
+
         if (entry == null) {
-            throw new IllegalArgumentException("Calendar entry not found for ID: " + calendarEntryId);
+            throw new IllegalArgumentException(
+                    "Calendar entry not found for ID: " + calendarEntryId);
         }
 
-        // Confirm requesting account owns calendar entry to delete
         long ownerId = entry.getCalendar().getAccountId();
+
         if (requesterId != ownerId) {
-            throw new IllegalArgumentException("Account with ID " + requesterId
-                    + " attempting to delete calendar from account with ID " + ownerId);
+            throw new IllegalArgumentException(
+                    "Account with ID " + requesterId
+                    + " attempting to delete calendar entry from account with ID "
+                    + ownerId);
         }
 
-        // Delete calendar entry
-        this.calendarEntryRepository.deleteById(calendarEntryId);
+        removeCalendarEntry(entry);
+
         return true;
     }
 
