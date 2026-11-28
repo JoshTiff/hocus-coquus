@@ -2,6 +2,7 @@ package com.hocuscoquus.hocuscoquus.service;
 
 import com.hocuscoquus.hocuscoquus.entity.*;
 import com.hocuscoquus.hocuscoquus.entity.Account;
+import com.hocuscoquus.hocuscoquus.entity.CalendarEntry;
 import com.hocuscoquus.hocuscoquus.entity.Reaction;
 import com.hocuscoquus.hocuscoquus.entity.RecipeNote;
 import com.hocuscoquus.hocuscoquus.entity.RecipeTag;
@@ -155,8 +156,33 @@ public class RecipeService {
         recipe.getRecipeIngredients().addAll(rows);
     }
 
-    public void deleteRecipe(long recipeId) {
-        // TODO: add implementation for this method
+    @Transactional
+    public void deleteRecipe(long recipeId, long accountId) {
+        if (recipeId <= 0) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Invalid recipe ID");
+        }
+
+        Recipe recipe = recipeRepository
+                .findForUpdateByRecipeIdAndAccount_AccountId(recipeId, accountId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Recipe not found"));
+
+        // Remove associations with recipe tags.
+        for (RecipeTag tag : recipe.getRecipeTags()) {
+            tag.getRecipes().remove(recipe);
+        }
+
+        // Remove associations with calendar entries.
+        for (CalendarEntry entry : recipe.getCalendarEntries()) {
+            entry.getRecipes().remove(recipe);
+        }
+
+        recipe.getRecipeTags().clear();
+        recipe.getCalendarEntries().clear();
+
+        // Delete the recipe and its dependent entities.
+        recipeRepository.delete(recipe);
     }
 
     /**

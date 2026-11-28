@@ -101,6 +101,15 @@ public class RecipeController {
         return ResponseEntity.noContent().build();
     }
 
+    @DeleteMapping("/api/recipe/{recipeId}")
+    public ResponseEntity<Void> deleteRecipe(
+            @PathVariable long recipeId,
+            @AuthenticationPrincipal AccountDetails account) {
+
+        recipeService.deleteRecipe(recipeId, account.getAccountId());
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping("/{recipeId}/reactions")
     public ResponseEntity<Map<ReactionType, Integer>> addReactionToRecipe(
             @PathVariable long recipeId,

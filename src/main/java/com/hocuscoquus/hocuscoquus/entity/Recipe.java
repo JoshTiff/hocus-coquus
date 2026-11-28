@@ -45,10 +45,10 @@ public class Recipe {
 	@ManyToMany(mappedBy="recipes")
 	private final List<RecipeTag> recipeTags = new ArrayList<>();
     
-	@OneToMany(mappedBy="recipe")
+	@OneToMany(mappedBy = "recipe", cascade = CascadeType.REMOVE)
 	private final List<RecipeNote> recipeNotes = new ArrayList<>();
     
-	@OneToMany(mappedBy="recipe")
+	@OneToMany(mappedBy = "recipe", cascade = CascadeType.REMOVE)
 	private final List<Reaction> reactions = new ArrayList<>();
 
 	@jakarta.persistence.Transient
@@ -57,8 +57,8 @@ public class Recipe {
 	@jakarta.persistence.Transient
 	private List<RecipeNote> visibleRecipeNotes = new ArrayList<>();
 
-    @ManyToMany(mappedBy="recipes")
-    private List<CalendarEntry> calendarEntries;
+    @ManyToMany(mappedBy = "recipes")
+	private List<CalendarEntry> calendarEntries = new ArrayList<>();
     
     @ManyToOne
     @JoinColumn(name="account_id")
