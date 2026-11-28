@@ -31,8 +31,10 @@ import com.hocuscoquus.hocuscoquus.model.RecipeCreateRequest;
 import com.hocuscoquus.hocuscoquus.model.RecipeEditRequest;
 import com.hocuscoquus.hocuscoquus.model.RecipeEditRequest.IngredientRow;
 import com.hocuscoquus.hocuscoquus.model.RecipeIngredientCreateRequest;
+import com.hocuscoquus.hocuscoquus.model.RecipeIngredientRecord;
 import com.hocuscoquus.hocuscoquus.model.RecipeNoteCreateRequest;
 import com.hocuscoquus.hocuscoquus.model.RecipeNoteUpdateRequest;
+import com.hocuscoquus.hocuscoquus.model.RecipeRecord;
 import com.hocuscoquus.hocuscoquus.model.RecipeTagUpdateRequest;
 import com.hocuscoquus.hocuscoquus.repository.IngredientRepository;
 import com.hocuscoquus.hocuscoquus.repository.RecipeIngredientRepository;
@@ -331,10 +333,6 @@ public class RecipeService {
     	return null;
     }
 
-    public void scaleIngredients(long recipeId, long scalar) {
-       // TODO: add implementation for this method
-    }
-
     public void downloadRecipe() {
         // TODO: add implementation for this method
     }
@@ -519,6 +517,39 @@ public class RecipeService {
         recipe.getRecipeTags().forEach(recipeTag -> recipeTag.getTag());
         recipe.getRecipeNotes().forEach(recipeNote -> recipeNote.getMessage());
         return recipe;
+    }
+
+    /**
+     * Retrieves a recipe and scales its ingredient quantities by a scalar
+     * without modifying the original recipe in the database.
+     * @param recipeId ID of the recipe to scale.
+     * @param accountId ID of the requesting account, or null if unauthenticated.
+     * @param scalar Multiplier applied to each ingredient quantity.
+     * @return {@link RecipeRecord} representing the recipe with scaled ingredients.
+     * @throws ResponseStatusException If the scalar is invalid, a scaled
+     *         quantity is not finite, or the recipe does not exist.
+     */
+    @Transactional(readOnly = true)
+    public RecipeRecord scaleIngredients(long recipeId, Long accountId, double scalar) {
+        if (!Double.isFinite(scalar) || scalar <= 0) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Scalar must be a finite positive number");
+        }
+
+        Recipe recipe = getRecipeByID(recipeId, accountId);
+
+        RecipeRecord scaledRecipe = RecipeRecord.getRecord(recipe, scalar);
+
+        for (RecipeIngredientRecord ingredient : scaledRecipe.ingredients()) {
+            if (!Double.isFinite(ingredient.quantity())) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Scaled ingredient quantity exceeds supported range");
+            }
+        }
+
+        return scaledRecipe;
     }
 
     /**

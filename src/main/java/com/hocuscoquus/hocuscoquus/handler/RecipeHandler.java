@@ -69,18 +69,25 @@ public class RecipeHandler {
     	
     }
 
-	/**
-	 * Used to create a {@link RecipeRecord} from a given {@link Recipe} entity within the {@link com.hocuscoquus.hocuscoquus.repository.RecipeRepository}.
-	 * @param recipeID ID of the recipe for which we want to retrieve the record.
-	 * @return {@link RecipeRecord} as a ResponseEntity.
-	 */
 	public ResponseEntity<?> getRecipeByID(long recipeID) {
 		return getRecipeByID(recipeID, null);
 	}
 
 	public ResponseEntity<?> getRecipeByID(long recipeID, Long accountId) {
-		Recipe recipe = recipeService.getRecipeByID(recipeID, accountId);
-		return ResponseEntity.ok(RecipeRecord.getRecord(recipe));
+		return getRecipeByID(recipeID, accountId, 1.0);
+	}
+
+	/**
+	 * Retrieves a recipe with its ingredient quantities scaled by a scalar.
+	 * @param recipeID ID of the recipe to retrieve.
+	 * @param accountId ID of the requesting account, or null if unauthenticated.
+	 * @param scalar Multiplier applied to each ingredient quantity.
+	 * @return ResponseEntity containing the scaled {@link RecipeRecord}.
+	 */
+	public ResponseEntity<RecipeRecord> getRecipeByID(
+			long recipeID, Long accountId, double scalar) {
+		return ResponseEntity.ok(
+				recipeService.scaleIngredients(recipeID, accountId, scalar));
 	}
 
 	public ResponseEntity<?> getRandomRecipe(Long accountID) {

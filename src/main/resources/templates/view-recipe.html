@@ -60,7 +60,23 @@
                     <div class="recipe-sidebar">
                         <section class="recipe-section ingredients-section">
                             <h2>Ingredients</h2>
-                            <ul class="ingredient-list"
+                            <form id="recipe-scale-form"
+                                th:action="@{/api/recipe/view-recipe/{recipeId}(recipeId=${recipeId})}">
+                                <label for="recipe-scale-scalar">Scaling factor</label>
+                                <input id="recipe-scale-scalar"
+                                    name="scalar"
+                                    type="number"
+                                    min="0"
+                                    step="any"
+                                    value="1"
+                                    required />
+                                <button class="btn" type="submit">Scale Ingredients</button>
+                                <p id="recipe-scale-error"
+                                class="recipe-share-error"
+                                role="alert"
+                                hidden></p>
+                            </form>
+                            <ul id="recipe-ingredient-list" class="ingredient-list"
                                 th:if="${recipe.recipeIngredients != null and !#lists.isEmpty(recipe.recipeIngredients)}">
                                 <li th:each="recipeIngredient : ${recipe.recipeIngredients}">
                                     <span class="ingredient-quantity" th:if="${recipeIngredient.quantity > 0}"
@@ -132,6 +148,73 @@
             </article>
         </main>
         <script>
+            const scaleForm = document.getElementById('recipe-scale-form');
+
+            if (scaleForm) {
+                const scalarInput = document.getElementById('recipe-scale-scalar');
+                const scaleButton = scaleForm.querySelector('button[type="submit"]');
+                const scaleError = document.getElementById('recipe-scale-error');
+                const ingredientList = document.getElementById('recipe-ingredient-list');
+
+                scaleForm.addEventListener('submit', async (event) => {
+                    event.preventDefault();
+                    if (scaleButton.disabled) {
+                        return;
+                    }
+
+                    const scalar = Number(scalarInput.value);
+
+                    scaleError.hidden = true;
+
+                    if (!Number.isFinite(scalar) || scalar <= 0) {
+                        scaleError.textContent = 'Enter a finite positive scaling factor.';
+                        scaleError.hidden = false;
+                        return;
+                    }
+
+                    scaleButton.disabled = true;
+
+                    try {
+                        const url = new URL(scaleForm.action);
+                        url.searchParams.set('scalar', scalar);
+
+                        const response = await fetch(url);
+
+                        if (!response.ok) {
+                            throw new Error('Could not scale ingredients.');
+                        }
+
+                        const recipe = await response.json();
+
+                        if (ingredientList) {
+                            ingredientList.replaceChildren();
+
+                            for (const ingredient of recipe.ingredients) {
+                                const item = document.createElement('li');
+
+                                const quantity = document.createElement('span');
+                                quantity.className = 'ingredient-quantity';
+                                quantity.textContent = ingredient.quantity;
+
+                                const measurement = document.createElement('span');
+                                measurement.className = 'ingredient-measurement';
+                                measurement.textContent = ingredient.measurement ?? '';
+
+                                const name = document.createElement('span');
+                                name.textContent = ingredient.ingredientName;
+
+                                item.append(quantity, ' ', measurement, ' ', name);
+                                ingredientList.appendChild(item);
+                            }
+                        }
+                    } catch (error) {
+                        scaleError.textContent = error.message;
+                        scaleError.hidden = false;
+                    } finally {
+                        scaleButton.disabled = false;
+                    }
+                });
+            }
             const shareForm = document.getElementById('recipe-email-share-form');
             if (shareForm) {
                 const shareEmail = document.getElementById('recipe-share-email');

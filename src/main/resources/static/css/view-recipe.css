@@ -250,6 +250,46 @@
     line-height: 1.1;
 }
 
+#recipe-scale-form {
+    display: grid;
+    gap: 0.65rem;
+    margin-bottom: 1.25rem;
+}
+
+#recipe-scale-form label {
+    color: var(--white);
+    font-size: 1rem;
+}
+
+#recipe-scale-scalar {
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--white);
+    border-radius: var(--border-radius);
+    color: var(--white);
+    background: rgba(8, 0, 46, 0.3);
+    font: inherit;
+}
+
+#recipe-scale-form .btn {
+    justify-self: start;
+    padding: 0.8rem 1.5rem;
+    cursor: pointer;
+}
+
+#recipe-scale-scalar:focus-visible,
+#recipe-scale-form .btn:focus-visible {
+    outline: 2px solid var(--light-primary);
+    outline-offset: 3px;
+}
+
+#recipe-scale-form .btn:disabled {
+    cursor: wait;
+    opacity: 0.7;
+}
+
 .ingredient-list,
 .recipe-note-list {
     display: grid;
@@ -331,6 +371,10 @@
         padding: 1.1rem;
     }
 
+    #recipe-scale-form .btn {
+        justify-self: stretch;
+    }   
+
     .recipe-share-controls {
         flex-direction: column;
     }
@@ -350,3 +394,4 @@
         justify-self: stretch;
     }
 }
+

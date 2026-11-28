@@ -42,10 +42,13 @@ public class RecipeController {
     }
 
     @GetMapping("/api/recipe/view-recipe/{recipeId}")
-    public ResponseEntity<?> viewRecipe(@PathVariable long recipeId,
+    public ResponseEntity<?> viewRecipe(
+            @PathVariable long recipeId,
+            @RequestParam(defaultValue = "1.0") double scalar,
             @AuthenticationPrincipal AccountDetails account) {
         return recipeHandler.getRecipeByID(recipeId,
-                account == null ? null : account.getAccountId());
+                account == null ? null : account.getAccountId(),
+                scalar);
     }
 
     public ResponseEntity<?> viewRecipe(long recipeId) {
