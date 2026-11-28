@@ -163,6 +163,11 @@ public class RecipeHandler {
 		return ResponseEntity.ok(response);
 	}
 
+	public ResponseEntity<Void> deleteRecipeNote(long accountId, long recipeNoteId) {
+		recipeService.removeRecipeNote(accountId, recipeNoteId);
+		return ResponseEntity.noContent().build();
+	}
+
 	public ResponseEntity<?> updateRecipeTag(long accountId, long recipeTagId, RecipeTagUpdateRequest request) {
 		RecipeTag tag = recipeService.updateRecipeTag(accountId, recipeTagId, request);
 		RecipeTagRecord response = RecipeTagRecord.getRecord(tag);
