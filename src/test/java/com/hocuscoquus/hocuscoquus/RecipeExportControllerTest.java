@@ -21,6 +21,7 @@ import com.hocuscoquus.hocuscoquus.config.SecurityConfig;
 import com.hocuscoquus.hocuscoquus.controller.RecipeExportController;
 import com.hocuscoquus.hocuscoquus.entity.Account;
 import com.hocuscoquus.hocuscoquus.entity.AccountDetails;
+import com.hocuscoquus.hocuscoquus.handler.RecipeExportHandler;
 import com.hocuscoquus.hocuscoquus.service.RecipeExportService;
 
 /** Tests the HTTP endpoint for sharing a recipe by email. */
@@ -33,6 +34,8 @@ class RecipeExportControllerTest {
 
     @MockitoBean
     private RecipeExportService recipeExportService;
+    @MockitoBean
+    private RecipeExportHandler recipeExportHandler;
 
     /**
      * Creates an authenticated test user for requests to the secured endpoint.

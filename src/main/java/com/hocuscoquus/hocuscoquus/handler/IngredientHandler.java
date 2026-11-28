@@ -1,5 +1,7 @@
 package com.hocuscoquus.hocuscoquus.handler;
 
+import java.util.Locale;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -22,7 +24,7 @@ public class IngredientHandler {
 		
 		try {
 			Ingredient newIngredient = new Ingredient();
-			newIngredient.setIngredientName(request.name().trim().toLowerCase());
+			newIngredient.setIngredientName(request.name().trim().toLowerCase(Locale.ROOT));
 			newIngredient = ingredientService.createIngredient(newIngredient);
 			IngredientRecord response = new IngredientRecord(newIngredient.getIngredientId(), newIngredient.getIngredientName());
 			

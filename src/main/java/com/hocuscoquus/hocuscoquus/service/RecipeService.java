@@ -2,15 +2,18 @@ package com.hocuscoquus.hocuscoquus.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.validation.constraints.NotNull;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -40,9 +43,6 @@ import com.hocuscoquus.hocuscoquus.repository.IngredientRepository;
 import com.hocuscoquus.hocuscoquus.repository.RecipeIngredientRepository;
 import com.hocuscoquus.hocuscoquus.repository.RecipeRepository;
 import com.hocuscoquus.hocuscoquus.repository.RecipeTagRepository;
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 
 @Service
 public class RecipeService {
@@ -82,12 +82,13 @@ public class RecipeService {
     	for (RecipeIngredientCreateRequest i : request.ingredients()) {
     		
     		//check if ingredient exists
-    		Ingredient ingredient = ingredientRepository.findByIngredientName(i.ingredient().trim().toLowerCase());
+		String ingredientName = i.ingredient().trim().toLowerCase(Locale.ROOT);
+		Ingredient ingredient = ingredientRepository.findByIngredientName(ingredientName);
     		
     		//if it doesn't, create it
     		if (ingredient == null) {
     			ingredient = new Ingredient();
-    			ingredient.setIngredientName(i.ingredient().trim().toLowerCase());
+				ingredient.setIngredientName(ingredientName);
     			ingredient = ingredientService.createIngredient(ingredient);
     		}
     		
@@ -154,7 +155,7 @@ public class RecipeService {
             if (!Double.isFinite(input.quantity())) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid ingredient quantity");
             }
-            String name = input.ingredient().strip().toLowerCase();
+            String name = input.ingredient().strip().toLowerCase(Locale.ROOT);
             Ingredient ingredient = ingredientRepository.findByIngredientName(name);
             if (ingredient == null) {
                 Ingredient newIngredient = new Ingredient();
@@ -517,6 +518,20 @@ public class RecipeService {
         recipe.getRecipeTags().forEach(recipeTag -> recipeTag.getTag());
         recipe.getRecipeNotes().forEach(recipeNote -> recipeNote.getMessage());
         return recipe;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Recipe> getSimilarRecipes(long recipeID, Long accountID) {
+        Recipe originalRecipe = recipeRepository.getRecipeByRecipeId(recipeID);
+        if (originalRecipe != null) {
+            List<Recipe> recipes = recipeRepository.findBySimilarIngredients(recipeID);
+            if (accountID != null) {
+                for (Recipe recipe : recipes)
+                    filterRecipeTags(accountID, recipe);
+            }
+            return recipes;
+        } else
+            throw new IllegalArgumentException("Recipe ID not found.");
     }
 
     /**

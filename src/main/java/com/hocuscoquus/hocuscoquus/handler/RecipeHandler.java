@@ -1,20 +1,17 @@
 package com.hocuscoquus.hocuscoquus.handler;
 
+import com.hocuscoquus.hocuscoquus.entity.*;
 import com.hocuscoquus.hocuscoquus.entity.Account;
-import com.hocuscoquus.hocuscoquus.entity.Recipe;
-import com.hocuscoquus.hocuscoquus.entity.RecipeIngredient;
-import com.hocuscoquus.hocuscoquus.entity.RecipeTag;
 import com.hocuscoquus.hocuscoquus.entity.RecipeNote;
+import com.hocuscoquus.hocuscoquus.entity.RecipeTag;
 import com.hocuscoquus.hocuscoquus.model.*;
 import com.hocuscoquus.hocuscoquus.service.RecipeService;
-
 import org.springframework.boot.http.converter.autoconfigure.ServerHttpMessageConvertersCustomizer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -170,5 +167,16 @@ public class RecipeHandler {
 		RecipeTag tag = recipeService.updateRecipeTag(accountId, recipeTagId, request);
 		RecipeTagRecord response = RecipeTagRecord.getRecord(tag);
 		return ResponseEntity.ok(response);
+	}
+
+	public ResponseEntity<?> getSimilarRecipe(long recipeID, Long accountId) {
+		List<Recipe> similarRecipes = recipeService.getSimilarRecipes(recipeID, accountId);
+		// Return the most similar recipe if the list is not empty.
+		if (!similarRecipes.isEmpty()) {
+			return ResponseEntity.ok(RecipeRecord.getRecord(similarRecipes.getFirst()));
+		}
+		// Return the empty list if the list is empty.
+		return ResponseEntity.ok(similarRecipes);
+
 	}
 }

@@ -8,6 +8,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * API representation of a recipe.
+ *
+ * @param id recipe ID
+ * @param name recipe name
+ * @param description optional description
+ * @param instructions optional preparation instructions
+ * @param ingredients recipe ingredients and their saved IDs
+ * @param image optional image reference
+ * @param reactions reaction counts by type
+ * @param accountId ID of the account that owns the recipe
+ */
 public record RecipeRecord(
 		
 		long id,
@@ -24,7 +36,7 @@ public record RecipeRecord(
 	 * Static builder method to construct a {@link RecipeRecord} from a
 	 * {@link Recipe} with its original ingredient quantities.
 	 * @param recipe {@link Recipe} from which to construct the record.
-	 * @return {@link RecipeRecord} representing the given recipe.
+	 * @return {@link RecipeRecord} representing the given recipe and its owning account.
 	 */
 	public static RecipeRecord getRecord(Recipe recipe) {
 		return getRecord(recipe, 1.0);

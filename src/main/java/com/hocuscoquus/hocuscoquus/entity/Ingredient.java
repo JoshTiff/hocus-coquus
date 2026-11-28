@@ -2,6 +2,7 @@ package com.hocuscoquus.hocuscoquus.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -57,7 +58,9 @@ public class Ingredient {
 	}
 
 	public void setIngredientName(String ingredientName) {
-		this.ingredientName = ingredientName;
+		this.ingredientName = ingredientName == null
+				? null
+				: ingredientName.trim().toLowerCase(Locale.ROOT);
 	}
 
 	public List<DietaryRestriction> getDietaryRestriction() {

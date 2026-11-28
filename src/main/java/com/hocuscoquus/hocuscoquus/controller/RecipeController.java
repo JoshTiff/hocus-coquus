@@ -1,9 +1,14 @@
 package com.hocuscoquus.hocuscoquus.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+import com.hocuscoquus.hocuscoquus.entity.AccountDetails;
+import com.hocuscoquus.hocuscoquus.handler.RecipeHandler;
+import com.hocuscoquus.hocuscoquus.model.ReactionCreateRequest;
+import com.hocuscoquus.hocuscoquus.model.ReactionType;
+import com.hocuscoquus.hocuscoquus.model.RecipeCreateRequest;
+import com.hocuscoquus.hocuscoquus.model.RecipeEditRequest;
+import com.hocuscoquus.hocuscoquus.model.RecipeEditRequest.IngredientRow;
+import com.hocuscoquus.hocuscoquus.service.RecipeService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,16 +19,9 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.hocuscoquus.hocuscoquus.entity.AccountDetails;
-import com.hocuscoquus.hocuscoquus.handler.RecipeHandler;
-import com.hocuscoquus.hocuscoquus.model.ReactionCreateRequest;
-import com.hocuscoquus.hocuscoquus.model.ReactionType;
-import com.hocuscoquus.hocuscoquus.model.RecipeCreateRequest;
-import com.hocuscoquus.hocuscoquus.model.RecipeEditRequest;
-import com.hocuscoquus.hocuscoquus.model.RecipeEditRequest.IngredientRow;
-import com.hocuscoquus.hocuscoquus.service.RecipeService;
-
-import jakarta.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 public class RecipeController {
@@ -122,5 +120,10 @@ public class RecipeController {
     @GetMapping("/api/recipe/view-recipe")
     public ResponseEntity<?> viewRandomRecipe(@AuthenticationPrincipal AccountDetails account) {
         return recipeHandler.getRandomRecipe(account == null ? null : account.getAccountId());
+    }
+
+    @GetMapping("/api/recipe/similarto/{recipeId}")
+    public ResponseEntity<?> viewRandomRecipe(@PathVariable long recipeId, @AuthenticationPrincipal AccountDetails account) {
+        return recipeHandler.getSimilarRecipe(recipeId, account == null ? null : account.getAccountId());
     }
 }

@@ -31,6 +31,21 @@ public class RecipeSearchController {
 			@RequestParam(defaultValue = "true") boolean usePantry) {
 		return recipeSearchHandler.processSearchByIngredientsRequest(ingredients,usePantry);
 	}
+
+	/**
+	 * Searches recipes that do not contain ingredients linked to a saved restriction.
+	 *
+	 * @param dietaryRestrictionId optional restriction to apply; if omitted, all of the
+	 *        authenticated user's saved restrictions are applied
+	 * @return matching recipes, or an error response if the user is unauthenticated,
+	 *         has no restrictions, or selects a restriction they do not own
+	 */
+	@GetMapping("/search-by-dietary-restrictions")
+	public ResponseEntity<?> searchByDietaryRestrictions(
+			@RequestParam(required = false) Long dietaryRestrictionId) {
+		return recipeSearchHandler.processSearchByDietaryRestrictionsRequest(
+				dietaryRestrictionId);
+	}
 	
 	
 }

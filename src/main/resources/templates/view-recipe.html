@@ -25,6 +25,7 @@
             <a class="recipe-back-link" th:href="@{/}">&larr; Back to recipes</a>
 
             <article class="recipe-view">
+                <div th:if="${fail}" class="fail" th:text="${fail}"></div>
                 <section class="recipe-hero">
                     <img class="recipe-hero-image"
                          th:if="${recipe.image != null and !#strings.isEmpty(recipe.image)}"
@@ -61,7 +62,7 @@
                         <section class="recipe-section ingredients-section">
                             <h2>Ingredients</h2>
                             <form id="recipe-scale-form"
-                                th:action="@{/api/recipe/view-recipe/{recipeId}(recipeId=${recipeId})}">
+                                th:action="@{/api/recipe/view-recipe/{recipeId}(recipeId=${recipe.recipeId})}">
                                 <label for="recipe-scale-scalar">Scaling factor</label>
                                 <input id="recipe-scale-scalar"
                                     name="scalar"
@@ -144,6 +145,11 @@
                             No instructions have been added yet.
                         </p>
                     </section>
+                </div>
+                <div class="similar-recipes-button">
+                    <form action="#" th:action="@{/recipe/similarto/} + ${recipe.getRecipeId()}" method="get">
+                        <input type="submit" class="btn brew" value="Find Similar Recipe"/>
+                    </form>
                 </div>
             </article>
         </main>

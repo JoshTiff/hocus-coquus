@@ -395,3 +395,19 @@
     }
 }
 
+.fail {
+    min-height: 3rem;
+    line-height: 3rem;
+    color: var(--red);
+    font-size: var(--font-size-regular);
+    background: rgba(198, 29, 43, 1);
+    text-align: center;
+}
+
+.similar-recipes-button {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 2rem 3rem;
+}
