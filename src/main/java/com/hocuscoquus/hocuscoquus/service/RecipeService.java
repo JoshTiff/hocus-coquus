@@ -1,19 +1,16 @@
 package com.hocuscoquus.hocuscoquus.service;
 
-import com.hocuscoquus.hocuscoquus.entity.*;
-import com.hocuscoquus.hocuscoquus.entity.Account;
-import com.hocuscoquus.hocuscoquus.entity.Reaction;
-import com.hocuscoquus.hocuscoquus.entity.RecipeNote;
-import com.hocuscoquus.hocuscoquus.entity.RecipeTag;
-import com.hocuscoquus.hocuscoquus.model.*;
-import com.hocuscoquus.hocuscoquus.model.RecipeEditRequest.IngredientRow;
-import com.hocuscoquus.hocuscoquus.repository.IngredientRepository;
-import com.hocuscoquus.hocuscoquus.repository.RecipeIngredientRepository;
-import com.hocuscoquus.hocuscoquus.repository.RecipeRepository;
-import com.hocuscoquus.hocuscoquus.repository.RecipeTagRepository;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.validation.constraints.NotNull;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,7 +20,29 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.*;
+import com.hocuscoquus.hocuscoquus.entity.Account;
+import com.hocuscoquus.hocuscoquus.entity.AccountDetails;
+import com.hocuscoquus.hocuscoquus.entity.Ingredient;
+import com.hocuscoquus.hocuscoquus.entity.Reaction;
+import com.hocuscoquus.hocuscoquus.entity.Recipe;
+import com.hocuscoquus.hocuscoquus.entity.RecipeIngredient;
+import com.hocuscoquus.hocuscoquus.entity.RecipeNote;
+import com.hocuscoquus.hocuscoquus.entity.RecipeTag;
+import com.hocuscoquus.hocuscoquus.model.IngredientModel;
+import com.hocuscoquus.hocuscoquus.model.ReactionType;
+import com.hocuscoquus.hocuscoquus.model.RecipeCreateRequest;
+import com.hocuscoquus.hocuscoquus.model.RecipeEditRequest;
+import com.hocuscoquus.hocuscoquus.model.RecipeEditRequest.IngredientRow;
+import com.hocuscoquus.hocuscoquus.model.RecipeIngredientCreateRequest;
+import com.hocuscoquus.hocuscoquus.model.RecipeIngredientRecord;
+import com.hocuscoquus.hocuscoquus.model.RecipeNoteCreateRequest;
+import com.hocuscoquus.hocuscoquus.model.RecipeNoteUpdateRequest;
+import com.hocuscoquus.hocuscoquus.model.RecipeRecord;
+import com.hocuscoquus.hocuscoquus.model.RecipeTagUpdateRequest;
+import com.hocuscoquus.hocuscoquus.repository.IngredientRepository;
+import com.hocuscoquus.hocuscoquus.repository.RecipeIngredientRepository;
+import com.hocuscoquus.hocuscoquus.repository.RecipeRepository;
+import com.hocuscoquus.hocuscoquus.repository.RecipeTagRepository;
 
 @Service
 public class RecipeService {
@@ -334,10 +353,6 @@ public class RecipeService {
     	return null;
     }
 
-    public void scaleIngredients(long recipeId, long scalar) {
-       // TODO: add implementation for this method
-    }
-
     public void downloadRecipe() {
         // TODO: add implementation for this method
     }
@@ -536,6 +551,39 @@ public class RecipeService {
             return recipes;
         } else
             throw new IllegalArgumentException("Recipe ID not found.");
+    }
+
+    /**
+     * Retrieves a recipe and scales its ingredient quantities by a scalar
+     * without modifying the original recipe in the database.
+     * @param recipeId ID of the recipe to scale.
+     * @param accountId ID of the requesting account, or null if unauthenticated.
+     * @param scalar Multiplier applied to each ingredient quantity.
+     * @return {@link RecipeRecord} representing the recipe with scaled ingredients.
+     * @throws ResponseStatusException If the scalar is invalid, a scaled
+     *         quantity is not finite, or the recipe does not exist.
+     */
+    @Transactional(readOnly = true)
+    public RecipeRecord scaleIngredients(long recipeId, Long accountId, double scalar) {
+        if (!Double.isFinite(scalar) || scalar <= 0) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Scalar must be a finite positive number");
+        }
+
+        Recipe recipe = getRecipeByID(recipeId, accountId);
+
+        RecipeRecord scaledRecipe = RecipeRecord.getRecord(recipe, scalar);
+
+        for (RecipeIngredientRecord ingredient : scaledRecipe.ingredients()) {
+            if (!Double.isFinite(ingredient.quantity())) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Scaled ingredient quantity exceeds supported range");
+            }
+        }
+
+        return scaledRecipe;
     }
 
     /**

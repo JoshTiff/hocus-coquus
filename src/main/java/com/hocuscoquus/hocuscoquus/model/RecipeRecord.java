@@ -33,16 +33,30 @@ public record RecipeRecord(
 		) {
 
 	/**
-	 * Static builder method to construct a {@link RecipeRecord} from a {@link Recipe}.
-	 * @param recipe {@link Recipe} from which to construct the {@link RecipeRecord} object.
-	 * @return record for the recipe and its owning account
+	 * Static builder method to construct a {@link RecipeRecord} from a
+	 * {@link Recipe} with its original ingredient quantities.
+	 * @param recipe {@link Recipe} from which to construct the record.
+	 * @return {@link RecipeRecord} representing the given recipe and its owning account.
 	 */
 	public static RecipeRecord getRecord(Recipe recipe) {
+		return getRecord(recipe, 1.0);
+	}
+
+	/**
+	 * Static builder method to construct a {@link RecipeRecord} from a
+	 * {@link Recipe} with ingredient quantities multiplied by a scalar.
+	 * The original recipe and its ingredient quantities remain unchanged.
+	 * @param recipe {@link Recipe} from which to construct the record.
+	 * @param scalar Positive, finite multiplier applied to each ingredient quantity.
+	 * @return {@link RecipeRecord} representing the given recipe with
+	 *         scaled ingredient quantities.
+	 */
+	public static RecipeRecord getRecord(Recipe recipe, double scalar) {
 		List<RecipeIngredientRecord> ingredientRecords = new ArrayList<>();
 		for (RecipeIngredient recipeIngredient : recipe.getRecipeIngredients()) {
 			RecipeIngredientRecord ingredientRecord = new RecipeIngredientRecord(
 					recipeIngredient.getMeasurement(),
-					recipeIngredient.getQuantity(),
+					recipeIngredient.getQuantity() * scalar,
 					recipeIngredient.getIngredient().getIngredientName(),
 					recipeIngredient.getIngredient().
 					getIngredientId()
